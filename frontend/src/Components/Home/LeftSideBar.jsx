@@ -33,7 +33,7 @@ const LeftSideBar = () => {
             @{user.username || "username"}
           </p>
           {user.bio && (
-            <p className="text-gray-300 text-sm mb-2 leading-relaxed">{user.bio}</p>
+            <p className="text-gray-300 text-sm mb-2 leading-relaxed line-clamp-3">{user.bio}</p>
           )}
           <a
             href="/profile"
