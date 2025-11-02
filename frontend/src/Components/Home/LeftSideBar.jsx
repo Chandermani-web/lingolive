@@ -3,7 +3,7 @@ import AppContext from '../../Context/UseContext';
 import { Edit3, BarChart3 } from 'lucide-react';
 
 const LeftSideBar = () => {
-  const { user } = useContext(AppContext);
+  const { user, setShowImage } = useContext(AppContext);
 
   return (
     <div className="space-y-3 sticky top-2">
@@ -18,6 +18,7 @@ const LeftSideBar = () => {
                     src={user.profilePic || "/defaultProfile.png"}
                     alt="Profile"
                     className="w-full h-full object-cover"
+                    onClick={()=>setShowImage(user.profilePic)}
                   />
                 ) : (
                   <img className='w-full h-full object-cover' src="/avatar.svg" alt="Default Avatar" />

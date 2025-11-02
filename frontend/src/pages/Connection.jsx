@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 const Connection = () => {
   const navigate = useNavigate();
   const [displayName, setdisplayName] = useState(1);
-  const { requests, loading, user, allUser } = useContext(AppContext);
+  const { requests, loading, user, allUser, setShowImage } = useContext(AppContext);
   const [requestBarOpen, setRequestBarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResult, setSearchResult] = useState("");
@@ -60,7 +60,7 @@ const Connection = () => {
         <div className="bg-[#050A15] rounded-xl p-4 border border-gray-700 shadow-lg">
           <div className="flex items-center space-x-3 mb-3">
             <div className="relative">
-              <img src={user?.profilePic || "/avatar.svg"} alt="" className="w-12 h-12 rounded-full" />
+              <img src={user?.profilePic || "/avatar.svg"} alt="" className="w-12 h-12 rounded-full" onClick={()=>setShowImage(user?.profilePic || "/avatar.svg")} />
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
             </div>
             <div className="flex-1">

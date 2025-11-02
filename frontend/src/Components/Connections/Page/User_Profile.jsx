@@ -15,7 +15,7 @@ const User_Profile = () => {
     const { id } = useParams();
   const [user, setUser] = useState({});
   const [openCommentBoxId, setOpenCommentBoxId] = useState(null);
-  const { posts, setCommentIdForFetching, setPosts, fetchComments, loading } = useContext(AppContext);
+  const { posts, setCommentIdForFetching, setPosts, fetchComments, loading, setShowImage } = useContext(AppContext);
 
   const getUser = async () => {
     try {
@@ -92,6 +92,7 @@ const User_Profile = () => {
               src={user.coverPic}
               alt="Cover"
               className="w-full h-full object-cover rounded-lg"
+              onClick={()=>setShowImage(user.coverPic)}
             />
           )}
         </div>
@@ -107,6 +108,7 @@ const User_Profile = () => {
                   }
                   alt="Profile"
                   className="w-full h-full object-cover"
+                  onClick={()=>setShowImage(user.profilePic || "/defaultProfile.png")}
                 />
               ) : (
                 <User className="w-16 h-16 text-gray-400" />

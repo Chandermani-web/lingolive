@@ -28,6 +28,7 @@ const ProfileUpdate = () => {
     // fetchComments,
     fetchPosts,
     setCommentIdForFetching,
+    setShowImage
   } = useContext(AppContext);
 
   const [expandedPostId, setExpandedPostId] = useState(null)
@@ -325,19 +326,27 @@ const ProfileUpdate = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#050A15] text-white">
-      <div className="max-w-full mx-auto p-6 ">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black text-white relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-32 right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto p-6 relative z-10">
         {/* Cover Photo */}
-        <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg mb-6">
+        <div className="relative h-80 rounded-3xl mb-8 overflow-hidden border border-gray-700/50 shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20"></div>
           {user.coverPic && (
             <img
               src={user.coverPic}
               alt="Cover"
-              className="w-full h-full object-cover rounded-lg"
+              className="w-full h-full object-cover"
+              onClick={()=>setShowImage(user.coverPic)}
             />
           )}
-          <label className="absolute top-4 right-4 bg-black bg-opacity-50 p-2 rounded-full cursor-pointer hover:bg-opacity-70">
-            <Camera className="w-10 h-10" />
+          <label className={`absolute top-6 right-6 bg-black/50 backdrop-blur-sm p-3 rounded-2xl cursor-pointer hover:bg-black/70 transition-all duration-300 transform hover:scale-105 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <Camera className="w-6 h-6" />
             <input
               type="file"
               accept="image/*"
@@ -345,27 +354,33 @@ const ProfileUpdate = () => {
               className="hidden"
               disabled={uploading}
             />
+            {uploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-2xl">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              </div>
+            )}
           </label>
         </div>
 
         {/* Profile Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-end gap-6 mb-8">
+        <div className="flex flex-col md:flex-row items-start md:items-end gap-8 mb-12 -mt-20 md:-mt-24 relative z-20">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-              {user.profilePic ? (
-                <img
-                  src={
-                    user.profilePic ? user.profilePic : "/defaultProfile.png"
-                  }
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <User className="w-16 h-16 text-gray-400" />
-              )}
+            <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-r from-blue-500 to-purple-600 p-1.5 shadow-2xl">
+              <div className="w-full h-full rounded-2xl bg-gray-800 flex items-center justify-center overflow-hidden">
+                {user.profilePic ? (
+                  <img
+                    src={user.profilePic || "/defaultProfile.png"}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onClick={()=>setShowImage(user.profilePic)}
+                  />
+                ) : (
+                  <User className="w-16 h-16 text-gray-400" />
+                )}
+              </div>
             </div>
-            <label className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700">
-              <Camera className="w-4 h-4" />
+            <label className={`absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-2xl cursor-pointer hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              <Camera className="w-4 h-4 text-white" />
               <input
                 type="file"
                 accept="image/*"
@@ -374,257 +389,269 @@ const ProfileUpdate = () => {
                 disabled={uploading}
               />
             </label>
+            {user.isVerified && (
+              <div className="absolute -top-2 -right-2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                ✓ Verified
+              </div>
+            )}
           </div>
 
-          <div className="flex-1">
-            <div className="flex items-center gap-4 mb-2">
-              <h1 className="text-3xl font-bold">
-                {user.fullname || user.username || "Anonymous User"}
-              </h1>
-              {user.isVerified && (
-                <div className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                  Verified
+          <div className="flex-1 bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-4 mb-3">
+                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    {user.fullname || user.username || "Anonymous User"}
+                  </h1>
                 </div>
-              )}
-            </div>
-            <p className="text-gray-400 mb-2">@{user.username || "username"}</p>
-            {user.bio && <p className="text-gray-300 mb-4">{user.bio}</p>}
+                <p className="text-gray-400 text-lg mb-4">@{user.username || "username"}</p>
+                {user.bio && <p className="text-gray-300 text-lg leading-relaxed mb-6">{user.bio}</p>}
 
-            <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-              {user.location && (
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  {user.location}
+                <div className="flex flex-wrap gap-6 text-sm">
+                  {user.location && (
+                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
+                      <MapPin className="w-4 h-4" />
+                      {user.location}
+                    </div>
+                  )}
+                  {user.website && (
+                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
+                      <Globe className="w-4 h-4" />
+                      <a
+                        href={user.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-blue-400 transition-colors"
+                      >
+                        Website
+                      </a>
+                    </div>
+                  )}
+                  {user.dateOfBirth && (
+                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
+                      <Calendar className="w-4 h-4" />
+                      {new Date(user.dateOfBirth).toLocaleDateString()}
+                    </div>
+                  )}
                 </div>
-              )}
-              {user.website && (
-                <div className="flex items-center gap-1">
-                  <Globe className="w-4 h-4" />
-                  <a
-                    href={user.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-blue-400"
-                  >
-                    {user.website}
-                  </a>
-                </div>
-              )}
-              {user.dateOfBirth && (
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {new Date(user.dateOfBirth).toLocaleDateString()}
-                </div>
-              )}
+              </div>
+
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-6 py-3 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                <Edit3 className="w-5 h-5" />
+                {isEditing ? "Cancel" : "Edit Profile"}
+              </button>
             </div>
           </div>
-
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center gap-2"
-          >
-            <Edit3 className="w-4 h-4" />
-            {isEditing ? "Cancel" : "Edit Profile"}
-          </button>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-2 mb-8">
-          <div className="bg-gray-600 p-4 rounded-lg text-center text-white">
-            <div className="text-2xl font-bold">{user.posts?.length || 0}</div>
-            <div className="text-blue-200">Posts</div>
-          </div>
-          <div className="bg-green-600 p-4 rounded-lg text-center text-white">
-            <div className="text-2xl font-bold">
-              {user.friends?.length || 0}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {[
+            { label: "Posts", value: user.posts?.length || 0, icon: BarChart3, color: "from-blue-500 to-cyan-500" },
+            { label: "Friends", value: user.friends?.length || 0, icon: Users, color: "from-green-500 to-emerald-500" },
+            { label: "Followers", value: user.followers?.length || 0, icon: Heart, color: "from-purple-500 to-pink-500" },
+            { label: "Following", value: user.following?.length || 0, icon: User, color: "from-orange-500 to-red-500" }
+          ].map((stat, index) => (
+            <div key={index} className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+                    {stat.value}
+                  </div>
+                  <div className="text-gray-400 text-sm mt-1">{stat.label}</div>
+                </div>
+                <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center shadow-lg`}>
+                  <stat.icon className="w-6 h-6 text-white" />
+                </div>
+              </div>
             </div>
-            <div className="text-green-200">Friends</div>
-          </div>
-          <div className="bg-blue-600 p-3 rounded-lg text-center text-white">
-            <div className="text-2xl font-bold">
-              {user.followers?.length || 0}
-            </div>
-            <div className="text-purple-200">Followers</div>
-          </div>
-          <div className="bg-violet-600 p-3 rounded-lg text-center text-white">
-            <div className="text-2xl font-bold">
-              {user.following?.length || 0}
-            </div>
-            <div className="text-red-200">Following</div>
-          </div>
+          ))}
         </div>
 
         {/* Edit Form */}
         {isEditing && (
-          <div className="bg-gray-800 p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="fullname"
-                    value={formData.fullname}
-                    onChange={handleInputChange}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+          <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-2xl mb-12">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Edit Your Profile
+              </h2>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-3 text-gray-300">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="fullname"
+                      value={formData.fullname}
+                      onChange={handleInputChange}
+                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-3 text-gray-300">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                      placeholder="Choose a username"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-3 text-gray-300">
+                      Bio
+                    </label>
+                    <textarea
+                      name="bio"
+                      value={formData.bio}
+                      onChange={handleInputChange}
+                      rows={4}
+                      maxLength={500}
+                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
+                      placeholder="Tell us about yourself..."
+                    />
+                    <div className="text-sm text-gray-400 mt-2 text-right">
+                      {formData.bio.length}/500
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-3 text-gray-300">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                        placeholder="Your city"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-3 text-gray-300">
+                        Website
+                      </label>
+                      <input
+                        type="url"
+                        name="website"
+                        value={formData.website}
+                        onChange={handleInputChange}
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                        placeholder="https://example.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold mb-3 text-gray-300">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                        placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold mb-3 text-gray-300">
+                        Date of Birth
+                      </label>
+                      <input
+                        type="date"
+                        name="dateOfBirth"
+                        value={formData.dateOfBirth}
+                        onChange={handleInputChange}
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-3 text-gray-300">
+                      Interests (comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      name="interests"
+                      value={formData.interests}
+                      onChange={handleInputChange}
+                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                      placeholder="Technology, Music, Travel, Art..."
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Bio</label>
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleInputChange}
-                  rows={3}
-                  maxLength={500}
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Tell us about yourself..."
-                />
-                <div className="text-sm text-gray-400 mt-1">
-                  {formData.bio.length}/500
+              {/* Social Links */}
+              <div className="bg-gray-700/30 rounded-2xl p-6 border border-gray-600/30">
+                <h3 className="text-lg font-semibold mb-4 text-gray-300">Social Links</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { name: "socialLinks.twitter", placeholder: "Twitter URL", color: "border-blue-400/50" },
+                    { name: "socialLinks.instagram", placeholder: "Instagram URL", color: "border-pink-400/50" },
+                    { name: "socialLinks.linkedin", placeholder: "LinkedIn URL", color: "border-blue-500/50" },
+                    { name: "socialLinks.github", placeholder: "GitHub URL", color: "border-gray-400/50" }
+                  ].map((social, index) => (
+                    <input
+                      key={index}
+                      type="url"
+                      name={social.name}
+                      value={formData.socialLinks[social.name.split('.')[1]]}
+                      onChange={handleInputChange}
+                      placeholder={social.placeholder}
+                      className={`w-full p-4 bg-gray-700/50 border ${social.color} rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300`}
+                    />
+                  ))}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Website
-                  </label>
-                  <input
-                    type="url"
-                    name="website"
-                    value={formData.website}
-                    onChange={handleInputChange}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Date of Birth
-                  </label>
-                  <input
-                    type="date"
-                    name="dateOfBirth"
-                    value={formData.dateOfBirth}
-                    onChange={handleInputChange}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Interests (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  name="interests"
-                  value={formData.interests}
-                  onChange={handleInputChange}
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Technology, Music, Travel..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Social Links
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    type="url"
-                    name="socialLinks.twitter"
-                    value={formData.socialLinks.twitter}
-                    onChange={handleInputChange}
-                    placeholder="Twitter URL"
-                    className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <input
-                    type="url"
-                    name="socialLinks.instagram"
-                    value={formData.socialLinks.instagram}
-                    onChange={handleInputChange}
-                    placeholder="Instagram URL"
-                    className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <input
-                    type="url"
-                    name="socialLinks.linkedin"
-                    value={formData.socialLinks.linkedin}
-                    onChange={handleInputChange}
-                    placeholder="LinkedIn URL"
-                    className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <input
-                    type="url"
-                    name="socialLinks.github"
-                    value={formData.socialLinks.github}
-                    onChange={handleInputChange}
-                    placeholder="GitHub URL"
-                    className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-4">
+              <div className="flex gap-4 pt-4">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-6 py-2 rounded-lg flex items-center gap-2"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
                 >
-                  <Save className="w-4 h-4" />
-                  {loading ? "Saving..." : "Save Changes"}
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5" />
+                      Save Changes
+                    </>
+                  )}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg flex items-center gap-2"
+                  className="bg-gray-700/50 hover:bg-gray-600/50 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 border border-gray-600/50"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                   Cancel
                 </button>
               </div>
@@ -633,64 +660,55 @@ const ProfileUpdate = () => {
         )}
 
         {/* Social Links Display */}
-        {user.socialLinks &&
-          Object.values(user.socialLinks).some((link) => link) && (
-            <div className="bg-gray-800 p-6 rounded-lg mt-6">
-              <h3 className="text-lg font-semibold mb-4">Social Links</h3>
-              <div className="flex flex-wrap gap-4">
-                {user.socialLinks.twitter && (
-                  <a
-                    href={user.socialLinks.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 flex items-center gap-2"
-                  >
-                    <span>Twitter</span>
-                  </a>
-                )}
-                {user.socialLinks.instagram && (
-                  <a
-                    href={user.socialLinks.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-pink-400 hover:text-pink-300 flex items-center gap-2"
-                  >
-                    <span>Instagram</span>
-                  </a>
-                )}
-                {user.socialLinks.linkedin && (
-                  <a
-                    href={user.socialLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-500 flex items-center gap-2"
-                  >
-                    <span>LinkedIn</span>
-                  </a>
-                )}
-                {user.socialLinks.github && (
-                  <a
-                    href={user.socialLinks.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-gray-300 flex items-center gap-2"
-                  >
-                    <span>GitHub</span>
-                  </a>
-                )}
+        {user.socialLinks && Object.values(user.socialLinks).some((link) => link) && (
+          <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center">
+                <Link2 className="w-6 h-6 text-white" />
               </div>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent">
+                Connect With Me
+              </h3>
             </div>
-          )}
+            <div className="flex flex-wrap gap-4">
+              {[
+                { platform: 'twitter', url: user.socialLinks.twitter, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+                { platform: 'instagram', url: user.socialLinks.instagram, color: 'bg-pink-500/20 text-pink-400 border-pink-500/30' },
+                { platform: 'linkedin', url: user.socialLinks.linkedin, color: 'bg-blue-600/20 text-blue-500 border-blue-600/30' },
+                { platform: 'github', url: user.socialLinks.github, color: 'bg-gray-500/20 text-gray-300 border-gray-500/30' }
+              ].map((social) => (
+                social.url && (
+                  <a
+                    key={social.platform}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center gap-3 px-6 py-3 rounded-2xl border ${social.color} hover:scale-105 transition-all duration-300 font-semibold`}
+                  >
+                    <span>{social.platform.charAt(0).toUpperCase() + social.platform.slice(1)}</span>
+                  </a>
+                )
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Interests */}
         {user.interests && user.interests.length > 0 && (
-          <div className="bg-gray-800 p-6 rounded-lg mt-6">
-            <h3 className="text-lg font-semibold mb-4">Interests</h3>
-            <div className="flex flex-wrap gap-2">
+          <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center">
+                <Heart className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold bg-gradient-to-r from-white to-pink-200 bg-clip-text text-transparent">
+                Interests & Passions
+              </h3>
+            </div>
+            <div className="flex flex-wrap gap-3">
               {user.interests.map((interest, index) => (
                 <span
                   key={index}
-                  className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm"
+                  className="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg hover:scale-105 transition-transform duration-300"
                 >
                   {interest}
                 </span>
@@ -699,124 +717,139 @@ const ProfileUpdate = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between mt-12 mb-6">
-          <h3 className="text-2xl text-gray-200 font-semibold">Recent Posts</h3>
-          <a
-            href="/create-post"
-            className="bg-blue-600 p-3 rounded-2xl hover:bg-blue-800 flex items-center gap-2"
-          >
-            <i className="ri-add-line"></i>
-            Create Post
-          </a>
-        </div>
+        {/* Posts Section */}
+        <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+            <div>
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
+                My Posts
+              </h3>
+              <p className="text-gray-400">
+                {userPosts?.length || 0} posts created
+              </p>
+            </div>
+            <Link
+              to="/create-post"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              <Sparkles className="w-5 h-5" />
+              Create New Post
+            </Link>
+          </div>
 
-        <div>
-          {posts
-            ?.filter((post) => post.user._id === user._id)
-            .map((post) => (
-              <div
-                key={post._id}
-                className="bg-gray-950 rounded-2xl shadow-lg p-4 space-y-3 max-w-4xl mb-6 mx-auto relative"
-              >
-                {/* User Info */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <img
-                      src={post.profilePic || "/avatar.svg"}
-                      alt="Profile"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                    <div>
-                      <Link
-                        to={`/profile/${post.user.username}`}
-                        className="font-semibold hover:underline"
+          <div className="space-y-6">
+            {userPosts?.length > 0 ? (
+              userPosts.map((post) => (
+                <div
+                  key={post._id}
+                  className="bg-gray-700/30 backdrop-blur-xl rounded-2xl p-6 border border-gray-600/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {/* User Info */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 p-0.5">
+                          <img
+                            src={post.profilePic || "/avatar.svg"}
+                            alt="Profile"
+                            className="w-full h-full rounded-2xl object-cover bg-gray-800"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Link
+                          to={`/profile/${post.user._id}`}
+                          className="font-semibold text-white hover:text-blue-400 transition-colors"
+                        >
+                          @{post.user.username}
+                        </Link>
+                        <p className="text-xs text-gray-400">
+                          {new Date(post.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Menu Button */}
+                    <div className="relative">
+                      <button
+                        className="p-2 text-gray-400 hover:text-white hover:bg-gray-600/50 rounded-xl transition-all duration-300"
+                        onClick={() =>
+                          setOpenMenuId(openMenuId === post._id ? null : post._id)
+                        }
                       >
-                        @{post.user.username}
-                      </Link>
-                      <p className="text-xs text-gray-400">
-                        {new Date(post.createdAt).toLocaleString()}
-                      </p>
+                        <MoreHorizontal className="w-5 h-5" />
+                      </button>
+
+                      {openMenuId === post._id && (
+                        <div className="absolute right-0 top-12 w-48 bg-gray-800/95 backdrop-blur-xl rounded-xl border border-gray-700/50 shadow-2xl z-10 overflow-hidden">
+                          <button
+                            onClick={() =>
+                              handleEdit(
+                                post._id,
+                                post.content,
+                                post.image,
+                                post.video
+                              )
+                            }
+                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                            Edit Post
+                          </button>
+                          <button
+                            onClick={() => handleDelete(post._id)}
+                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-red-500/10 text-red-400 transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                            Delete
+                          </button>
+                          <button
+                            onClick={() => handleShare(post._id)}
+                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
+                          >
+                            <Share className="w-4 h-4" />
+                            Share
+                          </button>
+                          <button
+                            onClick={() => handleSave(post._id)}
+                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
+                          >
+                            <Bookmark className="w-4 h-4" />
+                            Save
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Menu Button */}
-                  <div className="relative">
-                    <button
-                      className="text-gray-400 hover:text-white transition-colors"
-                      onClick={() =>
-                        setOpenMenuId(openMenuId === post._id ? null : post._id)
-                      }
-                    >
-                      <i className="ri-more-2-fill text-xl"></i>{" "}
-                      {/* Remix Icon */}
-                    </button>
-
-                    {openMenuId === post._id && (
-                      <div className="absolute right-0 mt-2 w-36 bg-gray-700 rounded-xl shadow-lg overflow-hidden z-10">
-                        <button
-                          onClick={() =>
-                            handleEdit(
-                              post._id,
-                              post.content,
-                              post.image,
-                              post.video
-                            )
-                          }
-                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-600 text-gray-200"
-                        >
-                          {editOn ? "✏️ Edit Off" : "✏️ Edit"}
-                        </button>
-                        <button
-                          onClick={() => handleDelete(post._id)}
-                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-600 text-red-400"
-                        >
-                          🗑️ Delete
-                        </button>
-                        <button
-                          onClick={() => handleShare(post._id)}
-                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-600 text-gray-200"
-                        >
-                          🔗 Share
-                        </button>
-                        <button
-                          onClick={() => handleSave(post._id)}
-                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-600 text-gray-200"
-                        >
-                          💾 Save
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Editing the post */}
-                <div>
+                  {/* Editing Interface */}
                   {editOn && editPostId === post._id ? (
-                    <div className="bg-gray-900 p-4 rounded-xl space-y-3">
+                    <div className="bg-gray-800/50 rounded-2xl p-6 space-y-4 border border-gray-600/50">
                       <textarea
-                        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
                         value={editdata.content}
                         onChange={(e) =>
                           seteditdata({ ...editdata, content: e.target.value })
                         }
                         rows={6}
+                        placeholder="What's on your mind?"
                       />
 
-                      {/* Show existing or newly selected image/video */}
+                      {/* Media Preview */}
                       {editdata.image && (
                         <div className="relative">
                           <img
                             src={editdata.image}
                             alt="Preview"
-                            className="w-full max-h-96 object-contain rounded-lg mt-2"
+                            className="w-full max-h-96 object-contain rounded-2xl border border-gray-600/50"
                           />
                           <button
                             onClick={() =>
                               seteditdata({ ...editdata, image: "" })
                             }
-                            className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2"
+                            className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-all duration-300 transform hover:scale-110"
                           >
-                            <i className="ri-close-line"></i>
+                            <X className="w-4 h-4" />
                           </button>
                         </div>
                       )}
@@ -826,23 +859,24 @@ const ProfileUpdate = () => {
                           <video
                             src={editdata.video}
                             controls
-                            className="w-full max-h-96 rounded-lg mt-2"
+                            className="w-full max-h-96 rounded-2xl border border-gray-600/50"
                           />
                           <button
                             onClick={() =>
                               seteditdata({ ...editdata, video: "" })
                             }
-                            className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2"
+                            className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-all duration-300 transform hover:scale-110"
                           >
-                            <i className="ri-close-line"></i>
+                            <X className="w-4 h-4" />
                           </button>
                         </div>
                       )}
 
-                      {/* Upload buttons */}
+                      {/* Upload Buttons */}
                       <div className="flex items-center gap-4">
-                        <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg">
-                          <i className="ri-image-add-line text-xl text-blue-400"></i>
+                        <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105">
+                          <Camera className="w-5 h-5 text-blue-400" />
+                          <span className="text-sm ml-2 text-gray-300">Add Image</span>
                           <input
                             type="file"
                             accept="image/*"
@@ -851,8 +885,9 @@ const ProfileUpdate = () => {
                           />
                         </label>
 
-                        <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg">
-                          <i className="ri-video-add-line text-xl text-pink-400"></i>
+                        <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105">
+                          <Download className="w-5 h-5 text-pink-400" />
+                          <span className="text-sm ml-2 text-gray-300">Add Video</span>
                           <input
                             type="file"
                             accept="video/*"
@@ -862,13 +897,13 @@ const ProfileUpdate = () => {
                         </label>
                       </div>
 
-                      {/* Buttons */}
-                      <div className="flex gap-4 mt-3">
+                      {/* Action Buttons */}
+                      <div className="flex gap-4 pt-4">
                         <button
                           onClick={handleSaveEdit}
-                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white"
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-6 py-3 rounded-2xl text-white font-semibold transition-all duration-300 transform hover:scale-105"
                         >
-                          Save
+                          Save Changes
                         </button>
                         <button
                           onClick={() => {
@@ -876,89 +911,131 @@ const ProfileUpdate = () => {
                             setEditPostId(null);
                             seteditdata({ content: "", image: "", video: "" });
                           }}
-                          className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white"
+                          className="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-2xl text-white font-semibold transition-all duration-300 transform hover:scale-105"
                         >
                           Cancel
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col  justify-center items-center">
+                    <>
                       {/* Post Content */}
-              <p
-                className={`text-gray-200 ${
-                  expandedPostId === post._id ? "" : "line-clamp-3"
-                }`}
-              >
-                {" "}
-                {post.content}
-              </p>
-              <button
-                className="text-blue-400 hover:underline text-left"
-                onClick={() =>
-                  setExpandedPostId(
-                    expandedPostId === post._id ? null : post._id
-                  )
-                }
-              >
-                {" "}
-                {expandedPostId === post._id ? "See Less" : "See More"}{" "}
-              </button>
+                      <div className="mb-4">
+                        <p
+                          className={`text-gray-200 leading-relaxed ${
+                            expandedPostId === post._id ? "" : "line-clamp-3"
+                          }`}
+                        >
+                          {post.content}
+                        </p>
+                        {post.content.length > 150 && (
+                          <button
+                            className="text-blue-400 hover:text-blue-300 font-medium text-sm mt-2 transition-colors"
+                            onClick={() =>
+                              setExpandedPostId(
+                                expandedPostId === post._id ? null : post._id
+                              )
+                            }
+                          >
+                            {expandedPostId === post._id ? "See Less" : "See More"}
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Media */}
                       {post.image && (
-                        <img
-                          src={post.image}
-                          alt=""
-                          className="w-1/2 h-1/2 object-contain rounded-lg mt-2"
-                        />
+                        <div className="mb-4 rounded-2xl overflow-hidden border border-gray-600/50">
+                          <img
+                            src={post.image}
+                            alt="Post"
+                            className="w-full h-auto max-h-96 object-cover"
+                          />
+                        </div>
                       )}
+
                       {post.video && (
-                        <video
-                          src={post.video}
-                          controls
-                          className="w-1/2 h-1/2 rounded-lg mt-2"
-                        />
+                        <div className="mb-4 rounded-2xl overflow-hidden border border-gray-600/50">
+                          <video
+                            src={post.video}
+                            controls
+                            className="w-full h-auto max-h-96 object-cover"
+                          />
+                        </div>
                       )}
-                    </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-600/50">
+                        <div className="flex items-center space-x-6">
+                          <button
+                            className="flex items-center space-x-2 group transition-all duration-300"
+                            onClick={() => handleLike(post._id)}
+                          >
+                            <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+                              post.likes?.includes(user._id) 
+                                ? "bg-red-500/20 text-red-400" 
+                                : "bg-gray-600/50 text-gray-400 group-hover:bg-red-500/20 group-hover:text-red-400"
+                            }`}>
+                              <ThumbsUp className="w-5 h-5" />
+                            </div>
+                            <span className={`font-medium ${
+                              post.likes?.includes(user._id) ? "text-red-400" : "text-gray-400"
+                            }`}>
+                              {post.likes?.length || 0}
+                            </span>
+                          </button>
+
+                          <button
+                            className="flex items-center space-x-2 group transition-all duration-300"
+                            onClick={() => {
+                              setOpenCommentBoxId(
+                                openCommentBoxId === post._id ? null : post._id
+                              );
+                              setCommentIdForFetching(post._id);
+                            }}
+                          >
+                            <div className="p-2 rounded-xl bg-gray-600/50 text-gray-400 group-hover:bg-blue-500/20 group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110">
+                              <MessageCircle className="w-5 h-5" />
+                            </div>
+                            <span className="text-gray-400 font-medium group-hover:text-blue-400 transition-colors">
+                              {post.comments?.length || 0}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Comment Section */}
+                      {openCommentBoxId === post._id && (
+                        <div className="mt-6 pt-6 border-t border-gray-600/50">
+                          <Comment id={post._id} />
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
-
-                {/* Actions */}
-                <div>
-                  <div className="flex space-x-6 text-gray-400 mt-2">
-                    <button
-                      className="flex items-center space-x-1 hover:text-blue-400 transition-colors"
-                      onClick={() => handleLike(post._id)}
-                    >
-                      <ThumbsUp
-                        className={`w-5 h-5 ${
-                          post.likes?.includes(user._id) ? "text-blue-500" : ""
-                        }`}
-                      />
-                      <span>{post.likes?.length || 0}</span>
-                    </button>
-
-                    <button
-                      className="flex items-center space-x-1 hover:text-blue-400 transition-colors"
-                      onClick={() => {
-                        setOpenCommentBoxId(
-                          openCommentBoxId === post._id ? null : post._id
-                        );
-                        setCommentIdForFetching(post._id);
-                      }}
-                    >
-                      <MessageCircle className="w-5 h-5" />
-                      <span>{post.comments?.length || 0}</span>
-                    </button>
-                  </div>
-
-                  {openCommentBoxId === post._id && <Comment id={post._id} />}
-                </div>
+              ))
+            ) : (
+              <div className="text-center py-16 bg-gray-700/30 rounded-2xl border border-gray-600/50">
+                <MessageSquare className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                <h4 className="text-xl font-semibold text-gray-400 mb-2">No posts yet</h4>
+                <p className="text-gray-500 mb-6">Start sharing your thoughts with the world!</p>
+                <Link
+                  to="/create-post"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-4 rounded-2xl inline-flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Create Your First Post
+                </Link>
               </div>
-            ))}
+            )}
+          </div>
         </div>
-
-        <ToastContainer />
       </div>
+
+      <ToastContainer 
+        position="top-right"
+        theme="dark"
+        toastClassName="bg-gray-800/95 backdrop-blur-xl border border-gray-700/50"
+      />
     </div>
   );
 };

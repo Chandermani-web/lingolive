@@ -17,6 +17,7 @@ const User_Profile = lazy(() => import("./Components/Connections/Page/User_Profi
 const Notification = lazy(() => import("./pages/Notification"));
 const ShowPost = lazy(() => import("./Components/Post/ShowPost"));
 const Message = lazy(() => import("./pages/Message"));
+const ShowImage = lazy(() => import("./ShowImage"));
 
 const App = () => {
   const { auth, loading } = useContext(AppContext);
@@ -25,6 +26,7 @@ const App = () => {
 
   return (
       <div className="bg-[#050A15] min-h-screen text-gray-100">
+        <ShowImage />
         <Navbar />
         <Suspense fallback={<Loading />}>
           <Routes>

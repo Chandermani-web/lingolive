@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useSocket } from "../../Context/SocketContext";
 import { Send, FolderUpIcon } from "lucide-react";
 import "remixicon/fonts/remixicon.css";
 import { useNavigate } from "react-router-dom";
+import AppContext from "../../Context/UseContext";
 
 const ChatPage = ({ selectedUser, onOpenSidebar }) => {
   const navigate = useNavigate();
   const { messages, setMessages, onlineUsers } = useSocket();
+  const { setShowImage } = useContext(AppContext);
   const [text, setText] = useState("");
   const [editOn, setEditOn] = useState(false);
   const [media, setMedia] = useState({
@@ -141,6 +143,9 @@ const ChatPage = ({ selectedUser, onOpenSidebar }) => {
           src={selectedUser.profilePic || "/default-avatar.png"}
           alt="profile"
           className="w-10 h-10 rounded-full object-cover"
+          onClick={() => {
+            setShowImage(selectedUser.profilePic || "/default-avatar.png");
+          }}
         />
         <div className="flex-1">
           <h2
