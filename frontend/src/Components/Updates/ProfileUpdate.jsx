@@ -12,6 +12,16 @@ import {
   MessageCircle,
   Loader,
   ThumbsUp,
+  Share,
+  Download,
+  MoreHorizontal,
+  Sparkles,
+  Heart,
+  MessageSquare,
+  BarChart3,
+  Users,
+  Link2,
+  Bookmark
 } from "lucide-react";
 import AppContext from "../../Context/UseContext.jsx";
 import { Link } from "react-router-dom";
@@ -725,7 +735,7 @@ const ProfileUpdate = () => {
                 My Posts
               </h3>
               <p className="text-gray-400">
-                {userPosts?.length || 0} posts created
+                {user.posts?.length || 0} posts created
               </p>
             </div>
             <Link
@@ -738,8 +748,8 @@ const ProfileUpdate = () => {
           </div>
 
           <div className="space-y-6">
-            {userPosts?.length > 0 ? (
-              userPosts.map((post) => (
+            {user.posts?.length > 0 ? (
+              user.posts.map((post) => (
                 <div
                   key={post._id}
                   className="bg-gray-700/30 backdrop-blur-xl rounded-2xl p-6 border border-gray-600/50 shadow-lg hover:shadow-xl transition-all duration-300"
