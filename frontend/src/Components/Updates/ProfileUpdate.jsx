@@ -760,7 +760,7 @@ const ProfileUpdate = () => {
                       <div className="relative">
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 p-0.5">
                           <img
-                            src={post.profilePic || "/avatar.svg"}
+                            src={user.profilePic || "/avatar.svg"}
                             alt="Profile"
                             className="w-full h-full rounded-2xl object-cover bg-gray-800"
                           />
@@ -771,7 +771,7 @@ const ProfileUpdate = () => {
                           to={`/profile/${post.user._id}`}
                           className="font-semibold text-white hover:text-blue-400 transition-colors"
                         >
-                          @{post.user.username}
+                          @{user.username}
                         </Link>
                         <p className="text-xs text-gray-400">
                           {new Date(post.createdAt).toLocaleString()}
