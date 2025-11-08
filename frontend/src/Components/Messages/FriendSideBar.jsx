@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UserCircle, Users, Search } from "lucide-react";
+import { UserCircle, MessageSquare, Search } from "lucide-react";
 import { useSocket } from "../../Context/SocketContext";
 
 const FriendsSidebar = ({ onSelectFriend, selectedUser }) => {
@@ -32,13 +32,12 @@ const FriendsSidebar = ({ onSelectFriend, selectedUser }) => {
   );
 
   return (
-    <div className="w-80 bg-gray-900/90 backdrop-blur-xl h-full overflow-y-auto border-r border-gray-700/50">
+    <div className="w-80 bg-black/50 backdrop-blur-xl h-full overflow-y-auto border-r border-gray-700/50">
       {/* Header */}
-      <div className="sticky top-0 z-10 p-6 border-b border-gray-700/50 bg-gray-900/95 backdrop-blur-xl">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-            <Users className="w-6 h-6 text-white" />
-          </div>
+      <div className="sticky top-0 z-10 p-6 border-b border-gray-700/50 bg-black/50 backdrop-blur-xl">
+        
+        <div className="flex items-center gap-1 mb-4">
+            <MessageSquare className="w-6 h-6 text-white" />
           <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             Messages
           </h2>
@@ -52,13 +51,13 @@ const FriendsSidebar = ({ onSelectFriend, selectedUser }) => {
             placeholder="Search friends..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+            className="w-full pl-12 pr-4 py-2 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
           />
         </div>
       </div>
 
       {/* Friends List */}
-      <div className="p-4">
+      <div className="p-1">
         {filteredFriends.length === 0 ? (
           <div className="text-center py-12">
             <UserCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
@@ -75,23 +74,23 @@ const FriendsSidebar = ({ onSelectFriend, selectedUser }) => {
               <li
                 key={friend._id}
                 onClick={() => onSelectFriend(friend)}
-                className={`flex items-center gap-4 p-4 cursor-pointer rounded-2xl transition-all duration-300 ${
+                className={`flex items-center gap-4 p-2 cursor-pointer rounded-2xl transition-all duration-300 ${
                   selectedUser?._id === friend._id 
                     ? "bg-gradient-to-r from-blue-500/20 to-purple-600/20 border border-blue-500/30 shadow-lg" 
-                    : "hover:bg-gray-800/50 border border-transparent hover:border-gray-600/30"
+                    : "hover:bg-gray-700 border border-transparent hover:border-gray-100"
                 }`}
               >
                 <div className="relative flex-shrink-0">
                   {friend.profilePic ? (
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 p-0.5">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 p-0.5">
                       <img
                         src={friend.profilePic}
                         alt="profile"
-                        className="w-full h-full rounded-2xl object-cover bg-gray-800"
+                        className="w-full h-full rounded-full object-cover bg-gray-800"
                       />
                     </div>
                   ) : (
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-gray-600 to-gray-700 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 flex items-center justify-center border-2 border-white">
                       <UserCircle className="w-8 h-8 text-gray-400" />
                     </div>
                   )}
@@ -103,7 +102,7 @@ const FriendsSidebar = ({ onSelectFriend, selectedUser }) => {
                   <h3 className="text-white font-semibold text-lg truncate">
                     @{friend.username}
                   </h3>
-                  <p className="text-gray-400 text-sm truncate">
+                  <p className="text-gray-400 text-xs truncate">
                     {onlineUsers.includes(friend._id) ? "Online" : "Offline"}
                   </p>
                 </div>

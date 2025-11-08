@@ -29,15 +29,17 @@ const Message = () => {
       {/* Mobile overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/70 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-20 bg-black backdrop-blur-sm md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-80 transform bg-gray-900/90 backdrop-blur-xl border-r border-gray-700/50 transition-all duration-300 md:static md:translate-x-0 ${
-          isSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+        className={`fixed inset-y-0 left-0 z-30 w-80 transform bg-black backdrop-blur-xl border-r border-gray-700/50 transition-all duration-300 md:static md:translate-x-0 ${
+          isSidebarOpen
+            ? "translate-x-0 shadow-2xl"
+            : "-translate-x-full md:translate-x-0"
         }`}
       >
         <FriendsSidebar
@@ -65,7 +67,9 @@ const Message = () => {
                 <MessageCircle className="w-12 h-12 text-white" />
               </div>
               <p className="text-xl mb-4">Select a friend to start chatting</p>
-              <p className="text-gray-500 text-sm mb-6">Choose from your connections to begin messaging</p>
+              <p className="text-gray-500 text-sm mb-6">
+                Choose from your connections to begin messaging
+              </p>
               <button
                 className="inline-flex md:hidden items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
                 onClick={() => setIsSidebarOpen(true)}

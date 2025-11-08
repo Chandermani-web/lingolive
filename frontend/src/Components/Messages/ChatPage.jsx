@@ -233,6 +233,7 @@ const ChatPage = ({ selectedUser, onOpenSidebar }) => {
                       src={m.image}
                       alt="sent"
                       className="rounded-lg mt-2 max-w-[200px] h-[150px] object-cover"
+                      onClick={()=>setShowImage(m.image)}
                     />
                   )}
                   {m.video && (
