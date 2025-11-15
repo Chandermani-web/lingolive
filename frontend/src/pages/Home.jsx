@@ -70,27 +70,25 @@ const Home = () => {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Welcome Message */}
-            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-xl rounded-2xl p-8 mb-8 border border-gray-700/50 shadow-2xl">
+            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-xl md:rounded-2xl md:p-8 p-4 md:mb-8 border border-gray-700/50 shadow-2xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold mb-3">
+                  <h1 className="md:text-3xl text-2xl font-bold mb-3">
                     Welcome back, {user.fullname || user.username || "User"}! 👋
                   </h1>
-                  <p className="text-blue-200/80 text-lg">
+                  <p className="text-blue-200/80 md:text-lg text-sm">
                     Here's what's happening in your world today.
                   </p>
                 </div>
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-white" />
+                <div className="md:w-16 md:h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl md:flex items-center justify-center hidden">
+                  <Sparkles className="md:w-8 md:h-8 text-white" />
                 </div>
               </div>
             </div>
-
-            {/* Create Post */}
             
             {/* Create Post */}
             <div
-              className="bg-gray-800/40 backdrop-blur-xl rounded-2xl lg:p-6 p-2 mb-8 border border-gray-700/50 shadow-xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300"
+              className="bg-gray-800/40 backdrop-blur-xl md:rounded-2xl lg:p-6 p-2 md:mb-8 border border-gray-700/50 shadow-xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300"
               onClick={() => navigate("/create-post")}
             >
               <div className="flex items-center space-x-2">
@@ -104,7 +102,7 @@ const Home = () => {
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-8 border border-gray-700/50 shadow-xl">
+            <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl lg:p-8 p-2 border border-gray-700/50 shadow-xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                   Recent Activity
