@@ -60,7 +60,7 @@ const Home = () => {
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-600/5 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+      <div className="max-w-9xl mx-auto md:px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Left Sidebar */}
           <div className="lg:col-span-1 lg:block hidden space-y-6">
@@ -102,8 +102,8 @@ const Home = () => {
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl lg:p-8 p-2 border border-gray-700/50 shadow-xl">
-              <div className="flex items-center justify-between mb-6">
+            <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-2xl lg:p-8 md:p-2 border border-gray-700/50 shadow-xl">
+              <div className="flex items-center justify-between md:mb-6">
                 <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                   Recent Activity
                 </h3>
@@ -111,7 +111,7 @@ const Home = () => {
               </div>
               
               <div className="space-y-6">
-                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-700/50 to-gray-600/50 rounded-2xl border border-gray-600/50">
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-700/50 to-gray-600/50 md:rounded-2xl md:border border-gray-600/50">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
                     <Plus className="w-6 h-6 text-white" />
                   </div>

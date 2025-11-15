@@ -104,11 +104,11 @@ const ShowPost = () => {
   return (
     <div className="max-w-5xl mx-auto text-white mt-5">
       {posts?.length > 0 ? (
-        <div className="space-y-6">
+        <div className="md:space-y-6 space-y-2">
           {posts.map((post) => (
             <div
               key={post._id}
-              className="bg-gray-950 rounded-2xl shadow-lg p-3 space-y-3 overflow-hidden"
+              className="bg-gray-950 md:rounded-2xl shadow-lg p-3 space-y-3 overflow-hidden"
             >
               {/* User Info */}
               <div className="flex items-center space-x-3">
