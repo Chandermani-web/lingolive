@@ -343,7 +343,7 @@ const ProfileUpdate = () => {
         <div className="absolute bottom-32 right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-6 relative z-10">
+      <div className="max-w-6xl mx-auto p-2 md:p-6 relative z-10">
         {/* Cover Photo */}
         <div className="relative h-80 md:rounded-3xl mb-8 overflow-hidden border border-gray-700/50 shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20"></div>
@@ -763,6 +763,7 @@ const ProfileUpdate = () => {
                             src={user.profilePic || "/avatar.svg"}
                             alt="Profile"
                             className="w-full h-full rounded-2xl object-cover bg-gray-800"
+                            onClick={()=>setShowImage(user.profilePic)}
                           />
                         </div>
                       </div>
@@ -959,6 +960,7 @@ const ProfileUpdate = () => {
                             src={post.image}
                             alt="Post"
                             className="w-full h-auto max-h-96 object-cover"
+                            onClick={()=>setShowImage(post.image)}
                           />
                         </div>
                       )}

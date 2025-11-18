@@ -14,6 +14,7 @@ export const AppProvider = ({ children }) => {
   const [requests, setRequests] = useState([]);
   const [friendList, setFriendList] = useState([]);
   const [showImage, setShowImage] = useState("");
+  const [showVideo, setShowVideo] = useState("")
 
   // notiications
   const [notifications, setNotifications] = useState([]);
@@ -215,6 +216,8 @@ export const AppProvider = ({ children }) => {
     setCommentIdForFetching,
     showImage,
     setShowImage,
+    showVideo,
+    setShowVideo,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

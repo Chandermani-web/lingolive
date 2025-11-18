@@ -8,7 +8,7 @@ import { useSocket } from "../../Context/SocketContext";
 const ShowPost = () => {
   const [openCommentBoxId, setOpenCommentBoxId] = useState(null); // store postId instead of boolean
   const [expandedPostId, setExpandedPostId] = useState(null);
-  const { posts, user, setPosts, setComments, setCommentIdForFetching } =
+  const { posts, user, setPosts, setComments, setCommentIdForFetching, setShowImage, setShowVideo } =
     useContext(AppContext);
 
   const { socket } = useSocket();
@@ -116,6 +116,7 @@ const ShowPost = () => {
                   src={post.profilePic || "/avatar.svg"}
                   alt="Profile"
                   className="w-10 h-10 rounded-full object-cover"
+                  onClick={()=>setShowImage(post.profilePic)}
                 />
                 <div>
                   <Link
@@ -157,6 +158,7 @@ const ShowPost = () => {
                   src={post.image}
                   alt="Post"
                   className="rounded-lg max-h-96 object-contain w-full"
+                  onClick={()=>setShowImage(post.image)}
                 />
               )}
 
@@ -166,6 +168,7 @@ const ShowPost = () => {
                   src={post.video}
                   controls
                   className="rounded-lg w-full max-h-96"
+                  onClick={()=>setShowVideo(post.video)}
                 />
               )}
 
