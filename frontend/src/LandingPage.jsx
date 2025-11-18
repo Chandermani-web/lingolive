@@ -329,10 +329,6 @@ export default function LandingPage() {
             />
           ))}
         </div>
-
-        {/* Cloud/Fog overlays on left & right */}
-        {/* <div className="cloud-overlay-left"></div>
-        <div className="cloud-overlay-right"></div> */}
       </section>
 
       {/* Testimonials Section */}
