@@ -160,30 +160,33 @@ export default function LandingPage() {
         />
 
         <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-blue-300 drop-shadow">
-          {"Welcome to LingoLive".split(" ").map((word, index) => (
-            <span key={index} className="inline-block mr-2">
-              {word.split("").map((char, charIndex) => (
-                <span key={charIndex} className="inline-block">
-                  {char}
-                </span>
-              ))}
-            </span>
-          ))}
+          {"Build professional connections with a calm, focused workspace"
+            .split(" ")
+            .map((word, index) => (
+              <span key={index} className="inline-block mr-2">
+                {word.split("").map((char, charIndex) => (
+                  <span key={charIndex} className="inline-block">
+                    {char}
+                  </span>
+                ))}
+              </span>
+            ))}
         </h1>
         <p className="text-xl md:text-2xl text-blue-200 max-w-3xl mx-auto mb-8">
-          The all-in-one social platform to connect, share, and chat in
-          real-time—where learning meets friendship.
+          LingoLive keeps the interface neutral so your ideas stand out. Share
+          updates, talk with friends, and manage notifications without
+          distractions.
         </p>
-        <div className="flex justify-center gap-6 mt-8 z-10">
+        <div className="flex flex-col sm:flex-row justify-center gap-6 mt-8 z-10">
           <Link
             to="/signup"
-            className="bg-purple-700 hover:bg-purple-900 transition py-3 px-8 rounded-full text-lg font-semibold header-first-link"
+            className="bg-purple-700 hover:bg-purple-900 transition py-3 px-5 rounded-md text-sm font-semibold header-first-link"
           >
-            Get Started
+            Create an Account
           </Link>
           <Link
             to="/login"
-            className="bg-blue-800 border border-blue-400 py-3 px-8 rounded-full text-lg font-semibold hover:bg-blue-900 transition header-second-link"
+            className="bg-blue-800 border border-blue-400 py-3 px-5 rounded-md text-sm font-semibold hover:bg-blue-900 transition header-second-link"
           >
             Login
           </Link>
@@ -192,8 +195,15 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section className="py-16 px-6 max-w-5xl mx-auto relative feature-card">
+        <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
+          Platform highlights
+        </p>
         <h2 className="text-3xl font-bold text-purple-300 mb-8 text-center">
-          Features that Set Us Apart
+          <p className="text-gray-600">
+            A single workspace for sharing posts, messaging, and managing your
+            network.
+          </p>
+          Everything you need, nothing you don't
         </h2>
         <div className="grid md:grid-cols-2 gap-10">
           <div className="bg-blue-950 rounded-xl p-7 flex flex-col items-center shadow-lg">
@@ -257,33 +267,37 @@ export default function LandingPage() {
 
       {/* How It Works & Demo Section */}
       <section className="py-16 px-6 bg-gradient-to-tr from-[#050A15] via-blue-900/60 to-purple-900/60 demo-section">
-        <h2 className="text-3xl font-bold text-blue-100 mb-8 text-center">
-          How LingoLive Works
-        </h2>
-        <div className="flex flex-col md:flex-row items-center gap-10 justify-center">
-          <img
-            src="/assets/demo.jpg"
-            alt="Demo Screenshot"
-            className="rounded-2xl w-96 h-64 object-cover shadow-lg border-2 border-purple-400"
-          />
-          <ul className="text-lg text-blue-200 space-y-6 max-w-md">
-            <li>
-              <span className="font-bold text-purple-300">Step 1:</span>{" "}
-              Register easily and build your personal profile.
-            </li>
-            <li>
-              <span className="font-bold text-purple-300">Step 2:</span> Add
-              friends or connect with other users.
-            </li>
-            <li>
-              <span className="font-bold text-purple-300">Step 3:</span> Share
-              posts, join real-time chats, and explore social interactions.
-            </li>
-            <li>
-              <span className="font-bold text-purple-300">Step 4:</span> Enjoy
-              seamless communication with notifications, calls, and more.
-            </li>
-          </ul>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-4">
+            <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
+              Working rhythm
+            </p>
+            <h2 className="text-3xl font-semibold">A predictable flow from sign-up to growth</h2>
+            <ul className="space-y-4 text-gray-600">
+              {[
+                "Register and set up your profile in minutes.",
+                "Find people you already know or discover new peers.",
+                "Share updates, reply to comments, and refine your feed.",
+                "Stay on top of messages and notifications from one place.",
+              ].map((item, index) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="mt-1 text-sm font-semibold text-gray-500">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-xl border border-gray-200 bg-white p-6">
+            <video
+              className="rounded-lg border border-dashed border-gray-300 w-full"
+              controls
+              poster="/Screenshot1.png"
+            >
+              <source src="/glob.mp4" type="video/mp4" />
+            </video>
+          </div>
         </div>
       </section>
 
@@ -318,9 +332,12 @@ export default function LandingPage() {
 
       {/* Testimonials Section */}
       <section className="py-16 px-6 bg-gradient-to-r from-blue-950 via-[#050A15] to-purple-950 testimonials-section">
-        <h2 className="text-3xl font-bold text-blue-100 mb-8 text-center">
-          What Users Say
-        </h2>
+        <div className="max-w-4xl mx-auto text-center space-y-3 mb-10">
+          <p className="text-sm uppercase tracking-[0.2em] text-blue-200">
+            Testimonials
+          </p>
+          <h2 className="text-3xl font-semibold text-blue-100">Trusted by people who work online every day</h2>
+        </div>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div className="bg-blue-900 rounded-xl p-6 shadow text-blue-200">
             <p className="italic">
@@ -343,14 +360,11 @@ export default function LandingPage() {
 
       {/* About & Call to Action Section */}
       <section className="py-16 px-6 max-w-3xl mx-auto text-center about-section">
-        <h2 className="text-3xl font-bold text-blue-200 mb-4">
-          About LingoLive
-        </h2>
-        <p className="text-lg text-blue-100 mb-6">
-          LingoLive is a full-featured social media platform designed to blend
-          learning, connection, and fun in a single, seamless experience. Built
-          by Chandermani Mishra, the app is constantly evolving to offer group
-          chat, story sharing, and amazing new features.
+        <p className="text-sm uppercase tracking-[0.2em] text-blue-100">About the product</p>
+        <h2 className="text-3xl text-blue-300 font-semibold mt-3 mb-4">A professional network with calm defaults</h2>
+        <p className="text-blue-50 mb-8">
+          LingoLive focuses on structure and reliability. Profiles, feeds, messages, and notifications
+          live in a single layout so you can move quickly without relearning the interface.
         </p>
         <Link
           to="/signup"
@@ -366,74 +380,79 @@ export default function LandingPage() {
       </footer>
 
       <style jsx="true">{`
-  @keyframes slideScreens {
-    0% {
-      transform: translateX(-80px);
-    }
-    100% {
-      transform: translateX(80px);
-    }
-  }
+        @keyframes slideScreens {
+          0% {
+            transform: translateX(-80px);
+          }
+          100% {
+            transform: translateX(80px);
+          }
+        }
 
-  .animate-slideScreens {
-    animation: slideScreens 6s ease-in-out infinite alternate;
-  }
+        .animate-slideScreens {
+          animation: slideScreens 6s ease-in-out infinite alternate;
+        }
 
-  .screenshot-section {
-    background: linear-gradient(135deg, #050A15 0%, #1E3A8A 50%, #6B21A8 100%);
-    position: relative;
-  }
+        .screenshot-section {
+          background: linear-gradient(
+            135deg,
+            #050a15 0%,
+            #1e3a8a 50%,
+            #6b21a8 100%
+          );
+          position: relative;
+        }
 
-  /* 💨 The fog that actually HIDES edges */
-  .screenshots-wrapper {
-    position: relative;
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgba(255, 255, 255, 1) 20%,
-      rgba(255, 255, 255, 1) 80%,
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgba(255, 255, 255, 1) 20%,
-      rgba(255, 255, 255, 1) 80%,
-      transparent 100%
-    );
-    mask-repeat: no-repeat;
-    mask-size: 100%;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-size: 100%;
-  }
+        /* 💨 The fog that actually HIDES edges */
+        .screenshots-wrapper {
+          position: relative;
+          mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            rgba(255, 255, 255, 1) 20%,
+            rgba(255, 255, 255, 1) 80%,
+            transparent 100%
+          );
+          -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            rgba(255, 255, 255, 1) 20%,
+            rgba(255, 255, 255, 1) 80%,
+            transparent 100%
+          );
+          mask-repeat: no-repeat;
+          mask-size: 100%;
+          -webkit-mask-repeat: no-repeat;
+          -webkit-mask-size: 100%;
+        }
 
-  /* Optional: slightly visible white mist over edges */
-  .screenshot-section::before,
-  .screenshot-section::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    width: 20%;
-    height: 100%;
-    pointer-events: none;
-    background: radial-gradient(
-      circle at center,
-      rgba(255, 255, 255, 0.8) 0%,
-      rgba(255, 255, 255, 0.4) 40%,
-      transparent 100%
-    );
-    filter: blur(30px);
-  }
+        /* Optional: slightly visible white mist over edges */
+        .screenshot-section::before,
+        .screenshot-section::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          width: 20%;
+          height: 100%;
+          pointer-events: none;
+          background: radial-gradient(
+            circle at center,
+            rgba(255, 255, 255, 0.8) 0%,
+            rgba(255, 255, 255, 0.4) 40%,
+            transparent 100%
+          );
+          filter: blur(30px);
+        }
 
-  .screenshot-section::before {
-    left: 0;
-  }
+        .screenshot-section::before {
+          left: 0;
+        }
 
-  .screenshot-section::after {
-    right: 0;
-    transform: scaleX(-1);
-  }
-`}</style>
+        .screenshot-section::after {
+          right: 0;
+          transform: scaleX(-1);
+        }
+      `}</style>
     </div>
   );
 }
