@@ -6,116 +6,144 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function LandingPage() {
   useEffect(() => {
-    const tl = gsap.timeline();
-
-    // header animation
-    tl.from("header h1 span span", {
-      y: -50,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 0.1,
-      ease: "bounce.out",
-    });
-
-    tl.from("header div", {
-      scale: 0,
-      opacity: 1,
-      duration: 0.5,
-      ease: "power2.out",
-    });
-
-    gsap.from("header p", {
-      y: 50,
-      opacity: 0,
-      duration: 0.5,
-      delay: 0.5,
-      ease: "power2.out",
-    });
-
-    // features animation
-    tl.fromTo(
-      ".feature-card div",
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.1,
+      const tl = gsap.timeline();
+  
+      // header animation
+      tl.from("header h1 span span", {
+        y: -50,
+        opacity: 0,
         stagger: 0.1,
-        scrollTrigger: {
-          trigger: ".feature-card",
-          start: "top bottom",
-          end: "bottom 100%",
-          scrub: 5,
-        },
-      }
-    );
-
-    // demo section animation
-    tl.fromTo(
-      ".demo-section h2",
-      { y: -50, opacity: 0 },
-      {
+        duration: 0.2,
+        ease: "bounce.out",
+      });
+  
+      tl.from("header div", {
+        scale: 0,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+  
+      gsap.from("header p", {
+        y: 50,
+        opacity: 0,
+        duration: 0.5,
+        delay: 0.5,
+        ease: "power2.out",
+      });
+  
+      gsap.to("header h1 span span", {
         y: 0,
         opacity: 1,
         duration: 0.5,
         scrollTrigger: {
-          trigger: ".demo-section h2",
-          start: "top bottom",
+          trigger: "header h1",
+          start: "top center",
           end: "bottom 80%",
           scrub: 5,
         },
-      }
-    );
-
-    tl.fromTo(
-      ".demo-section div ul li",
-      { x: -50, opacity: 0 },
-      {
-        x: 0,
-        opacity: 1,
-        duration: 0.5,
-        stagger: 0.4,
-        scrollTrigger: {
-          trigger: ".demo-section div",
-          start: "top 80%",
-          scrub: 5,
-        },
-      }
-    );
-
-    // testimonial section animation
-    tl.fromTo(
-      ".testimonials-section h2",
-      { y: -50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        scrollTrigger: {
-          trigger: ".testimonials-section h2",
-          start: "top bottom",
-          end: "bottom 80%",
-          scrub: 5,
-        },
-      }
-    );
-
-    tl.fromTo(
-      ".testimonials-section div div",
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        scrollTrigger: {
-          trigger: ".testimonials-section div",
-          start: "top bottom",
-          end: "bottom 80%",
-          scrub: 5,
-        },
-      }
-    );
-  }, []);
+      });
+  
+      // features animation
+      tl.fromTo(
+        ".feature-card h2",
+        { y: -50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: ".feature-card h2",
+            start: "top bottom",
+            end: "bottom 80%",
+            scrub: 5,
+          },
+        }
+      );
+      tl.fromTo(
+        ".feature-card div",
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.1,
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: ".feature-card",
+            start: "top bottom",
+            end: "bottom 100%",
+            scrub: 5,
+          },
+        }
+      );
+  
+      // demo section animation
+      tl.fromTo(
+        ".demo-section h2",
+        { y: -50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: ".demo-section h2",
+            start: "top bottom",
+            end: "bottom 80%",
+            scrub: 5,
+          },
+        }
+      );
+  
+      tl.fromTo(
+        ".demo-section div ul li",
+        { x: -50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.4,
+          scrollTrigger: {
+            trigger: ".demo-section div",
+            start: "top bottom",
+            end: "bottom 70%",
+            scrub: 5,
+          },
+        }
+      );
+  
+      // testimonial section animation
+      tl.fromTo(
+        ".testimonials-section h2",
+        { y: -50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: ".testimonials-section h2",
+            start: "top bottom",
+            end: "bottom 80%",
+            scrub: 5,
+          },
+        }
+      );
+  
+      tl.fromTo(
+        ".testimonials-section div div",
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: ".testimonials-section div",
+            start: "top bottom",
+            end: "bottom 80%",
+            scrub: 5,
+          },
+        }
+      );
+    }, []);
   const FeatureImage = [
     "/image1.png",
     "/image2.png",
@@ -130,8 +158,8 @@ export default function LandingPage() {
           src="/pexels-pixabay-41949.jpg"
           className="absolute top-0 left-0 w-full h-full object-cover opacity-25"
         />
-        <div className="max-w-5xl mx-auto text-center space-y-6 ">
-          <h1 className="text-4xl md:text-5xl text-blue-300 drop-shadow tracking-tight leading-tight font-semibold">
+
+        <h1 className="text-4xl md:text-5xl text-blue-300 drop-shadow tracking-tight leading-tight font-semibold max-w-5xl">
             {"Build professional connections with a calm, focused workspace"
               .split(" ")
               .map((word, index) => (
@@ -143,26 +171,25 @@ export default function LandingPage() {
                   ))}
                 </span>
               ))}
-          </h1>
-          <p className="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8">
+        </h1>
+        <p className="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8">
             LingoLive keeps the interface neutral so your ideas stand out. Share
             updates, talk with friends, and manage notifications without
             distractions.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6 z-10">
-            <Link
+        </p>
+        <div className="flex flex-col sm:flex-row justify-center gap-6 z-10">
+          <Link
               to="/signup"
               className="bg-purple-700 hover:bg-purple-900 transition py-3 px-5 rounded-md text-sm font-semibold header-first-link"
             >
               Create an Account
-            </Link>
-            <Link
+          </Link>
+          <Link
               to="/login"
               className="bg-blue-800 border border-blue-400 py-3 px-5 rounded-md text-sm font-semibold hover:bg-blue-900 transition header-second-link"
             >
               Login
-            </Link>
-          </div>
+          </Link>
         </div>
       </header>
 
