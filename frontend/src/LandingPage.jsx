@@ -377,13 +377,13 @@ export default function LandingPage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/signup"
-            className="px-5 py-3 rounded-md text-sm font-semibold primary-button"
+            className="px-5 py-3 rounded-md text-sm font-semibold bg-black text-white"
           >
             Start for free
           </Link>
           <Link
             to="/login"
-            className="px-5 py-3 rounded-md text-sm font-semibold secondary-button"
+            className="px-5 py-3 rounded-md text-sm font-semibold bg-white text-black"
           >
             Returning user? Sign in
           </Link>
