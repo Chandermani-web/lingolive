@@ -32,34 +32,34 @@ export default function LandingPage() {
       ease: "power2.out",
     });
 
-    gsap.to("header h1 span span", {
-      y: 0,
-      opacity: 1,
-      duration: 0.5,
-      scrollTrigger: {
-        trigger: "header h1",
-        start: "top center",
-        end: "bottom 80%",
-        scrub: 5,
-      },
-    });
+    // gsap.to("header h1 span span", {
+    //   y: 0,
+    //   opacity: 1,
+    //   duration: 0.5,
+    //   scrollTrigger: {
+    //     trigger: "header h1",
+    //     start: "top center",
+    //     end: "bottom 80%",
+    //     scrub: 5,
+    //   },
+    // });
 
     // features animation
-    tl.fromTo(
-      ".feature-card h2",
-      { y: -50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        scrollTrigger: {
-          trigger: ".feature-card h2",
-          start: "top bottom",
-          end: "bottom 80%",
-          scrub: 5,
-        },
-      }
-    );
+    // tl.fromTo(
+    //   ".feature-card h2",
+    //   { y: -50, opacity: 0 },
+    //   {
+    //     y: 0,
+    //     opacity: 1,
+    //     duration: 0.5,
+    //     scrollTrigger: {
+    //       trigger: ".feature-card h2",
+    //       start: "top bottom",
+    //       end: "bottom 80%",
+    //       scrub: 5,
+    //     },
+    //   }
+    // );
     tl.fromTo(
       ".feature-card div",
       { y: 50, opacity: 0 },
@@ -159,7 +159,7 @@ export default function LandingPage() {
           className="absolute top-0 left-0 w-full h-full object-cover opacity-25"
         />
 
-        <h1 className="text-4xl md:text-5xl text-blue-300 drop-shadow tracking-tight leading-tight font-semibold max-w-5xl">
+        <h1 className="text-4xl md:text-5xl text-blue-300 drop-shadow tracking-tight leading-tight font-semibold max-w-5xl mx-auto">
           {"Build professional connections with a calm, focused workspace"
             .split(" ")
             .map((word, index) => (
@@ -308,13 +308,13 @@ export default function LandingPage() {
       {/* Screenshot/Gallery Section */}
       <section className="py-16 px-6 relative overflow-hidden screenshot-section">
         <div className="text-center mb-10 space-y-3">
-          <p className="text-sm uppercase tracking-[0.2em] text-gray-200">
+          <p className="text-sm uppercase tracking-[0.2em] text-blue-200">
             Product preview
           </p>
           <h2 className="text-3xl font-semibold">
             Screens that stay understated
           </h2>
-          <p className="text-gray-300">
+          <p className="text-gray-400">
             Simple cards, open space, and readable type across every page.
           </p>
         </div>
@@ -331,8 +331,8 @@ export default function LandingPage() {
         </div>
 
         {/* Cloud/Fog overlays on left & right */}
-        <div className="cloud-overlay-left"></div>
-        <div className="cloud-overlay-right"></div>
+        {/* <div className="cloud-overlay-left"></div>
+        <div className="cloud-overlay-right"></div> */}
       </section>
 
       {/* Testimonials Section */}
