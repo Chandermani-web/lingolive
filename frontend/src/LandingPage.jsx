@@ -13,7 +13,7 @@ export default function LandingPage() {
       y: -50,
       opacity: 0,
       stagger: 0.1,
-      duration: 0.2,
+      duration: 0.1,
       ease: "bounce.out",
     });
 
@@ -32,34 +32,7 @@ export default function LandingPage() {
       ease: "power2.out",
     });
 
-    // gsap.to("header h1 span span", {
-    //   y: 0,
-    //   opacity: 1,
-    //   duration: 0.5,
-    //   scrollTrigger: {
-    //     trigger: "header h1",
-    //     start: "top center",
-    //     end: "bottom 80%",
-    //     scrub: 5,
-    //   },
-    // });
-
     // features animation
-    tl.fromTo(
-      ".feature-card h2",
-      { y: -50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        scrollTrigger: {
-          trigger: ".feature-card h2",
-          start: "top bottom",
-          end: "bottom 80%",
-          scrub: 5,
-        },
-      }
-    );
     tl.fromTo(
       ".feature-card div",
       { y: 50, opacity: 0 },
@@ -104,8 +77,7 @@ export default function LandingPage() {
         stagger: 0.4,
         scrollTrigger: {
           trigger: ".demo-section div",
-          start: "top bottom",
-          end: "bottom 70%",
+          start: "top 80%",
           scrub: 5,
         },
       }
@@ -158,53 +130,56 @@ export default function LandingPage() {
           src="/pexels-pixabay-41949.jpg"
           className="absolute top-0 left-0 w-full h-full object-cover opacity-25"
         />
-
-        <h1 className="text-4xl md:text-5xl text-blue-300 drop-shadow tracking-tight leading-tight font-semibold">
-          {"Build professional connections with a calm, focused workspace"
-            .split(" ")
-            .map((word, index) => (
-              <span key={index} className="inline-block mr-2">
-                {word.split("").map((char, charIndex) => (
-                  <span key={charIndex} className="inline-block">
-                    {char}
-                  </span>
-                ))}
-              </span>
-            ))}
-        </h1>
-        <p className="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8">
-          LingoLive keeps the interface neutral so your ideas stand out. Share
-          updates, talk with friends, and manage notifications without
-          distractions.
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-6 mt-8 z-10">
-          <Link
-            to="/signup"
-            className="bg-purple-700 hover:bg-purple-900 transition py-3 px-5 rounded-md text-sm font-semibold header-first-link"
-          >
-            Create an Account
-          </Link>
-          <Link
-            to="/login"
-            className="bg-blue-800 border border-blue-400 py-3 px-5 rounded-md text-sm font-semibold hover:bg-blue-900 transition header-second-link"
-          >
-            Login
-          </Link>
+        <div className="max-w-5xl mx-auto text-center space-y-6 ">
+          <h1 className="text-4xl md:text-5xl text-blue-300 drop-shadow tracking-tight leading-tight font-semibold">
+            {"Build professional connections with a calm, focused workspace"
+              .split(" ")
+              .map((word, index) => (
+                <span key={index} className="inline-block mr-2">
+                  {word.split("").map((char, charIndex) => (
+                    <span key={charIndex} className="inline-block">
+                      {char}
+                    </span>
+                  ))}
+                </span>
+              ))}
+          </h1>
+          <p className="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8">
+            LingoLive keeps the interface neutral so your ideas stand out. Share
+            updates, talk with friends, and manage notifications without
+            distractions.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-6 z-10">
+            <Link
+              to="/signup"
+              className="bg-purple-700 hover:bg-purple-900 transition py-3 px-5 rounded-md text-sm font-semibold header-first-link"
+            >
+              Create an Account
+            </Link>
+            <Link
+              to="/login"
+              className="bg-blue-800 border border-blue-400 py-3 px-5 rounded-md text-sm font-semibold hover:bg-blue-900 transition header-second-link"
+            >
+              Login
+            </Link>
+          </div>
         </div>
       </header>
 
       {/* Features Section */}
       <section className="py-16 px-6 max-w-5xl mx-auto relative feature-card">
-        <p className="text-sm uppercase tracking-[0.2em] text-gray-500 text-center">
-          Platform highlights
-        </p>
-        <h2 className="text-3xl font-bold text-purple-300 mb-8 text-center">
-          <p className="text-gray-600">
+        <div className="text-center mb-10 space-y-3">
+          <p className="text-sm uppercase tracking-[0.2em] text-blue-200">
+            Platform highlights
+          </p>
+          <h2 className="text-3xl font-semibold">
+            Everything you need, nothing you don't
+          </h2>
+          <p className="text-blue-400">
             A single workspace for sharing posts, messaging, and managing your
             network.
           </p>
-          Everything you need, nothing you don't
-        </h2>
+        </div>
         <div className="grid md:grid-cols-2 gap-10">
           <div className="bg-blue-950 rounded-xl p-7 flex flex-col items-center shadow-lg">
             <img
@@ -272,7 +247,9 @@ export default function LandingPage() {
             <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
               Working rhythm
             </p>
-            <h2 className="text-3xl font-semibold">A predictable flow from sign-up to growth</h2>
+            <h2 className="text-3xl font-semibold">
+              A predictable flow from sign-up to growth
+            </h2>
             <ul className="space-y-4 text-gray-600">
               {[
                 "Register and set up your profile in minutes.",
@@ -307,26 +284,23 @@ export default function LandingPage() {
           <p className="text-sm uppercase tracking-[0.2em] text-gray-200">
             Product preview
           </p>
-          <h2 className="text-3xl font-semibold">Screens that stay understated</h2>
-          <p className="text-gray-300">Simple cards, open space, and readable type across every page.</p>
+          <h2 className="text-3xl font-semibold">
+            Screens that stay understated
+          </h2>
+          <p className="text-gray-300">
+            Simple cards, open space, and readable type across every page.
+          </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-8 animate-slideScreens relative z-10">
-          <img
-            src="/Screenshot1.png"
-            alt="Screenshot 1"
-            className="rounded-xl shadow-lg border border-blue-700 w-full h-56 object-cover transition-transform duration-500 hover:scale-105"
-          />
-          <img
-            src="/Screenshot2.png"
-            alt="Screenshot 2"
-            className="rounded-xl shadow-lg border border-purple-600 w-full h-56 object-cover transition-transform duration-500 hover:scale-105"
-          />
-          <img
-            src="/Screenshot3.png"
-            alt="Screenshot 3"
-            className="rounded-xl shadow-lg border border-blue-700 w-full h-56 object-cover transition-transform duration-500 hover:scale-105"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((item) => (
+            <img
+              key={item}
+              src={`/Screenshot${item}.png`}
+              alt={`Screenshot ${item}`}
+              className="rounded-lg border border-gray-200 object-cover h-56 w-full"
+            />
+          ))}
         </div>
 
         {/* Cloud/Fog overlays on left & right */}
@@ -340,7 +314,9 @@ export default function LandingPage() {
           <p className="text-sm uppercase tracking-[0.2em] text-blue-200">
             Testimonials
           </p>
-          <h2 className="text-3xl font-semibold text-blue-100">Trusted by people who work online every day</h2>
+          <h2 className="text-3xl font-semibold text-blue-100">
+            Trusted by people who work online every day
+          </h2>
         </div>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div className="bg-blue-900 rounded-xl p-6 shadow text-blue-200">
@@ -364,11 +340,16 @@ export default function LandingPage() {
 
       {/* About & Call to Action Section */}
       <section className="py-16 px-6 max-w-3xl mx-auto text-center about-section">
-        <p className="text-sm uppercase tracking-[0.2em] text-blue-100">About the product</p>
-        <h2 className="text-3xl text-blue-300 font-semibold mt-3 mb-4">A professional network with calm defaults</h2>
+        <p className="text-sm uppercase tracking-[0.2em] text-blue-100">
+          About the product
+        </p>
+        <h2 className="text-3xl text-blue-300 font-semibold mt-3 mb-4">
+          A professional network with calm defaults
+        </h2>
         <p className="text-blue-50 mb-8">
-          LingoLive focuses on structure and reliability. Profiles, feeds, messages, and notifications
-          live in a single layout so you can move quickly without relearning the interface.
+          LingoLive focuses on structure and reliability. Profiles, feeds,
+          messages, and notifications live in a single layout so you can move
+          quickly without relearning the interface.
         </p>
         <Link
           to="/signup"
