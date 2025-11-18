@@ -245,7 +245,7 @@ const Connection = () => {
         )}
 
         {/* Dynamic Content Display */}
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 shadow-lg md:mx-2">
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 md:rounded-xl border border-gray-700 shadow-lg md:mx-2">
           {displayName === 1 ? (
             <ShowAllUser />
           ) : displayName === 2 ? (
