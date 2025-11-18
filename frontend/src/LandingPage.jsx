@@ -10,17 +10,18 @@ export default function LandingPage() {
 
     // header animation
     tl.from("header h1 span span", {
-      y: -50,
+      y: -100,
       opacity: 0,
       stagger: 0.1,
-      duration: 0.2,
-      ease: "bounce.out",
+      duration: 0.1,
+      ease: "power2.out",
     });
 
-    tl.from("header div", {
+    gsap.from("header div", {
       scale: 0,
       opacity: 1,
-      duration: 0.5,
+      delay: 1,
+      duration: 1,
       ease: "power2.out",
     });
 
@@ -180,13 +181,13 @@ export default function LandingPage() {
         <div className="flex flex-col sm:flex-row justify-center gap-6 z-10">
           <Link
             to="/signup"
-            className="bg-purple-700 hover:bg-purple-900 transition py-3 px-5 rounded-md text-sm font-semibold header-first-link"
+            className="bg-black text-white transition py-3 px-5 rounded-md text-sm font-semibold header-first-link"
           >
             Create an Account
           </Link>
           <Link
             to="/login"
-            className="bg-blue-800 border border-blue-400 py-3 px-5 rounded-md text-sm font-semibold hover:bg-blue-900 transition header-second-link"
+            className=" bg-white text-black py-3 px-5 rounded-md text-sm font-semibold transition header-second-link"
           >
             Login
           </Link>
@@ -208,7 +209,7 @@ export default function LandingPage() {
           </p>
         </div>
         <div className="grid md:grid-cols-2 gap-10">
-          <div className="bg-blue-950 rounded-xl p-7 flex flex-col items-center shadow-lg">
+          <div className="bg-blue-500 rounded-xl p-7 flex flex-col items-center shadow-lg">
             <img
               src="/image1.png"
               alt="Real-time Chat"
@@ -250,7 +251,7 @@ export default function LandingPage() {
               activities, and celebrate community achievements.
             </p>
           </div>
-          <div className="bg-purple-950 rounded-xl p-7 flex flex-col items-center shadow-lg">
+          <div className="bg-blue-950 rounded-xl p-7 flex flex-col items-center shadow-lg">
             <img
               src="/image4.png"
               alt="Notifications"
@@ -443,22 +444,22 @@ export default function LandingPage() {
         }
 
         /* Optional: slightly visible white mist over edges */
-        .screenshot-section::before,
-        .screenshot-section::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          width: 20%;
-          height: 100%;
-          pointer-events: none;
-          background: radial-gradient(
-            circle at center,
-            rgba(255, 255, 255, 0.8) 0%,
-            rgba(255, 255, 255, 0.4) 40%,
-            transparent 100%
-          );
-          filter: blur(30px);
-        }
+        // .screenshot-section::before,
+        // .screenshot-section::after {
+        //   content: "";
+        //   position: absolute;
+        //   top: 0;
+        //   width: 20%;
+        //   height: 100%;
+        //   pointer-events: none;
+        //   background: radial-gradient(
+        //     circle at center,
+        //     rgba(255, 255, 255, 0.8) 0%,
+        //     rgba(255, 255, 255, 0.4) 40%,
+        //     transparent 100%
+        //   );
+        //   filter: blur(30px);
+        // }
 
         .screenshot-section::before {
           left: 0;

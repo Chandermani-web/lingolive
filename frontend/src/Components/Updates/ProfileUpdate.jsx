@@ -345,7 +345,7 @@ const ProfileUpdate = () => {
 
       <div className="max-w-6xl mx-auto p-6 relative z-10">
         {/* Cover Photo */}
-        <div className="relative h-80 rounded-3xl mb-8 overflow-hidden border border-gray-700/50 shadow-2xl">
+        <div className="relative h-80 md:rounded-3xl mb-8 overflow-hidden border border-gray-700/50 shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20"></div>
           {user.coverPic && (
             <img
@@ -483,7 +483,7 @@ const ProfileUpdate = () => {
 
         {/* Edit Form */}
         {isEditing && (
-          <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-2xl mb-12">
+          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-2xl mb-12">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
@@ -671,7 +671,7 @@ const ProfileUpdate = () => {
 
         {/* Social Links Display */}
         {user.socialLinks && Object.values(user.socialLinks).some((link) => link) && (
-          <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl mb-8">
+          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl mb-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center">
                 <Link2 className="w-6 h-6 text-white" />
@@ -705,7 +705,7 @@ const ProfileUpdate = () => {
 
         {/* Interests */}
         {user.interests && user.interests.length > 0 && (
-          <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl mb-12">
+          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl mb-12">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center">
                 <Heart className="w-6 h-6 text-white" />
@@ -728,7 +728,7 @@ const ProfileUpdate = () => {
         )}
 
         {/* Posts Section */}
-        <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl">
+        <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
             <div>
               <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
@@ -752,7 +752,7 @@ const ProfileUpdate = () => {
               user.posts.map((post) => (
                 <div
                   key={post._id}
-                  className="bg-gray-700/30 backdrop-blur-xl rounded-2xl p-6 border border-gray-600/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-gray-700/30 backdrop-blur-xl md:rounded-2xl p-2 md:p-6 border border-gray-600/50 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   {/* User Info */}
                   <div className="flex items-center justify-between mb-4">
@@ -834,7 +834,7 @@ const ProfileUpdate = () => {
 
                   {/* Editing Interface */}
                   {editOn && editPostId === post._id ? (
-                    <div className="bg-gray-800/50 rounded-2xl p-6 space-y-4 border border-gray-600/50">
+                    <div className="bg-gray-800/50 rounded-2xl p-2 md:p-6 space-y-4 border border-gray-600/50">
                       <textarea
                         className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
                         value={editdata.content}
