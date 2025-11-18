@@ -32,17 +32,17 @@ export default function LandingPage() {
       ease: "power2.out",
     });
 
-    gsap.to("header h1 span span", {
-      y: 0,
-      opacity: 1,
-      duration: 0.5,
-      scrollTrigger: {
-        trigger: "header h1",
-        start: "top center",
-        end: "bottom 80%",
-        scrub: 5,
-      },
-    });
+    // gsap.to("header h1 span span", {
+    //   y: 0,
+    //   opacity: 1,
+    //   duration: 0.5,
+    //   scrollTrigger: {
+    //     trigger: "header h1",
+    //     start: "top center",
+    //     end: "bottom 80%",
+    //     scrub: 5,
+    //   },
+    // });
 
     // features animation
     tl.fromTo(
@@ -153,13 +153,13 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#050A15] text-white overflow-x-hidden">
       {/* Hero Section */}
-      <header className="py-16 px-6 text-center bg-gradient-to-br from-blue-900/10 via-[#050A15] to-purple-900/20 h-[90vh] flex flex-col justify-center relative">
+      <header className="py-16 px-6 text-center bg-gradient-to-br from-blue-900/10 via-[#050A15] to-purple-900/20 flex flex-col justify-center relative">
         <img
-          src="/Google_AI_Studio_2025-09-20T15_56_19.364Z.png"
+          src="/pexels-pixabay-41949.jpg"
           className="absolute top-0 left-0 w-full h-full object-cover opacity-25"
         />
 
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-blue-300 drop-shadow">
+        <h1 className="text-4xl md:text-5xl text-blue-300 drop-shadow tracking-tight leading-tight font-semibold">
           {"Build professional connections with a calm, focused workspace"
             .split(" ")
             .map((word, index) => (
@@ -172,7 +172,7 @@ export default function LandingPage() {
               </span>
             ))}
         </h1>
-        <p className="text-xl md:text-2xl text-blue-200 max-w-3xl mx-auto mb-8">
+        <p className="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto mb-8">
           LingoLive keeps the interface neutral so your ideas stand out. Share
           updates, talk with friends, and manage notifications without
           distractions.
@@ -195,7 +195,7 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section className="py-16 px-6 max-w-5xl mx-auto relative feature-card">
-        <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
+        <p className="text-sm uppercase tracking-[0.2em] text-gray-500 text-center">
           Platform highlights
         </p>
         <h2 className="text-3xl font-bold text-purple-300 mb-8 text-center">
@@ -303,11 +303,15 @@ export default function LandingPage() {
 
       {/* Screenshot/Gallery Section */}
       <section className="py-16 px-6 relative overflow-hidden screenshot-section">
-        <h2 className="text-3xl font-bold text-purple-200 mb-10 text-center z-10 relative">
-          Explore Some Screenshots
-        </h2>
+        <div className="text-center mb-10 space-y-3">
+          <p className="text-sm uppercase tracking-[0.2em] text-gray-200">
+            Product preview
+          </p>
+          <h2 className="text-3xl font-semibold">Screens that stay understated</h2>
+          <p className="text-gray-300">Simple cards, open space, and readable type across every page.</p>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-slideScreens relative z-10">
+        <div className="grid grid-cols-3 gap-8 animate-slideScreens relative z-10">
           <img
             src="/Screenshot1.png"
             alt="Screenshot 1"
@@ -374,7 +378,7 @@ export default function LandingPage() {
         </Link>
       </section>
 
-      <footer className="mt-12 pb-8 text-center text-blue-500 text-sm opacity-75">
+      <footer className="py-8 text-center text-blue-500 text-sm opacity-75 border-t border-gray-300">
         &copy; {new Date().getFullYear()} LingoLive by Chandermani Mishra • All
         Rights Reserved
       </footer>
