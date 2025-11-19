@@ -294,9 +294,9 @@ export default function LandingPage() {
               ))}
             </ul>
           </div>
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
+          <div className="rounded-xl p-6">
             <video
-              className="rounded-lg border border-dashed border-gray-300 w-full"
+              className="rounded-lg w-full"
               controls
               poster="/Screenshot1.png"
             >
