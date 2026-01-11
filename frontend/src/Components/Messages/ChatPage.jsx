@@ -232,7 +232,7 @@ const ChatPage = ({ selectedUser, onOpenSidebar }) => {
                     <img
                       src={m.image}
                       alt="sent"
-                      className="rounded-lg mt-2 max-w-[200px] h-[150px] object-cover"
+                      className="mt-2 max-w-xs shadow-lg w-[200px] h-[200px] object-cover"
                       onClick={()=>setShowImage(m.image)}
                     />
                   )}
@@ -240,7 +240,7 @@ const ChatPage = ({ selectedUser, onOpenSidebar }) => {
                     <video
                       src={m.video}
                       controls
-                      className="rounded-lg mt-2 max-w-[250px] h-[150px] object-cover"
+                      className="mt-2 max-w-xs shadow-lg w-[200px] h-[200px] object-cover"
                     />
                   )}
                   {m.audio && <audio src={m.audio} controls className="mt-2" />}
