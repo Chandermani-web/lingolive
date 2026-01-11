@@ -22,7 +22,14 @@ const ShowImage = lazy(() => import("./ShowImage"));
 const App = () => {
   const { auth, loading } = useContext(AppContext);
 
-    if (loading) <Loading />;
+    if (loading) return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">
+        <div className="text-center">
+          <Loader className="h-12 w-12 animate-spin text-blue-500 mx-auto mb-4" />
+          <p className="text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
 
   return (
       <div className="bg-[#050A15] min-h-screen text-gray-100">
@@ -30,16 +37,16 @@ const App = () => {
         <Navbar />
         <Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/" element={auth ? <Home /> : <LandingPage />} />
-            <Route path="/profile" element={auth ? <Profile /> : <LandingPage />} />
+            <Route path="/" element={auth ? <Home /> : <Login />} />
+            <Route path="/profile" element={auth ? <Profile /> : <Login />} />
             <Route path="/signup" element={auth ? <Home /> : <Signup />} />
             <Route path="/login" element={auth ? <Home /> : <Login />} />
-            <Route path="/create-post" element={auth ? <CreatePost /> : <LandingPage />} />
-            <Route path="/posts" element={auth ? <ShowPost /> : <LandingPage />} />
-            <Route path="/connections" element={auth ? <Connection /> : <LandingPage />} />
-            <Route path="/profile/:id" element={auth ? <User_Profile /> : <LandingPage />} />
-            <Route path="/notifications" element={auth ? <Notification /> : <LandingPage />} />
-            <Route path="/message" element={auth ? <Message /> : <LandingPage />} />
+            <Route path="/create-post" element={auth ? <CreatePost /> : <Login />} />
+            <Route path="/posts" element={auth ? <ShowPost /> : <Login />} />
+            <Route path="/connections" element={auth ? <Connection /> : <Login />} />
+            <Route path="/profile/:id" element={auth ? <User_Profile /> : <Login />} />
+            <Route path="/notifications" element={auth ? <Notification /> : <Login />} />
+            <Route path="/message" element={auth ? <Message /> : <Login />} />
           </Routes>
         </Suspense>
         <NotificationPopupManager />

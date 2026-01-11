@@ -62,10 +62,6 @@ const ShowAllUser = () => {
           <hr className="my-4" />
         </>
       )}
-
-      <h1 className="text-white text-2xl font-semibold ml-4 mt-4">
-        Suggestion For You
-      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         {displayUsers?.length > 0 ? (
           displayUsers.map((u) => (
@@ -125,7 +121,12 @@ const ShowAllUser = () => {
             </div>
           ))
         ) : (
-          <h1 className="text-white">No Users Found</h1>
+          <div className="col-span-full text-center text-gray-400">
+            <h1 className="text-white text-2xl">
+              Suggestion For You
+            </h1>
+            <p className="text-center leading-10">No users available to connect.</p>
+          </div>
         )}
       </div>
     </div>

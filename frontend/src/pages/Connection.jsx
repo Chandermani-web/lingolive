@@ -164,7 +164,7 @@ const Connection = () => {
         <Sidebar setdisplayName={setdisplayName} displayName={displayName} />
 
         {/* Quick Actions */}
-        <div className="bg-gray-800 md:rounded-xl p-4 border border-gray-700 md:block hidden">
+        {/* <div className="bg-gray-800 md:rounded-xl p-4 border border-gray-700 md:block hidden">
           <h3 className="text-white font-semibold text-sm mb-3">
             Quick Actions
           </h3>
@@ -184,7 +184,7 @@ const Connection = () => {
               <span>Invite Friends</span>
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Footer */}
         {requestBarOpen && (

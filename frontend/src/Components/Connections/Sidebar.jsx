@@ -3,7 +3,7 @@ import 'remixicon/fonts/remixicon.css';
 const Sidebar = ({ setdisplayName, displayName }) => {
   return (
     <div className='bg-[#050A15] rounded-2xl'>
-        <div className='flex flex-col bg-white/5 border border-white/10 md:rounded-2xl'>
+        <div className='flex flex-col bg-white/5 border border-white/10 md:rounded-2xl hidden md:block'>
             
             <button className={`py-5 px-3 border-b border-white/10 leading-10 font-semibold text-white hover:bg-blue-600/20 transition-all duration-300 ease-in-out hover:translate-x-2 group ${displayName === 1 ? "bg-gradient-to-br from-green-500 to-blue-500" : ""} rounded-t-2xl`} onClick={() => setdisplayName(1)}>
                 <div className='flex items-center space-x-4'>
