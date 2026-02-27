@@ -38,7 +38,7 @@ const Navbar = () => {
   return (
     <nav className="flex items-center justify-between p-4 bg-gray-800 border-b-2 border-b-amber-500 shadow-lg">
       <div className="w-full">
-        <div className="flex justify-evenly items-center h-10">
+        <div className="flex justify-around items-center h-10">
           {/* <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-amber-500">LingOLive</h1> */}
 
           <svg
