@@ -54,7 +54,7 @@ const YourTotalConnection = () => {
             className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
           >
             <div className="p-4 text-white flex justify-around items-center">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 flex-1">
                 <img
                   src={friend.profilePic || "/avatar.svg"}
                   alt={friend.fullname}
