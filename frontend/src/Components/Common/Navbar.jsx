@@ -102,11 +102,11 @@ const Navbar = () => {
                   </div>
                   <div className="">
                     {/* <span>Notifications</span> */}
-                    {notifications.length > 0 && (
+                    {/* {notifications.length > 0 && (
                       <span className="ml-1 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
                         {notifications.filter((u) => u.read === false).length}
                       </span>
-                    )}
+                    )} */}
                   </div>
                 </Link>
                 <Link
