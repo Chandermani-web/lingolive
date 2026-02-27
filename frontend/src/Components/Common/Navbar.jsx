@@ -3,7 +3,7 @@ import {
   Home as HomeIcon,
   User as UserIcon,
   Bell,
-  MessageSquareMore,
+  MessageCircle,
   Network,
   Menu,
   X,
@@ -38,7 +38,7 @@ const Navbar = () => {
   return (
     <nav className="flex items-center justify-between p-4 bg-gray-800 border-b-2 border-b-amber-500 shadow-lg">
       <div className="w-full">
-        <div className="flex justify-between items-center h-10">
+        <div className="flex justify-evenly items-center h-10">
           {/* <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-amber-500">LingOLive</h1> */}
 
           <svg
@@ -89,7 +89,7 @@ const Navbar = () => {
                   to="/message"
                   className="flex items-center space-x-2 text-green-400 hover:text-green-300 transition-colors duration-200"
                 >
-                  <MessageSquareMore className="w-5 h-5" />
+                  <MessageCircle className="w-5 h-5" />
                   {/* <span>Messages</span> */}
                 </Link>
                 <Link
@@ -167,7 +167,7 @@ const Navbar = () => {
                   className="flex items-center space-x-3 p-3 text-green-400 hover:text-green-300 hover:bg-gray-600 rounded-lg transition-all duration-200 text-left"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <MessageSquareMore className="w-5 h-5" />
+                  <MessageCircle className="w-5 h-5" />
                   <span>Messages</span>
                 </Link>
                 <Link

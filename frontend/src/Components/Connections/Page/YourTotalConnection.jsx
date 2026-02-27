@@ -24,15 +24,23 @@ const YourTotalConnection = () => {
     );
 
     const handleRemoveFriend = async (friendId) => {
-    if (window.confirm('Are you sure you want to remove this friend?')) {
-      try {
-        await friendAPI.removeFriend({ friendId })
-        await fetchData()
-      } catch (error) {
-        console.error('Error removing friend:', error)
+      try{
+        const response = await fetch(`https://lingolive.onrender.com/api/friends/remove-friend`, {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ friendId }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to remove friend");
+        }
+        fetchFriendlist(); // Refresh the friend list after removal
+      } catch (err) {
+        console.error("Error removing friend:", err);
       }
     }
-  }
 
   return (
     <div className="grid grid-cols-1 gap-6 p-4">
@@ -73,12 +81,15 @@ const YourTotalConnection = () => {
               </div>
 
               <div>
-                <Link to={`/message/${friend._id}`}>
-                  <button className="mt-4 bg-gradient-to-r from-blue-500 to-indigo-400 hover:from-green-600 hover:to-teal-500 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1">
-                    Message
-                  </button>
-                </Link>
-                <button className="mt-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" >
+                <button className="mt-4 bg-gradient-to-r from-blue-500 to-indigo-400 hover:from-green-600 hover:to-teal-500 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" onClick={()=>{
+                  navigate(`/message/${friend._id}`)
+                }}>
+                  Message
+                </button>
+                <button 
+                  className="mt-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" 
+                  onClick={() => handleRemoveFriend(friend._id)}
+                >
                   Remove
                 </button>
               </div>
