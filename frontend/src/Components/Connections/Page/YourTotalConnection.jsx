@@ -54,7 +54,7 @@ const YourTotalConnection = () => {
             className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
           >
             <div className="p-4 text-white flex justify-around items-center">
-              <div className="flex items-center space-x-3 flex-1/2">
+              <div className="flex items-center space-x-3">
                 <img
                   src={friend.profilePic || "/avatar.svg"}
                   alt={friend.fullname}
@@ -80,7 +80,7 @@ const YourTotalConnection = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="flex gap-5">
                 <button className="mt-4 bg-gradient-to-r from-blue-500 to-indigo-400 hover:from-green-600 hover:to-teal-500 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" onClick={()=>{
                   navigate(`/message/${friend._id}`)
                 }}>
