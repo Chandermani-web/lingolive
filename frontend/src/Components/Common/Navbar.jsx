@@ -50,10 +50,10 @@ const Navbar = () => {
               fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
             }}
           >
-            <text x="20" y="65" fontSize="35" fill="#D5B03A" fontWeight="bold">
+            <text x="40" y="65" fontSize="45" fill="#D5B03A" fontWeight="bold">
               Lingo
             </text>
-            <text x="175" y="65" fontSize="35" fill="#D5B01A" fontWeight="bold">
+            <text x="165" y="65" fontSize="45" fill="#D5B01A" fontWeight="bold">
               live
             </text>
 
