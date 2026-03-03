@@ -95,11 +95,29 @@ export function registerCallHandlers(io, socket, onlineUsers) {
   
   /**
    * Receiver accepts the call
+   * BACKWARD COMPATIBLE: Accepts both { sessionId, answer } and { to, answer }
    */
-  socket.on('answerCall', async ({ sessionId, answer }) => {
-    console.log(`✅ [CALL] User ${userId} accepting session ${sessionId}`);
+  socket.on('answerCall', async ({ sessionId, to, answer }) => {
+    console.log(`✅ [CALL] User ${userId} accepting call`);
 
-    const result = callSessionManager.acceptCall(sessionId, answer);
+    // Get session by sessionId (new) or by userId (old)
+    let session;
+    if (sessionId) {
+      session = callSessionManager.sessions.get(sessionId);
+    } else if (userId) {
+      session = callSessionManager.getUserSession(userId);
+    }
+
+    if (!session) {
+      socket.emit('callFailed', {
+        reason: 'SESSION_NOT_FOUND',
+        message: 'Call session not found'
+      });
+      return;
+    }
+
+    const actualSessionId = session.id;
+    const result = callSessionManager.acceptCall(actualSessionId, answer);
 
     if (!result.success) {
       socket.emit('callFailed', {
@@ -109,18 +127,16 @@ export function registerCallHandlers(io, socket, onlineUsers) {
       return;
     }
 
-    const { session } = result;
-
     // Send answer to caller
     const callerSocketId = onlineUsers.get(session.callerId);
     if (callerSocketId) {
       io.to(callerSocketId).emit('callAccepted', {
-        sessionId,
+        sessionId: actualSessionId,
         answer,
       });
     }
 
-    console.log(`✅ [CALL] Call accepted: ${sessionId}`);
+    console.log(`✅ [CALL] Call accepted: ${actualSessionId}`);
   });
 
 
@@ -128,21 +144,31 @@ export function registerCallHandlers(io, socket, onlineUsers) {
   
   /**
    * Receiver rejects the call
+   * BACKWARD COMPATIBLE: Accepts both { sessionId } and { to }
    */
-  socket.on('rejectCall', ({ sessionId }) => {
-    console.log(`❌ [CALL] User ${userId} rejecting session ${sessionId}`);
+  socket.on('rejectCall', ({ sessionId, to }) => {
+    console.log(`❌ [CALL] User ${userId} rejecting call`);
 
-    const session = callSessionManager.getUserSession(userId);
-    if (!session || session.id !== sessionId) {
+    // Get session
+    let session;
+    if (sessionId) {
+      session = callSessionManager.sessions.get(sessionId);
+    } else if (userId) {
+      session = callSessionManager.getUserSession(userId);
+    }
+
+    if (!session) {
+      console.log(`⚠️ [CALL] No session to reject for user ${userId}`);
       return;
     }
 
-    callSessionManager.rejectCall(sessionId);
+    const actualSessionId = session.id;
+    callSessionManager.rejectCall(actualSessionId);
 
     // Notify caller
     const callerSocketId = onlineUsers.get(session.callerId);
     if (callerSocketId) {
-      io.to(callerSocketId).emit('callRejected', { sessionId });
+      io.to(callerSocketId).emit('callRejected', { sessionId: actualSessionId });
     }
   });
 
@@ -177,23 +203,37 @@ export function registerCallHandlers(io, socket, onlineUsers) {
   
   /**
    * Either party ends the call
+   * BACKWARD COMPATIBLE: Accepts both { sessionId } and { to }
    */
-  socket.on('endCall', ({ sessionId }) => {
-    console.log(`📵 [CALL] User ${userId} ending session ${sessionId}`);
+  socket.on('endCall', ({ sessionId, to }) => {
+    console.log(`📵 [CALL] User ${userId} ending session`);
 
-    const session = callSessionManager.sessions.get(sessionId);
+    let session;
+    
+    // Try to get session by sessionId (new format)
+    if (sessionId) {
+      session = callSessionManager.sessions.get(sessionId);
+    }
+    
+    // Fallback: get session by userId (old format)
+    if (!session && userId) {
+      session = callSessionManager.getUserSession(userId);
+    }
+
     if (!session) {
+      console.log(`⚠️ [CALL] No active session found for user ${userId}`);
       return;
     }
 
-    callSessionManager.endSession(sessionId, 'ENDED');
+    const actualSessionId = session.id;
+    callSessionManager.endSession(actualSessionId, 'ENDED');
 
     // Notify the other party
     const otherUserId = session.callerId === userId ? session.receiverId : session.callerId;
     const otherSocketId = onlineUsers.get(otherUserId);
 
     if (otherSocketId) {
-      io.to(otherSocketId).emit('callEnded', { sessionId });
+      io.to(otherSocketId).emit('callEnded', { sessionId: actualSessionId });
     }
   });
 
@@ -202,29 +242,39 @@ export function registerCallHandlers(io, socket, onlineUsers) {
   
   /**
    * ICE candidate exchange
+   * BACKWARD COMPATIBLE: Accepts both { sessionId, candidate } and { to, candidate }
    */
-  socket.on('iceCandidate', ({ sessionId, candidate }) => {
-    const session = callSessionManager.sessions.get(sessionId);
+  socket.on('iceCandidate', ({ sessionId, to, candidate }) => {
+    // Get session
+    let session;
+    if (sessionId) {
+      session = callSessionManager.sessions.get(sessionId);
+    } else if (userId) {
+      session = callSessionManager.getUserSession(userId);
+    }
+
     if (!session) {
-      console.log(`⚠️ [ICE] Session not found: ${sessionId}`);
+      console.log(`⚠️ [ICE] No active session for user ${userId}`);
       return;
     }
 
-    // Determine recipient
-    const recipientId = session.callerId === userId ? session.receiverId : session.callerId;
+    const actualSessionId = session.id;
+
+    // Determine recipient (use 'to' param if provided, otherwise derive from session)
+    const recipientId = to || (session.callerId === userId ? session.receiverId : session.callerId);
     const recipientSocketId = onlineUsers.get(recipientId);
 
     if (recipientSocketId) {
       // Send immediately if online
       io.to(recipientSocketId).emit('iceCandidate', {
-        sessionId,
+        sessionId: actualSessionId,
         candidate,
       });
-      console.log(`🧊 [ICE] Forwarded candidate: ${sessionId}`);
+      console.log(`🧊 [ICE] Forwarded candidate: ${actualSessionId}`);
     } else {
       // Queue if offline (will be sent on reconnect)
-      callSessionManager.addIceCandidate(sessionId, candidate, userId);
-      console.log(`🧊 [ICE] Queued candidate: ${sessionId}`);
+      callSessionManager.addIceCandidate(actualSessionId, candidate, userId);
+      console.log(`🧊 [ICE] Queued candidate: ${actualSessionId}`);
     }
   });
 
