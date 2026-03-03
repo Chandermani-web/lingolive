@@ -142,6 +142,8 @@ export const CallProvider = ({ children }) => {
             clearTimeout(disconnectTimeout);
             disconnectTimeout = null;
           }
+          // Notify backend that connection is established
+          socket.emit("callConnected", { to: targetUserId });
         } else if (peerConnectionRef.current.connectionState === "disconnected") {
           // Give it 10 seconds to reconnect before ending call
           console.log("⚠️ Temporarily disconnected, attempting to reconnect...");
@@ -237,6 +239,8 @@ export const CallProvider = ({ children }) => {
             clearTimeout(disconnectTimeout);
             disconnectTimeout = null;
           }
+          // Notify backend that connection is established
+          socket.emit("callConnected", { to: incomingCall.from });
         } else if (peerConnectionRef.current.connectionState === "disconnected") {
           // Give it 10 seconds to reconnect before ending call
           console.log("⚠️ Temporarily disconnected, attempting to reconnect...");

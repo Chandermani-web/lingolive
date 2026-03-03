@@ -139,6 +139,33 @@ export function registerCallHandlers(io, socket, onlineUsers) {
     console.log(`✅ [CALL] Call accepted: ${actualSessionId}`);
   });
 
+  // ==================== CALL CONNECTED ====================
+  
+  /**
+   * WebRTC connection established - clear connect timeout
+   * BACKWARD COMPATIBLE: Accepts both { sessionId } and { to }
+   */
+  socket.on('callConnected', ({ sessionId, to }) => {
+    console.log(`🔗 [CALL] User ${userId} connection established`);
+
+    // Get session
+    let session;
+    if (sessionId) {
+      session = callSessionManager.sessions.get(sessionId);
+    } else if (userId) {
+      session = callSessionManager.getUserSession(userId);
+    }
+
+    if (!session) {
+      console.log(`⚠️ [CALL] No session found for callConnected`);
+      return;
+    }
+
+    const actualSessionId = session.id;
+    callSessionManager.markConnected(actualSessionId);
+    console.log(`🎉 [CALL] Call connected: ${actualSessionId}`);
+  });
+
 
   // ==================== CALL REJECTION ====================
   
