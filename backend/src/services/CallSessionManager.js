@@ -31,9 +31,9 @@ class CallSessionManager {
     // Maximum history entries per user
     this.MAX_HISTORY = 50;
     
-    // Call timeout durations
-    this.RING_TIMEOUT = 60000; // 60 seconds
-    this.CONNECT_TIMEOUT = 30000; // 30 seconds
+    // Call timeout durations - increased for better reliability
+    this.RING_TIMEOUT = 90000; // 90 seconds (was 60)
+    this.CONNECT_TIMEOUT = 45000; // 45 seconds (was 30)
   }
 
   /**

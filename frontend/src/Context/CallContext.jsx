@@ -4,39 +4,54 @@ import AppContext from "./UseContext";
 
 const CallContext = createContext();
 
-// ICE servers for WebRTC connection
+// ICE servers for WebRTC connection - with multiple TURN servers for reliability
 const ICE_SERVERS = {
   iceServers: [
+    // STUN servers
     { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    // TURN servers for long-distance/firewall traversal
+    {
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
     {
       urls: "turn:openrelay.metered.ca:443?transport=tcp",
       username: "openrelayproject",
       credential: "openrelayproject",
     },
   ],
+  iceCandidatePoolSize: 10,
 };
 
-// Mobile audio constraints for better compatibility
+// Media constraints for better compatibility
 const getMediaConstraints = (type, isMobile) => {
-  const constraints = { audio: true };
+  const constraints = {
+    audio: {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+      sampleRate: 48000,
+      channelCount: 1,
+    }
+  };
   
   if (type === "video") {
     constraints.video = {
       width: { ideal: isMobile ? 640 : 1280 },
       height: { ideal: isMobile ? 480 : 720 },
       facingMode: "user",
+      frameRate: { ideal: isMobile ? 24 : 30 },
     };
   } else {
     constraints.video = false;
-  }
-  
-  // Mobile-specific audio settings
-  if (isMobile) {
-    constraints.audio = {
-      echoCancellation: true,
-      noiseSuppression: true,
-      autoGainControl: true,
-    };
   }
   
   return constraints;
@@ -116,17 +131,38 @@ export const CallProvider = ({ children }) => {
         }
       };
 
-      // Monitor connection state
+      // Monitor connection state - with reconnection attempts
+      let disconnectTimeout;
       peerConnectionRef.current.onconnectionstatechange = () => {
         console.log("Connection state:", peerConnectionRef.current.connectionState);
         if (peerConnectionRef.current.connectionState === "connected") {
           setCallStatus("connected");
           setCallActive(true);
-        } else if (
-          peerConnectionRef.current.connectionState === "disconnected" ||
-          peerConnectionRef.current.connectionState === "failed"
-        ) {
+          if (disconnectTimeout) {
+            clearTimeout(disconnectTimeout);
+            disconnectTimeout = null;
+          }
+        } else if (peerConnectionRef.current.connectionState === "disconnected") {
+          // Give it 10 seconds to reconnect before ending call
+          console.log("⚠️ Temporarily disconnected, attempting to reconnect...");
+          disconnectTimeout = setTimeout(() => {
+            console.log("❌ Reconnection failed, ending call");
+            endCall();
+          }, 10000);
+        } else if (peerConnectionRef.current.connectionState === "failed") {
+          // Connection failed - end immediately
+          console.log("❌ Connection failed");
           endCall();
+        }
+      };
+
+      // Monitor ICE connection state
+      peerConnectionRef.current.oniceconnectionstatechange = () => {
+        console.log("ICE connection state:", peerConnectionRef.current.iceConnectionState);
+        if (peerConnectionRef.current.iceConnectionState === "failed") {
+          console.log("🔄 ICE failed, attempting restart");
+          // Try ICE restart
+          peerConnectionRef.current.restartIce();
         }
       };
 
@@ -190,17 +226,38 @@ export const CallProvider = ({ children }) => {
         }
       };
 
-      // Monitor connection state
+      // Monitor connection state - with reconnection attempts
+      let disconnectTimeout;
       peerConnectionRef.current.onconnectionstatechange = () => {
         console.log("Connection state:", peerConnectionRef.current.connectionState);
         if (peerConnectionRef.current.connectionState === "connected") {
           setCallStatus("connected");
           setCallActive(true);
-        } else if (
-          peerConnectionRef.current.connectionState === "disconnected" ||
-          peerConnectionRef.current.connectionState === "failed"
-        ) {
+          if (disconnectTimeout) {
+            clearTimeout(disconnectTimeout);
+            disconnectTimeout = null;
+          }
+        } else if (peerConnectionRef.current.connectionState === "disconnected") {
+          // Give it 10 seconds to reconnect before ending call
+          console.log("⚠️ Temporarily disconnected, attempting to reconnect...");
+          disconnectTimeout = setTimeout(() => {
+            console.log("❌ Reconnection failed, ending call");
+            endCall();
+          }, 10000);
+        } else if (peerConnectionRef.current.connectionState === "failed") {
+          // Connection failed - end immediately
+          console.log("❌ Connection failed");
           endCall();
+        }
+      };
+
+      // Monitor ICE connection state
+      peerConnectionRef.current.oniceconnectionstatechange = () => {
+        console.log("ICE connection state:", peerConnectionRef.current.iceConnectionState);
+        if (peerConnectionRef.current.iceConnectionState === "failed") {
+          console.log("🔄 ICE failed, attempting restart");
+          // Try ICE restart
+          peerConnectionRef.current.restartIce();
         }
       };
 

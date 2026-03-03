@@ -28,11 +28,12 @@ const VideoCallUI = () => {
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const remoteAudioRef = useRef(null); // For audio-only calls
   const [callDuration, setCallDuration] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const callStartTimeRef = useRef(null);
 
-  // Set up video streams with mobile autoplay handling
+  // Set up local video stream with mobile autoplay handling
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
@@ -51,8 +52,9 @@ const VideoCallUI = () => {
     }
   }, [localStream]);
 
+  // Set up remote video stream
   useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
+    if (remoteVideoRef.current && remoteStream && callType === "video") {
       remoteVideoRef.current.srcObject = remoteStream;
       
       // Mobile autoplay handling with playsinline attribute
@@ -67,6 +69,32 @@ const VideoCallUI = () => {
           document.addEventListener('touchstart', () => {
             remoteVideoRef.current?.play();
           }, { once: true });
+        });
+      }
+    }
+  }, [remoteStream, callType]);
+
+  // Set up remote audio stream for audio-only calls
+  useEffect(() => {
+    if (remoteAudioRef.current && remoteStream) {
+      console.log("🔊 Setting up remote audio stream");
+      remoteAudioRef.current.srcObject = remoteStream;
+      remoteAudioRef.current.volume = 1.0; // Maximum volume
+      
+      const playPromise = remoteAudioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          console.log("✅ Remote audio playing successfully");
+        }).catch((error) => {
+          console.error("❌ Remote audio autoplay prevented:", error);
+          // Try to play on user interaction
+          const tryPlay = () => {
+            remoteAudioRef.current?.play()
+              .then(() => console.log("✅ Remote audio started after interaction"))
+              .catch(e => console.error("❌ Still failed:", e));
+          };
+          document.addEventListener('touchstart', tryPlay, { once: true });
+          document.addEventListener('click', tryPlay, { once: true });
         });
       }
     }
@@ -223,6 +251,14 @@ const VideoCallUI = () => {
             </div>
           </div>
         )}
+
+        {/* Hidden Audio Element for Remote Audio Stream */}
+        <audio
+          ref={remoteAudioRef}
+          autoPlay
+          playsInline
+          style={{ display: 'none' }}
+        />
       </div>
 
       {/* Controls - Mobile Optimized */}
