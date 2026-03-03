@@ -28,6 +28,7 @@ const ICE_SERVERS = {
       credential: "openrelayproject",
     },
   ],
+  iceTransportPolicy: "relay",
   iceCandidatePoolSize: 10,
 };
 
