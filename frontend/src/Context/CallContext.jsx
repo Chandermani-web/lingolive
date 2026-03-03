@@ -9,7 +9,41 @@ const ICE_SERVERS = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
   ],
+};
+
+// Mobile audio constraints for better compatibility
+const getMediaConstraints = (type, isMobile) => {
+  const constraints = { audio: true };
+  
+  if (type === "video") {
+    constraints.video = {
+      width: { ideal: isMobile ? 640 : 1280 },
+      height: { ideal: isMobile ? 480 : 720 },
+      facingMode: "user",
+    };
+  } else {
+    constraints.video = false;
+  }
+  
+  // Mobile-specific audio settings
+  if (isMobile) {
+    constraints.audio = {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+    };
+  }
+  
+  return constraints;
+};
+
+// Detect if device is mobile
+const isMobileDevice = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 };
 
 export const CallProvider = ({ children }) => {
@@ -33,23 +67,24 @@ export const CallProvider = ({ children }) => {
   // Refs
   const peerConnectionRef = useRef(null);
   const pendingCandidatesRef = useRef([]);
+  const isMobile = useRef(isMobileDevice());
 
   // Start a call
   // Note: targetUserName and targetUserAvatar kept for future use (e.g., showing "Calling John...")
-  const startCall = async (targetUserId, type, targetUserName, targetUserAvatar) => {
+  const startCall = async (targetUserId, type, _targetUserName, _targetUserAvatar) => {
     try {
       setCallStatus("calling");
       setCallType(type);
       setIsCaller(true);
       setRemoteUserId(targetUserId);
 
-      // Get user media
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: type === "video",
-        audio: true,
-      });
+      // Get user media with mobile-optimized constraints
+      const constraints = getMediaConstraints(type, isMobile.current);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
       setLocalStream(stream);
+
+      // Note: targetUserName and targetUserAvatar are sent to the server for the receiving user
 
       // Note: targetUserName and targetUserAvatar are sent to the server for the receiving user
 
@@ -121,11 +156,9 @@ export const CallProvider = ({ children }) => {
       setIsCaller(false);
       setRemoteUserId(incomingCall.from);
 
-      // Get user media
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: incomingCall.callType === "video",
-        audio: true,
-      });
+      // Get user media with mobile-optimized constraints
+      const constraints = getMediaConstraints(incomingCall.callType, isMobile.current);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
       setLocalStream(stream);
 
@@ -343,8 +376,25 @@ export const CallProvider = ({ children }) => {
 
     // Call failed
     socket.on("callFailed", ({ message }) => {
-      alert(message || "Call failed");
-      endCall();
+      console.log("❌ Call failed:", message);
+      setCallStatus("idle");
+      // Don't alert for offline - show callQueued message instead
+    });
+
+    // Call queued (user offline)
+    socket.on("callQueued", ({ message }) => {
+      console.log("📭 Call queued:", message);
+      alert(message);
+      setCallStatus("idle");
+      setCallType(null);
+      setIsCaller(false);
+      setRemoteUserId(null);
+      
+      // Stop local stream if started
+      if (localStream) {
+        localStream.getTracks().forEach((track) => track.stop());
+        setLocalStream(null);
+      }
     });
 
     return () => {
@@ -356,6 +406,7 @@ export const CallProvider = ({ children }) => {
       socket.off("callBusy");
       socket.off("userDisconnected");
       socket.off("callFailed");
+      socket.off("callQueued");
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, callActive, incomingCall, remoteUserId]);

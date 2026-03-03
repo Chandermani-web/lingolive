@@ -70,7 +70,7 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
           {/* Reject Button */}
           <button
             onClick={rejectCall}
-            className="group relative flex flex-col items-center gap-2 transition-all hover:scale-110"
+            className="group relative flex flex-col items-center gap-2 transition-all hover:scale-110 active:scale-95 touch-manipulation"
             title="Reject Call"
           >
             <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center shadow-lg hover:shadow-red-600/50 transition-all">
@@ -84,7 +84,7 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
           {/* Accept Button */}
           <button
             onClick={acceptCall}
-            className="group relative flex flex-col items-center gap-2 transition-all hover:scale-110"
+            className="group relative flex flex-col items-center gap-2 transition-all hover:scale-110 active:scale-95 touch-manipulation"
             title="Accept Call"
           >
             <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-green-600 hover:bg-green-700 flex items-center justify-center shadow-lg hover:shadow-green-600/50 transition-all animate-pulse-ring">
@@ -162,6 +162,11 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
 
         .animate-pulse-ring {
           animation: pulseRing 2s ease-in-out infinite;
+        }
+        
+        .touch-manipulation {
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
         }
       `}</style>
     </div>
