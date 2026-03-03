@@ -1,13 +1,23 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useSocket } from "../../Context/SocketContext";
+import { useCall } from "../../Context/CallContext";
 import { Send, FolderUpIcon } from "lucide-react";
 import "remixicon/fonts/remixicon.css";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../../Context/UseContext";
 
 const ChatPage = ({ selectedUser, onOpenSidebar }) => {
-  const navigate = useNavigate();
-  const { messages, setMessages, onlineUsers } = useSocket();
+  const {
+  socket,
+  messages,
+  setMessages,
+  onlineUsers
+} = useSocket();
+
+  // Get call functions from CallContext
+  const { startCall, callActive, callStatus } = useCall();
+
+const navigate = useNavigate();
   const { setShowImage } = useContext(AppContext);
   const [text, setText] = useState("");
   const [editOn, setEditOn] = useState(false);
@@ -160,6 +170,28 @@ const ChatPage = ({ selectedUser, onOpenSidebar }) => {
             {onlineUsers.includes(selectedUser._id) ? "🟢Online" : "🔴Offline"}
           </p>
         </div>
+
+        {/* Call Buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => startCall(selectedUser._id, "video", selectedUser.name, selectedUser.avatar)}
+            disabled={callActive || callStatus !== "idle"}
+            className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors"
+            title="Video Call"
+          >
+            <i className="ri-vidicon-line text-white"></i>
+          </button>
+
+          <button
+            onClick={() => startCall(selectedUser._id, "audio", selectedUser.name, selectedUser.avatar)}
+            disabled={callActive || callStatus !== "idle"}
+            className="p-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors"
+            title="Voice Call"
+          >
+            <i className="ri-phone-line text-white"></i>
+          </button>
+        </div>
+        
       </div>
 
       {/* Messages */}

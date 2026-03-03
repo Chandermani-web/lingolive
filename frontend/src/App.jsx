@@ -6,6 +6,9 @@ import Navbar from "./Components/Common/Navbar";
 import NotificationPopupManager from "./Context/NotificationProvider";
 import Loading from "./Loading";
 import LandingPage from "./LandingPage";
+import { useCall } from "./Context/CallContext";
+import CallModal from "./Components/Call/CallModal";
+import VideoCallUI from "./Components/Call/VideoCallUI";
 
 const Home = lazy(() => import("./pages/Home"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -14,7 +17,7 @@ const Login = lazy(() => import("./pages/Login"));
 const CreatePost = lazy(() => import("./Components/Post/CreatePost"));
 const Connection = lazy(() => import("./pages/Connection"));
 const User_Profile = lazy(
-  () => import("./Components/Connections/Page/User_Profile")
+  () => import("./Components/Connections/Page/User_Profile"),
 );
 const Notification = lazy(() => import("./pages/Notification"));
 const ShowPost = lazy(() => import("./Components/Post/ShowPost"));
@@ -23,6 +26,7 @@ const ShowImage = lazy(() => import("./ShowImage"));
 
 const App = () => {
   const { auth, loading } = useContext(AppContext);
+  const { incomingCall, acceptCall, rejectCall, callActive } = useCall();
 
   if (loading)
     return (
@@ -38,6 +42,19 @@ const App = () => {
     <div className="bg-[#050A15] min-h-screen text-gray-100">
       <ShowImage />
       <Navbar />
+      
+      {/* Incoming Call Modal */}
+      {incomingCall && !callActive && (
+        <CallModal
+          incomingCall={incomingCall}
+          acceptCall={acceptCall}
+          rejectCall={rejectCall}
+        />
+      )}
+
+      {/* Active Call UI */}
+      <VideoCallUI />
+
       <Suspense
         fallback={
           <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">

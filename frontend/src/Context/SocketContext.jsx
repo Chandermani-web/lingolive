@@ -1,5 +1,5 @@
 // src/Context/SocketContext.jsx
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react"
 import { io } from "socket.io-client";
 import AppContext from "./UseContext"; // import your main context
 
@@ -19,7 +19,7 @@ export const SocketProvider = ({ children }) => {
     if (!user?._id) return;
 
     const socketUrl = getSocketUrl();
-    ("🔌 Connecting to socket:", socketUrl);
+    console.log("🔌 Connecting to socket:", socketUrl);
 
     const newSocket = io(socketUrl, {
       query: { userId: user._id },
@@ -36,44 +36,45 @@ export const SocketProvider = ({ children }) => {
 
     // Post events
     newSocket.on("newPost", (newPost) => {
-      ("🆕 New post received via socket:", newPost);
+      console.log("🆕 New post received via socket:", newPost);
       setPosts((prev) => [newPost, ...prev]);
     });
 
     newSocket.on("updatePost", (updatedPost) => {
-      ("📝 Post updated via socket:", updatedPost);
+      console.log("📝 Post updated via socket:", updatedPost);
       setPosts((prev) =>
         prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
       );
     });
 
     newSocket.on("deletePost", ({ postId }) => {
-      ("🗑️ Post deleted via socket:", postId);
+      console.log("🗑️ Post deleted via socket:", postId);
       setPosts((prev) => prev.filter((p) => p._id !== postId));
     });
 
     // Friend request events
     newSocket.on("friendRequest", ({ newRequest }) => {
-      ("🆕 New friend request received:", newRequest);
+      console.log("🆕 New friend request received:", newRequest);
       setRequests((prev) => [newRequest, ...prev]);
     });
 
     // Notification events
     newSocket.on("newNotification", (notification) => {
-      ("🔔 New notification received:", notification);
+      console.log("🔔 New notification received:", notification);
       setNotifications((prev) => [notification, ...prev]);
     });
 
     // Online users events
     newSocket.on("onlineUsers", (onlineUsersList) => {
-      ("👥 Online Users List Updated:", onlineUsersList);
+      console.log("👥 Online Users List Updated:", onlineUsersList);
       setOnlineUsers(onlineUsersList);
     });
 
     return () => {
-      ("🔌 Cleaning up socket connection");
+      console.log("🔌 Cleaning up socket connection");
       newSocket.disconnect();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?._id]); // Only reconnect when user changes
 
   // Real-time message handling
