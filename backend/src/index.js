@@ -16,7 +16,9 @@ export const io = new Server(server, {
   },
 });
 
-export let onlineUsers = new Map();
+export let onlineUsers = new Map(); // userId -> socketId
+export let busyUsers = new Set(); // Users currently in a call
+export let pendingCalls = new Map(); // userId -> [array of pending calls]
 
 // Handle user connections
 io.on("connection", (socket) => {
@@ -31,18 +33,39 @@ io.on("connection", (socket) => {
     onlineUsers.set(userId, socket.id);
     console.log("Online Users:", onlineUsers);
     io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+
+    // Send any pending calls to this user
+    if (pendingCalls.has(userId)) {
+      const userPendingCalls = pendingCalls.get(userId);
+      console.log(`📬 Sending ${userPendingCalls.length} pending calls to user ${userId}`);
+      
+      userPendingCalls.forEach((call) => {
+        io.to(socket.id).emit("incomingCall", call);
+      });
+      
+      // Clear pending calls after sending
+      pendingCalls.delete(userId);
+    }
   });
 
   socket.on("disconnect", () => {
     console.log("🔴 User disconnected:", socket.id);
+    let disconnectedUserId = null;
+    
     for (let [userId, sockId] of onlineUsers.entries()) {
       if (sockId === socket.id) {
+        disconnectedUserId = userId;
         onlineUsers.delete(userId);
-        // Notify other user if in call
-        io.emit("userDisconnected", userId);
+        busyUsers.delete(userId); // Remove from busy users
         break;
       }
     }
+    
+    if (disconnectedUserId) {
+      // Notify other user if in call
+      io.emit("userDisconnected", disconnectedUserId);
+    }
+    
     io.emit("onlineUsers", Array.from(onlineUsers.keys()));
   });
 
@@ -51,23 +74,69 @@ io.on("connection", (socket) => {
     console.log("📞 CallUser event triggered");
     console.log("Calling to:", to, "Type:", callType);
     
+    const callerId = socket.handshake.query.userId;
+    
+    // Check if target user is busy
+    if (busyUsers.has(to)) {
+      socket.emit("callBusy", { message: "User is currently on another call" });
+      return;
+    }
+    
     const targetSocketId = onlineUsers.get(to);
+    const callData = {
+      from: callerId,
+      offer,
+      callType,
+      callerName,
+      callerAvatar,
+      timestamp: Date.now(),
+    };
+    
     if (targetSocketId) {
-      io.to(targetSocketId).emit("incomingCall", {
-        from: socket.handshake.query.userId,
-        offer,
-        callType,
-        callerName,
-        callerAvatar,
-      });
+      // User is online, send immediately
+      io.to(targetSocketId).emit("incomingCall", callData);
     } else {
-      socket.emit("callFailed", { message: "User is offline" });
+      // User is offline, queue the call
+      console.log(`📭 User ${to} is offline, queueing call`);
+      
+      if (!pendingCalls.has(to)) {
+        pendingCalls.set(to, []);
+      }
+      
+      pendingCalls.get(to).push(callData);
+      
+      // Clean up old pending calls (older than 5 minutes)
+      setTimeout(() => {
+        if (pendingCalls.has(to)) {
+          const calls = pendingCalls.get(to);
+          const filtered = calls.filter(
+            (call) => Date.now() - call.timestamp < 5 * 60 * 1000
+          );
+          
+          if (filtered.length === 0) {
+            pendingCalls.delete(to);
+          } else {
+            pendingCalls.set(to, filtered);
+          }
+        }
+      }, 5 * 60 * 1000);
+      
+      socket.emit("callQueued", { 
+        message: "User is offline. Call will be delivered when they come online." 
+      });
     }
   });
 
   // Answer Call - Accept incoming call
   socket.on("answerCall", ({ to, answer }) => {
     console.log("✅ answerCall event triggered to:", to);
+    
+    const userId = socket.handshake.query.userId;
+    
+    // Mark both users as busy
+    busyUsers.add(userId);
+    busyUsers.add(to);
+    
     const targetSocketId = onlineUsers.get(to);
     if (targetSocketId) {
       io.to(targetSocketId).emit("callAccepted", { answer });
@@ -86,6 +155,13 @@ io.on("connection", (socket) => {
   // End Call
   socket.on("endCall", ({ to }) => {
     console.log("📵 endCall event triggered");
+    
+    const userId = socket.handshake.query.userId;
+    
+    // Free both users from busy state
+    busyUsers.delete(userId);
+    busyUsers.delete(to);
+    
     const targetSocketId = onlineUsers.get(to);
     if (targetSocketId) {
       io.to(targetSocketId).emit("callEnded");
@@ -116,9 +192,9 @@ io.on("connection", (socket) => {
 connectDB()
   .then(() => {
     server.listen(PORT, () => {
-      (`Server running on http://localhost:${PORT}`);
+      console.log(`Server running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    ("Failed to connect to DB", err);
+    console.log("Failed to connect to DB", err);
   });
