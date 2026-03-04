@@ -469,14 +469,13 @@ export const CallProvider = ({ children }) => {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (localStream) {
-        localStream.getTracks().forEach((track) => track.stop());
-      }
-      if (peerConnectionRef.current) {
+      if(peerConnectionRef.current) {
+        peerConnectionRef.current.getSender().forEach(sender=>{
+          if(sender.track) sender.track.stop();
+        });
         peerConnectionRef.current.close();
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
