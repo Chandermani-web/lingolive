@@ -29,6 +29,7 @@ const VideoCallUI = () => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const remoteAudioRef = useRef(null); // For audio-only calls
+  const ringtoneRef = useRef(null); // For outgoing call ringtone
   const [callDuration, setCallDuration] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const callStartTimeRef = useRef(null);
@@ -99,6 +100,37 @@ const VideoCallUI = () => {
       }
     }
   }, [remoteStream]);
+
+  // Play ringtone for outgoing calls
+  useEffect(() => {
+    if (callStatus === "calling" || callStatus === "ringing") {
+      // Play outgoing call ringtone
+      if (!ringtoneRef.current) {
+        ringtoneRef.current = new Audio("/iphone-remix-68028.mp3");
+        ringtoneRef.current.loop = true;
+        ringtoneRef.current.volume = 0.5; // Set volume to 50% for outgoing
+      }
+      
+      ringtoneRef.current.play().catch((error) => {
+        console.log("Outgoing ringtone autoplay blocked:", error);
+      });
+    } else {
+      // Stop ringtone when call is connected or ended
+      if (ringtoneRef.current) {
+        ringtoneRef.current.pause();
+        ringtoneRef.current.currentTime = 0;
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (ringtoneRef.current) {
+        ringtoneRef.current.pause();
+        ringtoneRef.current.currentTime = 0;
+        ringtoneRef.current = null;
+      }
+    };
+  }, [callStatus]);
 
   // Call duration timer
   useEffect(() => {

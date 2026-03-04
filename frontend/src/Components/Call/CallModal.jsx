@@ -5,11 +5,12 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
   useEffect(() => {
     if (incomingCall) {
       // Play ringtone sound
-      const audio = new Audio("/ringtone.mp3");
+      const audio = new Audio("/iphone-remix-68028.mp3");
       audio.loop = true;
-      audio.play().catch(() => {
+      audio.volume = 0.7; // Set volume to 70%
+      audio.play().catch((error) => {
         // Handle autoplay restrictions
-        console.log("Ringtone autoplay blocked");
+        console.log("Ringtone autoplay blocked:", error);
       });
 
       return () => {
