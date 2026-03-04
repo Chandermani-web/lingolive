@@ -37,40 +37,46 @@ const VideoCallUI = () => {
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
-      
+
       // Mobile autoplay handling
       const playPromise = localVideoRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch((error) => {
           console.log("Local video autoplay prevented:", error);
           // Try to play on user interaction
-          document.addEventListener('touchstart', () => {
-            localVideoRef.current?.play();
-          }, { once: true });
+          document.addEventListener(
+            "touchstart",
+            () => {
+              localVideoRef.current?.play();
+            },
+            { once: true },
+          );
         });
       }
     }
   }, [localStream]);
 
   // Set up remote video stream
+  // Set up remote video stream
   useEffect(() => {
     if (remoteVideoRef.current && remoteStream && callType === "video") {
       remoteVideoRef.current.srcObject = remoteStream;
-      
-      // Mobile autoplay handling with playsinline attribute
-      remoteVideoRef.current.setAttribute('playsinline', '');
-      remoteVideoRef.current.setAttribute('webkit-playsinline', '');
-      
-      const playPromise = remoteVideoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.log("Remote video autoplay prevented:", error);
-          // Try to play on user interaction
-          document.addEventListener('touchstart', () => {
-            remoteVideoRef.current?.play();
-          }, { once: true });
-        });
-      }
+
+      remoteVideoRef.current.setAttribute("playsinline", "");
+      remoteVideoRef.current.setAttribute("webkit-playsinline", "");
+
+      const videoElement = remoteVideoRef.current;
+
+      const playVideo = async () => {
+        try {
+          await videoElement.play();
+          console.log("✅ Remote video playing");
+        } catch (err) {
+          console.log("Play interrupted:", err.message);
+        }
+      };
+
+      playVideo();
     }
   }, [remoteStream, callType]);
 
@@ -80,22 +86,27 @@ const VideoCallUI = () => {
       console.log("🔊 Setting up remote audio stream");
       remoteAudioRef.current.srcObject = remoteStream;
       remoteAudioRef.current.volume = 1.0; // Maximum volume
-      
+
       const playPromise = remoteAudioRef.current.play();
       if (playPromise !== undefined) {
-        playPromise.then(() => {
-          console.log("✅ Remote audio playing successfully");
-        }).catch((error) => {
-          console.error("❌ Remote audio autoplay prevented:", error);
-          // Try to play on user interaction
-          const tryPlay = () => {
-            remoteAudioRef.current?.play()
-              .then(() => console.log("✅ Remote audio started after interaction"))
-              .catch(e => console.error("❌ Still failed:", e));
-          };
-          document.addEventListener('touchstart', tryPlay, { once: true });
-          document.addEventListener('click', tryPlay, { once: true });
-        });
+        playPromise
+          .then(() => {
+            console.log("✅ Remote audio playing successfully");
+          })
+          .catch((error) => {
+            console.error("❌ Remote audio autoplay prevented:", error);
+            // Try to play on user interaction
+            const tryPlay = () => {
+              remoteAudioRef.current
+                ?.play()
+                .then(() =>
+                  console.log("✅ Remote audio started after interaction"),
+                )
+                .catch((e) => console.error("❌ Still failed:", e));
+            };
+            document.addEventListener("touchstart", tryPlay, { once: true });
+            document.addEventListener("click", tryPlay, { once: true });
+          });
       }
     }
   }, [remoteStream]);
@@ -109,7 +120,9 @@ const VideoCallUI = () => {
     if (callStatus === "connected") {
       const interval = setInterval(() => {
         if (callStartTimeRef.current) {
-          const elapsed = Math.floor((Date.now() - callStartTimeRef.current) / 1000);
+          const elapsed = Math.floor(
+            (Date.now() - callStartTimeRef.current) / 1000,
+          );
           setCallDuration(elapsed);
         }
       }, 1000);
@@ -160,10 +173,10 @@ const VideoCallUI = () => {
               {callStatus === "connected"
                 ? formatDuration(callDuration)
                 : callStatus === "calling"
-                ? "Calling..."
-                : callStatus === "ringing"
-                ? "Ringing..."
-                : "Connecting..."}
+                  ? "Calling..."
+                  : callStatus === "ringing"
+                    ? "Ringing..."
+                    : "Connecting..."}
             </p>
           </div>
         </div>
@@ -188,8 +201,8 @@ const VideoCallUI = () => {
               webkit-playsinline="true"
               className="absolute inset-0 w-full h-full object-cover"
               style={{
-                objectFit: 'cover',
-                transform: 'scale(1.0)',
+                objectFit: "cover",
+                transform: "scale(1.0)",
               }}
             />
           ) : (
@@ -212,8 +225,8 @@ const VideoCallUI = () => {
                   {callStatus === "calling"
                     ? "Calling..."
                     : callStatus === "ringing"
-                    ? "Ringing..."
-                    : "Connecting..."}
+                      ? "Ringing..."
+                      : "Connecting..."}
                 </p>
               </div>
             </div>
@@ -232,7 +245,7 @@ const VideoCallUI = () => {
                 muted
                 className="w-full h-full transform scale-x-[-1]"
                 style={{
-                  objectFit: 'cover',
+                  objectFit: "cover",
                 }}
               />
             ) : (
@@ -257,7 +270,7 @@ const VideoCallUI = () => {
           ref={remoteAudioRef}
           autoPlay
           playsInline
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
         />
       </div>
 
@@ -324,12 +337,12 @@ const VideoCallUI = () => {
         .safe-area-bottom {
           padding-bottom: max(12px, env(safe-area-inset-bottom));
         }
-        
+
         .touch-manipulation {
           touch-action: manipulation;
           -webkit-tap-highlight-color: transparent;
         }
-        
+
         @supports (-webkit-touch-callout: none) {
           /* iOS specific styles */
           video {
