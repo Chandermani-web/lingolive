@@ -120,9 +120,11 @@ export const acceptFriendRequest = asyncHandler(async (req, res) => {
 export const rejectFriendRequest = asyncHandler(async (req, res) => {
     const { requestId } = req.body;
     const userId = req.user._id;
+
     if (!requestId) {
         return res.status(400).json({ message: 'Request ID is required.' });
     }
+
     const request = await Friend.findOne({
         _id: requestId,
         receiver: userId,
@@ -136,49 +138,68 @@ export const rejectFriendRequest = asyncHandler(async (req, res) => {
     request.status = 'rejected';
     await request.save();
 
-    // ❌ Remove from following/followers if already added during send
-    await User.findByIdAndUpdate(request.sender, {
-        $pull: { following: userId },
-    });
-    await User.findByIdAndUpdate(userId, {
-        $pull: { followers: request.sender },
+    const senderId = request.sender;
+
+    // 🔥 Remove follow relationship (both sides)
+    await User.findByIdAndUpdate(senderId, {
+        $pull: { following: userId }
     });
 
-    const newNotification = new Notification({
-        toUser: receiverId,
-        message: `${req.user.username} Rejected your friend request.`,
-        type: 'friend_request',
-        fromUser: senderId,
+    await User.findByIdAndUpdate(userId, {
+        $pull: { followers: senderId }
     });
+
+    // ✅ Notification fix
+    const newNotification = new Notification({
+        toUser: senderId,
+        message: `${req.user.username} rejected your friend request.`,
+        type: 'friend_request',
+        fromUser: userId,
+    });
+
     await newNotification.save();
 
-    res.status(200).json({ message: 'Friend request rejected.', request });
+    res.status(200).json({
+        message: 'Friend request rejected.',
+        request
+    });
 });
 
 export const removeFriend = asyncHandler(async (req, res) => {
     const { friendId } = req.body;
     const userId = req.user._id;
+
     if (!friendId) {
         return res.status(400).json({ message: 'Friend ID is required.' });
     }
 
-    await User.findByIdAndUpdate(
-        userId,
-        { $pull: { friends: friendId } },
-        { new: true }
-    );
-    await User.findByIdAndUpdate(
-        friendId,
-        { $pull: { friends: userId } },
-        { new: true }
-    );
+    // 🔥 Remove from friends (both users)
+    await User.findByIdAndUpdate(userId, {
+        $pull: { friends: friendId }
+    });
+
+    await User.findByIdAndUpdate(friendId, {
+        $pull: { friends: userId }
+    });
+
+    // 🔥 Remove from followers/following (both sides)
+    await User.findByIdAndUpdate(userId, {
+        $pull: { followers: friendId, following: friendId }
+    });
+
+    await User.findByIdAndUpdate(friendId, {
+        $pull: { followers: userId, following: userId }
+    });
+
+    // 🔥 Remove friend document
     await Friend.findOneAndDelete({
         $or: [
-            { sender: userId, receiver: friendId, status: 'accepted' },
-            { sender: friendId, receiver: userId, status: 'accepted' },
-        ],
+            { sender: userId, receiver: friendId },
+            { sender: friendId, receiver: userId }
+        ]
     });
-    res.status(200).json({ message: 'Friend removed.' });
+
+    res.status(200).json({ message: 'Friend removed successfully.' });
 });
 
 // Get all the friends of the logged-in user
