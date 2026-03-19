@@ -12,16 +12,16 @@
     // Filter out users who are followed but not yet friends
     const sendRequest = user.following.filter((u) => !friendIds.includes(u._id));
 
-    if (loading) return <div className="bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)] min-h-screen text-[var(--color-text)]"> Loading...</div>;
+    if (loading) return <div className="bg-gradient-to-br from-gray-900 via-gray-950 to-black min-h-screen text-gray-100"> Loading...</div>;
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-        <h1 className="col-span-full text-2xl font-bold text-[var(--color-text)]">
+        <h1 className="col-span-full text-2xl font-bold text-white">
           Followers and Followings
         </h1>
         {sendRequest.map((u) => (
           <div
             key={u._id}
-            className="bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-secondary)] to-[var(--color-primary)] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
+            className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
           >
             <div className="h-24 w-full overflow-hidden">
               <img
@@ -31,7 +31,7 @@
               />
             </div>
 
-            <div className="p-5 text-[var(--color-text)]">
+            <div className="p-5 text-white">
               <div className="flex items-center space-x-4">
                 <img
                   src={u.profilePic || "/avatar.svg"}
@@ -40,7 +40,7 @@
                 />
                 <div>
                   <h3
-                    className="font-bold text-lg text-[var(--color-text)] cursor-pointer hover:underline"
+                    className="font-bold text-lg text-white cursor-pointer hover:underline"
                     onClick={() => navigate(`/profile/${u._id}`)}
                   >
                     {u.fullname}
@@ -54,21 +54,21 @@
                 </div>
               </div>
 
-              <p className="text-sm text-[var(--color-muted)] mt-2 line-clamp-2">
+              <p className="text-sm text-gray-300 mt-2 line-clamp-2">
                 {u.bio || "No bio available"}
               </p>
 
               {/* Email & Location */}
               <div className="mt-3 flex items-center justify-between">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-xs text-[var(--color-muted)]">{u.email}</p>
+                  <p className="text-xs text-gray-400">{u.email}</p>
                   {u.location && (
-                    <p className="text-xs text-[var(--color-muted)]">📍 {u.location}</p>
+                    <p className="text-xs text-gray-400">📍 {u.location}</p>
                   )}
                 </div>
               </div>
 
-              <button className="mt-4 bg-gradient-to-r from-gray-500 to-[var(--color-highlight)] hover:from-[var(--color-accent)] hover:to-[var(--color-highlight)] text-[var(--color-text)] py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center">
+              <button className="mt-4 bg-gradient-to-r from-gray-500 to-zinc-400 hover:from-green-600 hover:to-teal-500 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center">
                 <i className="ri-user-add-line mr-2"></i>
                 Following
               </button>
@@ -77,7 +77,7 @@
         ))}
 
         {sendRequest.length === 0 && (
-          <p className="text-[var(--color-muted)] col-span-full text-center">
+          <p className="text-gray-400 col-span-full text-center">
             No connection send.
           </p>
         )}

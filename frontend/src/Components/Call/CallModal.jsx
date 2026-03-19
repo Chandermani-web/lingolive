@@ -23,19 +23,19 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
   if (!incomingCall) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--color-primary)]/80 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-fadeIn">
-      <div className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full border border-[var(--color-secondary)] animate-slideUp">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-fadeIn">
+      <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl max-w-md w-full border border-gray-700 animate-slideUp">
         {/* Call Type Icon */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[var(--color-secondary)] to-[var(--color-highlight)] mb-4 animate-pulse-slow">
+          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mb-4 animate-pulse-slow">
             {incomingCall.callType === "video" ? (
-              <Video className="w-10 h-10 md:w-12 md:h-12 text-[var(--color-text)]" />
+              <Video className="w-10 h-10 md:w-12 md:h-12 text-white" />
             ) : (
-              <Volume2 className="w-10 h-10 md:w-12 md:h-12 text-[var(--color-text)]" />
+              <Volume2 className="w-10 h-10 md:w-12 md:h-12 text-white" />
             )}
           </div>
           
-          <h2 className="text-[var(--color-text)] text-2xl md:text-3xl font-bold mb-2">
+          <h2 className="text-white text-2xl md:text-3xl font-bold mb-2">
             Incoming {incomingCall.callType === "video" ? "Video" : "Voice"} Call
           </h2>
         </div>
@@ -48,20 +48,20 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
               <img
                 src={incomingCall.callerAvatar}
                 alt={incomingCall.callerName}
-                className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-[var(--color-highlight)] shadow-lg"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-blue-500 shadow-lg"
               />
             ) : (
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-gray-700 to-[var(--color-secondary)] flex items-center justify-center border-4 border-[var(--color-highlight)] shadow-lg">
-                <User className="w-10 h-10 md:w-12 md:h-12 text-[var(--color-muted)]" />
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-gray-700 to-gray-600 flex items-center justify-center border-4 border-blue-500 shadow-lg">
+                <User className="w-10 h-10 md:w-12 md:h-12 text-gray-300" />
               </div>
             )}
           </div>
 
           {/* Caller Name */}
-          <p className="text-[var(--color-text)] text-xl md:text-2xl font-semibold mb-1">
+          <p className="text-gray-200 text-xl md:text-2xl font-semibold mb-1">
             {incomingCall.callerName || "Unknown User"}
           </p>
-          <p className="text-[var(--color-muted)] text-sm md:text-base animate-pulse">
+          <p className="text-gray-400 text-sm md:text-base animate-pulse">
             is calling you...
           </p>
         </div>
@@ -75,7 +75,7 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
             title="Reject Call"
           >
             <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center shadow-lg hover:shadow-red-600/50 transition-all">
-              <PhoneOff className="w-7 h-7 md:w-9 md:h-9 text-[var(--color-text)]" />
+              <PhoneOff className="w-7 h-7 md:w-9 md:h-9 text-white" />
             </div>
             <span className="text-red-500 text-xs md:text-sm font-semibold">
               Decline
@@ -88,10 +88,10 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
             className="group relative flex flex-col items-center gap-2 transition-all hover:scale-110 active:scale-95 touch-manipulation"
             title="Accept Call"
           >
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[var(--color-accent)] hover:bg-[var(--color-accent)] flex items-center justify-center shadow-lg hover:shadow-green-600/50 transition-all animate-pulse-ring">
-              <Phone className="w-7 h-7 md:w-9 md:h-9 text-[var(--color-text)]" />
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-green-600 hover:bg-green-700 flex items-center justify-center shadow-lg hover:shadow-green-600/50 transition-all animate-pulse-ring">
+              <Phone className="w-7 h-7 md:w-9 md:h-9 text-white" />
             </div>
-            <span className="text-[var(--color-accent)] text-xs md:text-sm font-semibold">
+            <span className="text-green-500 text-xs md:text-sm font-semibold">
               Accept
             </span>
           </button>
@@ -99,7 +99,7 @@ const CallModal = ({ incomingCall, acceptCall, rejectCall }) => {
 
         {/* Call Type Badge */}
         <div className="mt-6 text-center">
-          <span className="inline-block px-4 py-2 rounded-full bg-[var(--color-secondary)]/50 text-[var(--color-muted)] text-xs md:text-sm">
+          <span className="inline-block px-4 py-2 rounded-full bg-gray-700/50 text-gray-300 text-xs md:text-sm">
             {incomingCall.callType === "video" ? "📹 Video Call" : "🎙️ Voice Call"}
           </span>
         </div>

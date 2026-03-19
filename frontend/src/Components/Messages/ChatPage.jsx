@@ -136,18 +136,18 @@ const navigate = useNavigate();
   };
 
   return (
-    <div className="flex flex-col h-full bg-[var(--color-primary)] border-l border-[var(--color-secondary)]">
+    <div className="flex flex-col h-full bg-[#050A15] border-l border-gray-800">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-[var(--color-secondary)] bg-[var(--color-primary)]">
+      <div className="flex items-center gap-3 p-4 border-b border-gray-800 bg-[#050A15]">
         <button
-          className="md:hidden mr-1 flex flex-col items-center justify-center w-9 h-9 rounded-md bg-[var(--color-secondary)] text-[var(--color-text)]"
+          className="md:hidden mr-1 flex flex-col items-center justify-center w-9 h-9 rounded-md bg-gray-800 text-white"
           onClick={onOpenSidebar}
           aria-label="Open chats"
         >
           {/* simple hamburger */}
-          <span className="block w-5 h-0.5 bg-[var(--color-text)] mb-1"></span>
-          <span className="block w-5 h-0.5 bg-[var(--color-text)] mb-1"></span>
-          <span className="block w-5 h-0.5 bg-[var(--color-text)]"></span>
+          <span className="block w-5 h-0.5 bg-white mb-1"></span>
+          <span className="block w-5 h-0.5 bg-white mb-1"></span>
+          <span className="block w-5 h-0.5 bg-white"></span>
         </button>
         <img
           src={selectedUser.profilePic || "/default-avatar.png"}
@@ -159,14 +159,14 @@ const navigate = useNavigate();
         />
         <div className="flex-1">
           <h2
-            className="text-[var(--color-text)] font-semibold text-lg"
+            className="text-white font-semibold text-lg"
             onClick={() => {
               navigate(`/profile/${selectedUser._id}`);
             }}
           >
             @{selectedUser.username}
           </h2>
-          <p className="text-[var(--color-muted)] text-sm">
+          <p className="text-gray-400 text-sm">
             {onlineUsers.includes(selectedUser._id) ? "🟢Online" : "🔴Offline"}
           </p>
         </div>
@@ -176,19 +176,19 @@ const navigate = useNavigate();
           <button
             onClick={() => startCall(selectedUser._id, "video", selectedUser.name, selectedUser.avatar)}
             disabled={callActive || callStatus !== "idle"}
-            className="p-2 bg-[var(--color-secondary)] hover:bg-[var(--color-highlight)] disabled:bg-[var(--color-secondary)]/60 disabled:cursor-not-allowed rounded-lg transition-colors"
+            className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors"
             title="Video Call"
           >
-            <i className="ri-vidicon-line text-[var(--color-text)]"></i>
+            <i className="ri-vidicon-line text-white"></i>
           </button>
 
           <button
             onClick={() => startCall(selectedUser._id, "audio", selectedUser.name, selectedUser.avatar)}
             disabled={callActive || callStatus !== "idle"}
-            className="p-2 bg-[var(--color-accent)] hover:bg-[var(--color-highlight)] disabled:bg-[var(--color-secondary)]/60 disabled:cursor-not-allowed rounded-lg transition-colors"
+            className="p-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors"
             title="Voice Call"
           >
-            <i className="ri-phone-line text-[var(--color-text)]"></i>
+            <i className="ri-phone-line text-white"></i>
           </button>
         </div>
         
@@ -222,8 +222,8 @@ const navigate = useNavigate();
                 <div
                   className={`py-3 px-4 rounded-2xl break-words relative group ${
                     isOwn
-                      ? "bg-[var(--color-secondary)] text-[var(--color-text)] rounded-br-none"
-                      : "bg-[var(--color-secondary)]/40 text-[var(--color-text)] rounded-bl-none"
+                      ? "bg-blue-600 text-white rounded-br-none"
+                      : "bg-gray-800 text-gray-100 rounded-bl-none"
                   }`}
                 >
                   {/* 3-dot menu button */}
@@ -234,7 +234,7 @@ const navigate = useNavigate();
                           e.stopPropagation();
                           setEditOn(isMenuOpen ? null : m._id);
                         }}
-                        className="text-[var(--color-muted)] hover:text-[var(--color-text)] transition"
+                        className="text-gray-300 hover:text-white transition"
                       >
                         <i className="ri-more-2-line text-xs"></i>
                       </button>
@@ -242,7 +242,7 @@ const navigate = useNavigate();
                       {/* Dropdown menu */}
                       {isMenuOpen && (
                         <div
-                          className="absolute right-0 mt-6 w-28 bg-[var(--color-primary)] border border-[var(--color-secondary)] rounded-lg shadow-md z-20"
+                          className="absolute right-0 mt-6 w-28 bg-gray-900 border border-gray-700 rounded-lg shadow-md z-20"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <button
@@ -250,7 +250,7 @@ const navigate = useNavigate();
                               deleteMessage(m._id);
                               setEditOn(null);
                             }}
-                            className="w-full text-left px-3 py-2 text-sm text-[var(--color-highlight)] hover:bg-[var(--color-secondary)]/30 rounded-t-lg"
+                            className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-gray-800 rounded-t-lg"
                           >
                             Delete
                           </button>
@@ -281,13 +281,13 @@ const navigate = useNavigate();
                       href={m.file}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[var(--color-highlight)] underline mt-2 block"
+                      className="text-blue-400 underline mt-2 block"
                     >
                       📎 Download file
                     </a>
                   )}
                   {m.text && <p className="text-sm">{m.text}</p>}
-                <span className={`text-[10px] block mt-2 text-right ${isOwn ? "text-[var(--color-text)]" : "text-[var(--color-muted)]"
+                <span className={`text-[10px] block mt-2 text-right ${isOwn ? "text-blue-100" : "text-gray-400"
                   }`}>
                   {new Date(m.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -305,19 +305,19 @@ const navigate = useNavigate();
 
       {/* Media preview before sending */}
       {(media.image || media.video || media.audio || media.file) && (
-        <div className="p-2 flex items-center gap-3 border-t border-[var(--color-secondary)] bg-[var(--color-primary)]">
+        <div className="p-2 flex items-center gap-3 border-t border-gray-800 bg-gray-900">
           {media.image && (
             <img
               src={URL.createObjectURL(media.image)}
               alt="preview"
-              className="w-20 h-20 object-cover rounded-lg border border-[var(--color-secondary)]"
+              className="w-20 h-20 object-cover rounded-lg border border-gray-700"
             />
           )}
           {media.video && (
             <video
               src={URL.createObjectURL(media.video)}
               controls
-              className="w-24 h-20 rounded-lg border border-[var(--color-secondary)]"
+              className="w-24 h-20 rounded-lg border border-gray-700"
             />
           )}
           {media.audio && (
@@ -328,7 +328,7 @@ const navigate = useNavigate();
             />
           )}
           {media.file && (
-            <p className="text-sm text-[var(--color-muted)] truncate max-w-[150px]">
+            <p className="text-sm text-gray-300 truncate max-w-[150px]">
               📎 {media.file.name}
             </p>
           )}
@@ -344,9 +344,9 @@ const navigate = useNavigate();
       )}
 
       {/* Input */}
-      <div className="flex items-center border-t border-[var(--color-secondary)] p-3 bg-[var(--color-primary)]">
+      <div className="flex items-center border-t border-gray-800 p-3 bg-gray-900">
         <FolderUpIcon
-          className="cursor-pointer mr-3 text-[var(--color-highlight)]"
+          className="cursor-pointer mr-3 text-amber-500"
           onClick={() => document.getElementById("media").click()}
         />
         <input
@@ -362,11 +362,11 @@ const navigate = useNavigate();
           onChange={(e) => setText(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Type a message..."
-          className="flex-1 bg-[var(--color-secondary)]/40 text-[var(--color-text)] p-2 rounded-full outline-none focus:ring-2 focus:ring-[var(--color-highlight)]"
+          className="flex-1 bg-gray-800 text-white p-2 rounded-full outline-none focus:ring-2 focus:ring-blue-600"
         />
         <button
           onClick={sendMessage}
-          className={`ml-3 p-2 ${loading ? "bg-[var(--color-secondary)]/60" : "bg-[var(--color-accent)]"} ${loading ? "hover:bg-[var(--color-secondary)]/70" : "hover:bg-[var(--color-highlight)]"} rounded-full transition`}
+          className={`ml-3 p-2 ${loading ? "bg-gray-600" : "bg-blue-600"} ${loading ? "hover:bg-gray-700" : "hover:bg-blue-700"} rounded-full transition`}
           disabled={loading}
         >
           <Send size={18} />

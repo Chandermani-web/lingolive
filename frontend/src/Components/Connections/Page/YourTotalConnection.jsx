@@ -17,7 +17,7 @@ const YourTotalConnection = () => {
 
   if (loading)
     return (
-      <div className="bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)] min-h-screen text-[var(--color-text)]">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-950 to-black min-h-screen text-gray-100">
         {" "}
         Loading...
       </div>
@@ -44,16 +44,16 @@ const YourTotalConnection = () => {
 
   return (
     <div className="grid grid-cols-1 gap-6 p-4">
-      <h1 className="col-span-full text-2xl font-bold text-[var(--color-text)]">
+      <h1 className="col-span-full text-2xl font-bold text-white">
         Your Total Connections
       </h1>
       {friendList.length > 0 ? (
         friendList.map((friend) => (
           <div
             key={friend._id}
-            className="bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-secondary)] to-[var(--color-primary)] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
+            className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
           >
-            <div className="p-4 text-[var(--color-text)] flex justify-around items-center">
+            <div className="p-4 text-white flex justify-around items-center">
               <div className="flex items-center space-x-3 flex-1">
                 <img
                   src={friend.profilePic || "/avatar.svg"}
@@ -81,13 +81,13 @@ const YourTotalConnection = () => {
               </div>
 
               <div className="flex gap-5">
-                <button className="mt-4 bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] hover:from-[var(--color-accent)] hover:to-[var(--color-highlight)] text-[var(--color-text)] py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" onClick={()=>{
+                <button className="mt-4 bg-gradient-to-r from-blue-500 to-indigo-400 hover:from-green-600 hover:to-teal-500 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" onClick={()=>{
                   navigate(`/message/${friend._id}`)
                 }}>
                   Message
                 </button>
                 <button 
-                  className="mt-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-[var(--color-text)] py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" 
+                  className="mt-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" 
                   onClick={() => handleRemoveFriend(friend._id)}
                 >
                   Remove
@@ -97,7 +97,7 @@ const YourTotalConnection = () => {
           </div>
         ))
       ) : (
-        <p className="text-[var(--color-muted)] col-span-full text-center">
+        <p className="text-gray-400 col-span-full text-center">
           No connection requests.
         </p>
       )}

@@ -35,17 +35,17 @@ const CallButton = ({ userId, userName, userAvatar, callType = "audio", classNam
       disabled={callActive || callStatus !== "idle"}
       className={`p-2 md:p-3 rounded-full transition-all ${
         callActive || callStatus !== "idle"
-          ? "bg-[var(--color-secondary)]/60 cursor-not-allowed opacity-50"
+          ? "bg-gray-600 cursor-not-allowed opacity-50"
           : callType === "video"
-          ? "bg-[var(--color-secondary)] hover:bg-[var(--color-highlight)] hover:scale-110"
-          : "bg-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:scale-110"
+          ? "bg-blue-600 hover:bg-blue-700 hover:scale-110"
+          : "bg-green-600 hover:bg-green-700 hover:scale-110"
       } ${className}`}
       title={callType === "video" ? "Video Call" : "Voice Call"}
     >
       {callType === "video" ? (
-        <Video className="w-5 h-5 text-[var(--color-text)]" />
+        <Video className="w-5 h-5 text-white" />
       ) : (
-        <Phone className="w-5 h-5 text-[var(--color-text)]" />
+        <Phone className="w-5 h-5 text-white" />
       )}
     </button>
   );

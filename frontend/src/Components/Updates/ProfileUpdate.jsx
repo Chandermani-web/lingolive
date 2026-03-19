@@ -329,24 +329,24 @@ const ProfileUpdate = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Loader className="w-12 h-12 text-[var(--color-muted)] animate-spin mx-auto mb-4" />
+          <Loader className="w-12 h-12 text-gray-500 animate-spin mx-auto mb-4" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)] text-[var(--color-text)] relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black text-white relative overflow-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-20 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-32 right-32 w-96 h-96 bg-[var(--color-secondary)]/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-32 right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <div className="max-w-6xl mx-auto p-2 md:p-6 relative z-10">
         {/* Cover Photo */}
-        <div className="relative h-80 md:rounded-3xl mb-8 overflow-hidden border border-[var(--color-secondary)]/50 shadow-2xl">
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-highlight)]/20 to-[var(--color-highlight)]/20"></div>
+        <div className="relative h-80 md:rounded-3xl mb-8 overflow-hidden border border-gray-700/50 shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20"></div>
           {user.coverPic && (
             <img
               src={user.coverPic}
@@ -355,7 +355,7 @@ const ProfileUpdate = () => {
               onClick={()=>setShowImage(user.coverPic)}
             />
           )}
-          <label className={`absolute top-6 right-6 bg-[var(--color-primary)]/50 backdrop-blur-sm p-3 rounded-2xl cursor-pointer hover:bg-[var(--color-primary)]/70 transition-all duration-300 transform hover:scale-105 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+          <label className={`absolute top-6 right-6 bg-black/50 backdrop-blur-sm p-3 rounded-2xl cursor-pointer hover:bg-black/70 transition-all duration-300 transform hover:scale-105 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
             <Camera className="w-6 h-6" />
             <input
               type="file"
@@ -365,8 +365,8 @@ const ProfileUpdate = () => {
               disabled={uploading}
             />
             {uploading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-primary)]/50 rounded-2xl">
-                <div className="w-4 h-4 border-2 border-[var(--color-secondary)]/40 border-t-white rounded-full animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-2xl">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               </div>
             )}
           </label>
@@ -375,8 +375,8 @@ const ProfileUpdate = () => {
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-start md:items-end gap-8 mb-12 -mt-20 md:-mt-24 relative z-20">
           <div className="relative">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] p-1.5 shadow-2xl">
-              <div className="w-full h-full rounded-2xl bg-[var(--color-secondary)] flex items-center justify-center overflow-hidden">
+            <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-r from-blue-500 to-purple-600 p-1.5 shadow-2xl">
+              <div className="w-full h-full rounded-2xl bg-gray-800 flex items-center justify-center overflow-hidden">
                 {user.profilePic ? (
                   <img
                     src={user.profilePic || "/defaultProfile.png"}
@@ -385,12 +385,12 @@ const ProfileUpdate = () => {
                     onClick={()=>setShowImage(user.profilePic)}
                   />
                 ) : (
-                  <User className="w-16 h-16 text-[var(--color-muted)]" />
+                  <User className="w-16 h-16 text-gray-400" />
                 )}
               </div>
             </div>
-            <label className={`absolute -bottom-2 -right-2 bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] p-3 rounded-2xl cursor-pointer hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] transition-all duration-300 transform hover:scale-105 shadow-lg ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
-              <Camera className="w-4 h-4 text-[var(--color-text)]" />
+            <label className={`absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-2xl cursor-pointer hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              <Camera className="w-4 h-4 text-white" />
               <input
                 type="file"
                 accept="image/*"
@@ -400,45 +400,45 @@ const ProfileUpdate = () => {
               />
             </label>
             {user.isVerified && (
-              <div className="absolute -top-2 -right-2 bg-[var(--color-secondary)] text-[var(--color-text)] px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+              <div className="absolute -top-2 -right-2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
                 ✓ Verified
               </div>
             )}
           </div>
 
-          <div className="flex-1 bg-[var(--color-secondary)]/40 backdrop-blur-xl rounded-3xl p-8 border border-[var(--color-secondary)]/50 shadow-xl">
+          <div className="flex-1 bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-4 mb-3">
-                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[var(--color-text)] to-[var(--color-muted)] bg-clip-text text-transparent">
+                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                     {user.fullname || user.username || "Anonymous User"}
                   </h1>
                 </div>
-                <p className="text-[var(--color-muted)] text-lg mb-4">@{user.username || "username"}</p>
-                {user.bio && <p className="text-[var(--color-muted)] text-lg leading-relaxed mb-6">{user.bio}</p>}
+                <p className="text-gray-400 text-lg mb-4">@{user.username || "username"}</p>
+                {user.bio && <p className="text-gray-300 text-lg leading-relaxed mb-6">{user.bio}</p>}
 
                 <div className="flex flex-wrap gap-6 text-sm">
                   {user.location && (
-                    <div className="flex items-center gap-2 text-[var(--color-muted)] bg-[var(--color-secondary)]/50 px-4 py-2 rounded-xl border border-[var(--color-secondary)]/50">
+                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
                       <MapPin className="w-4 h-4" />
                       {user.location}
                     </div>
                   )}
                   {user.website && (
-                    <div className="flex items-center gap-2 text-[var(--color-muted)] bg-[var(--color-secondary)]/50 px-4 py-2 rounded-xl border border-[var(--color-secondary)]/50">
+                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
                       <Globe className="w-4 h-4" />
                       <a
                         href={user.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:text-[var(--color-highlight)] transition-colors"
+                        className="hover:text-blue-400 transition-colors"
                       >
                         Website
                       </a>
                     </div>
                   )}
                   {user.dateOfBirth && (
-                    <div className="flex items-center gap-2 text-[var(--color-muted)] bg-[var(--color-secondary)]/50 px-4 py-2 rounded-xl border border-[var(--color-secondary)]/50">
+                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
                       <Calendar className="w-4 h-4" />
                       {new Date(user.dateOfBirth).toLocaleDateString()}
                     </div>
@@ -448,7 +448,7 @@ const ProfileUpdate = () => {
 
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] px-6 py-3 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-6 py-3 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 <Edit3 className="w-5 h-5" />
                 {isEditing ? "Cancel" : "Edit Profile"}
@@ -460,21 +460,21 @@ const ProfileUpdate = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {[
-            { label: "Posts", value: user.posts?.length || 0, icon: BarChart3, color: "from-[var(--color-secondary)] to-[var(--color-accent)]" },
-            { label: "Friends", value: user.friends?.length || 0, icon: Users, color: "from-[var(--color-accent)] to-emerald-500" },
-            { label: "Followers", value: user.followers?.length || 0, icon: Heart, color: "from-[var(--color-highlight)] to-pink-500" },
-            { label: "Following", value: user.following?.length || 0, icon: User, color: "from-[var(--color-secondary)] to-red-500" }
+            { label: "Posts", value: user.posts?.length || 0, icon: BarChart3, color: "from-blue-500 to-cyan-500" },
+            { label: "Friends", value: user.friends?.length || 0, icon: Users, color: "from-green-500 to-emerald-500" },
+            { label: "Followers", value: user.followers?.length || 0, icon: Heart, color: "from-purple-500 to-pink-500" },
+            { label: "Following", value: user.following?.length || 0, icon: User, color: "from-orange-500 to-red-500" }
           ].map((stat, index) => (
-            <div key={index} className="bg-[var(--color-secondary)]/40 backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-secondary)]/50 shadow-xl hover:shadow-2xl transition-all duration-300">
+            <div key={index} className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div>
                   <div className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
                     {stat.value}
                   </div>
-                  <div className="text-[var(--color-muted)] text-sm mt-1">{stat.label}</div>
+                  <div className="text-gray-400 text-sm mt-1">{stat.label}</div>
                 </div>
                 <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center shadow-lg`}>
-                  <stat.icon className="w-6 h-6 text-[var(--color-text)]" />
+                  <stat.icon className="w-6 h-6 text-white" />
                 </div>
               </div>
             </div>
@@ -483,12 +483,12 @@ const ProfileUpdate = () => {
 
         {/* Edit Form */}
         {isEditing && (
-          <div className="bg-[var(--color-secondary)]/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-[var(--color-secondary)]/50 shadow-2xl mb-12">
+          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-2xl mb-12">
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] rounded-2xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-[var(--color-text)]" />
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-[var(--color-text)] to-[var(--color-muted)] bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 Edit Your Profile
               </h2>
             </div>
@@ -497,7 +497,7 @@ const ProfileUpdate = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-[var(--color-muted)]">
+                    <label className="block text-sm font-semibold mb-3 text-gray-300">
                       Full Name
                     </label>
                     <input
@@ -505,12 +505,12 @@ const ProfileUpdate = () => {
                       name="fullname"
                       value={formData.fullname}
                       onChange={handleInputChange}
-                      className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300"
+                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                       placeholder="Enter your full name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-[var(--color-muted)]">
+                    <label className="block text-sm font-semibold mb-3 text-gray-300">
                       Username
                     </label>
                     <input
@@ -518,12 +518,12 @@ const ProfileUpdate = () => {
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300"
+                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                       placeholder="Choose a username"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-[var(--color-muted)]">
+                    <label className="block text-sm font-semibold mb-3 text-gray-300">
                       Bio
                     </label>
                     <textarea
@@ -532,10 +532,10 @@ const ProfileUpdate = () => {
                       onChange={handleInputChange}
                       rows={4}
                       maxLength={500}
-                      className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300 resize-none"
+                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
                       placeholder="Tell us about yourself..."
                     />
-                    <div className="text-sm text-[var(--color-muted)] mt-2 text-right">
+                    <div className="text-sm text-gray-400 mt-2 text-right">
                       {formData.bio.length}/500
                     </div>
                   </div>
@@ -544,7 +544,7 @@ const ProfileUpdate = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold mb-3 text-[var(--color-muted)]">
+                      <label className="block text-sm font-semibold mb-3 text-gray-300">
                         Location
                       </label>
                       <input
@@ -552,12 +552,12 @@ const ProfileUpdate = () => {
                         name="location"
                         value={formData.location}
                         onChange={handleInputChange}
-                        className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300"
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                         placeholder="Your city"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold mb-3 text-[var(--color-muted)]">
+                      <label className="block text-sm font-semibold mb-3 text-gray-300">
                         Website
                       </label>
                       <input
@@ -565,7 +565,7 @@ const ProfileUpdate = () => {
                         name="website"
                         value={formData.website}
                         onChange={handleInputChange}
-                        className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300"
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                         placeholder="https://example.com"
                       />
                     </div>
@@ -573,7 +573,7 @@ const ProfileUpdate = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold mb-3 text-[var(--color-muted)]">
+                      <label className="block text-sm font-semibold mb-3 text-gray-300">
                         Phone
                       </label>
                       <input
@@ -581,12 +581,12 @@ const ProfileUpdate = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300"
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                         placeholder="+1 (555) 000-0000"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold mb-3 text-[var(--color-muted)]">
+                      <label className="block text-sm font-semibold mb-3 text-gray-300">
                         Date of Birth
                       </label>
                       <input
@@ -594,13 +594,13 @@ const ProfileUpdate = () => {
                         name="dateOfBirth"
                         value={formData.dateOfBirth}
                         onChange={handleInputChange}
-                        className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300"
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-[var(--color-muted)]">
+                    <label className="block text-sm font-semibold mb-3 text-gray-300">
                       Interests (comma-separated)
                     </label>
                     <input
@@ -608,7 +608,7 @@ const ProfileUpdate = () => {
                       name="interests"
                       value={formData.interests}
                       onChange={handleInputChange}
-                      className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300"
+                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
                       placeholder="Technology, Music, Travel, Art..."
                     />
                   </div>
@@ -616,13 +616,13 @@ const ProfileUpdate = () => {
               </div>
 
               {/* Social Links */}
-              <div className="bg-[var(--color-secondary)]/30 rounded-2xl p-6 border border-[var(--color-secondary)]/30">
-                <h3 className="text-lg font-semibold mb-4 text-[var(--color-muted)]">Social Links</h3>
+              <div className="bg-gray-700/30 rounded-2xl p-6 border border-gray-600/30">
+                <h3 className="text-lg font-semibold mb-4 text-gray-300">Social Links</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
                     { name: "socialLinks.twitter", placeholder: "Twitter URL", color: "border-blue-400/50" },
                     { name: "socialLinks.instagram", placeholder: "Instagram URL", color: "border-pink-400/50" },
-                    { name: "socialLinks.linkedin", placeholder: "LinkedIn URL", color: "border-[var(--color-highlight)]/50" },
+                    { name: "socialLinks.linkedin", placeholder: "LinkedIn URL", color: "border-blue-500/50" },
                     { name: "socialLinks.github", placeholder: "GitHub URL", color: "border-gray-400/50" }
                   ].map((social, index) => (
                     <input
@@ -632,7 +632,7 @@ const ProfileUpdate = () => {
                       value={formData.socialLinks[social.name.split('.')[1]]}
                       onChange={handleInputChange}
                       placeholder={social.placeholder}
-                      className={`w-full p-4 bg-[var(--color-secondary)]/50 border ${social.color} rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300`}
+                      className={`w-full p-4 bg-gray-700/50 border ${social.color} rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300`}
                     />
                   ))}
                 </div>
@@ -642,11 +642,11 @@ const ProfileUpdate = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] disabled:opacity-50 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
                 >
                   {loading ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-[var(--color-secondary)]/40 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       Saving...
                     </>
                   ) : (
@@ -659,7 +659,7 @@ const ProfileUpdate = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="bg-[var(--color-secondary)]/50 hover:bg-[var(--color-secondary)]/50 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 border border-[var(--color-secondary)]/50"
+                  className="bg-gray-700/50 hover:bg-gray-600/50 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 border border-gray-600/50"
                 >
                   <X className="w-5 h-5" />
                   Cancel
@@ -671,21 +671,21 @@ const ProfileUpdate = () => {
 
         {/* Social Links Display */}
         {user.socialLinks && Object.values(user.socialLinks).some((link) => link) && (
-          <div className="bg-[var(--color-secondary)]/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-[var(--color-secondary)]/50 shadow-xl mb-8">
+          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl mb-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] rounded-2xl flex items-center justify-center">
-                <Link2 className="w-6 h-6 text-[var(--color-text)]" />
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center">
+                <Link2 className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-[var(--color-text)] to-[var(--color-muted)] bg-clip-text text-transparent">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent">
                 Connect With Me
               </h3>
             </div>
             <div className="flex flex-wrap gap-4">
               {[
-                { platform: 'twitter', url: user.socialLinks.twitter, color: 'bg-[var(--color-secondary)]/20 text-[var(--color-highlight)] border-[var(--color-highlight)]/30' },
-                { platform: 'instagram', url: user.socialLinks.instagram, color: 'bg-pink-500/20 text-[var(--color-highlight)] border-pink-500/30' },
-                { platform: 'linkedin', url: user.socialLinks.linkedin, color: 'bg-[var(--color-secondary)]/20 text-[var(--color-highlight)] border-blue-600/30' },
-                { platform: 'github', url: user.socialLinks.github, color: 'bg-gray-500/20 text-[var(--color-muted)] border-gray-500/30' }
+                { platform: 'twitter', url: user.socialLinks.twitter, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+                { platform: 'instagram', url: user.socialLinks.instagram, color: 'bg-pink-500/20 text-pink-400 border-pink-500/30' },
+                { platform: 'linkedin', url: user.socialLinks.linkedin, color: 'bg-blue-600/20 text-blue-500 border-blue-600/30' },
+                { platform: 'github', url: user.socialLinks.github, color: 'bg-gray-500/20 text-gray-300 border-gray-500/30' }
               ].map((social) => (
                 social.url && (
                   <a
@@ -705,12 +705,12 @@ const ProfileUpdate = () => {
 
         {/* Interests */}
         {user.interests && user.interests.length > 0 && (
-          <div className="bg-[var(--color-secondary)]/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-[var(--color-secondary)]/50 shadow-xl mb-12">
+          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl mb-12">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-[var(--color-highlight)] to-[var(--color-accent)] rounded-2xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-[var(--color-text)]" />
+              <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center">
+                <Heart className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-[var(--color-text)] to-[var(--color-muted)] bg-clip-text text-transparent">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-white to-pink-200 bg-clip-text text-transparent">
                 Interests & Passions
               </h3>
             </div>
@@ -718,7 +718,7 @@ const ProfileUpdate = () => {
               {user.interests.map((interest, index) => (
                 <span
                   key={index}
-                  className="bg-gradient-to-r from-[var(--color-highlight)] to-[var(--color-accent)] text-[var(--color-text)] px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg hover:scale-105 transition-transform duration-300"
+                  className="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg hover:scale-105 transition-transform duration-300"
                 >
                   {interest}
                 </span>
@@ -728,19 +728,19 @@ const ProfileUpdate = () => {
         )}
 
         {/* Posts Section */}
-        <div className="bg-[var(--color-secondary)]/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-[var(--color-secondary)]/50 shadow-xl">
+        <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
             <div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-[var(--color-text)] to-[var(--color-muted)] bg-clip-text text-transparent mb-2">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
                 My Posts
               </h3>
-              <p className="text-[var(--color-muted)]">
+              <p className="text-gray-400">
                 {user.posts?.length || 0} posts created
               </p>
             </div>
             <Link
               to="/create-post"
-              className="bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               <Sparkles className="w-5 h-5" />
               Create New Post
@@ -752,17 +752,17 @@ const ProfileUpdate = () => {
               user.posts.map((post) => (
                 <div
                   key={post._id}
-                  className="bg-[var(--color-secondary)]/30 backdrop-blur-xl md:rounded-2xl p-2 md:p-6 border border-[var(--color-secondary)]/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-gray-700/30 backdrop-blur-xl md:rounded-2xl p-2 md:p-6 border border-gray-600/50 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   {/* User Info */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
                       <div className="relative">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] p-0.5">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 p-0.5">
                           <img
                             src={user.profilePic || "/avatar.svg"}
                             alt="Profile"
-                            className="w-full h-full rounded-2xl object-cover bg-[var(--color-secondary)]"
+                            className="w-full h-full rounded-2xl object-cover bg-gray-800"
                             onClick={()=>setShowImage(user.profilePic)}
                           />
                         </div>
@@ -770,11 +770,11 @@ const ProfileUpdate = () => {
                       <div>
                         <Link
                           to={`/profile/${post.user._id}`}
-                          className="font-semibold text-[var(--color-text)] hover:text-[var(--color-highlight)] transition-colors"
+                          className="font-semibold text-white hover:text-blue-400 transition-colors"
                         >
                           @{user.username}
                         </Link>
-                        <p className="text-xs text-[var(--color-muted)]">
+                        <p className="text-xs text-gray-400">
                           {new Date(post.createdAt).toLocaleString()}
                         </p>
                       </div>
@@ -783,7 +783,7 @@ const ProfileUpdate = () => {
                     {/* Menu Button */}
                     <div className="relative">
                       <button
-                        className="p-2 text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-secondary)]/50 rounded-xl transition-all duration-300"
+                        className="p-2 text-gray-400 hover:text-white hover:bg-gray-600/50 rounded-xl transition-all duration-300"
                         onClick={() =>
                           setOpenMenuId(openMenuId === post._id ? null : post._id)
                         }
@@ -792,7 +792,7 @@ const ProfileUpdate = () => {
                       </button>
 
                       {openMenuId === post._id && (
-                        <div className="absolute right-0 top-12 w-48 bg-[var(--color-secondary)]/95 backdrop-blur-xl rounded-xl border border-[var(--color-secondary)]/50 shadow-2xl z-10 overflow-hidden">
+                        <div className="absolute right-0 top-12 w-48 bg-gray-800/95 backdrop-blur-xl rounded-xl border border-gray-700/50 shadow-2xl z-10 overflow-hidden">
                           <button
                             onClick={() =>
                               handleEdit(
@@ -802,7 +802,7 @@ const ProfileUpdate = () => {
                                 post.video
                               )
                             }
-                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-[var(--color-secondary)]/50 text-[var(--color-text)] transition-colors"
+                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
                           >
                             <Edit3 className="w-4 h-4" />
                             Edit Post
@@ -816,14 +816,14 @@ const ProfileUpdate = () => {
                           </button>
                           <button
                             onClick={() => handleShare(post._id)}
-                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-[var(--color-secondary)]/50 text-[var(--color-text)] transition-colors"
+                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
                           >
                             <Share className="w-4 h-4" />
                             Share
                           </button>
                           <button
                             onClick={() => handleSave(post._id)}
-                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-[var(--color-secondary)]/50 text-[var(--color-text)] transition-colors"
+                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
                           >
                             <Bookmark className="w-4 h-4" />
                             Save
@@ -835,9 +835,9 @@ const ProfileUpdate = () => {
 
                   {/* Editing Interface */}
                   {editOn && editPostId === post._id ? (
-                    <div className="bg-[var(--color-secondary)]/50 rounded-2xl p-2 md:p-6 space-y-4 border border-[var(--color-secondary)]/50">
+                    <div className="bg-gray-800/50 rounded-2xl p-2 md:p-6 space-y-4 border border-gray-600/50">
                       <textarea
-                        className="w-full p-4 bg-[var(--color-secondary)]/50 border border-[var(--color-secondary)]/50 rounded-2xl text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-highlight)]/50 focus:border-transparent transition-all duration-300 resize-none"
+                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
                         value={editdata.content}
                         onChange={(e) =>
                           seteditdata({ ...editdata, content: e.target.value })
@@ -852,13 +852,13 @@ const ProfileUpdate = () => {
                           <img
                             src={editdata.image}
                             alt="Preview"
-                            className="w-full max-h-96 object-contain rounded-2xl border border-[var(--color-secondary)]/50"
+                            className="w-full max-h-96 object-contain rounded-2xl border border-gray-600/50"
                           />
                           <button
                             onClick={() =>
                               seteditdata({ ...editdata, image: "" })
                             }
-                            className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-[var(--color-text)] rounded-full p-2 transition-all duration-300 transform hover:scale-110"
+                            className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-all duration-300 transform hover:scale-110"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -870,13 +870,13 @@ const ProfileUpdate = () => {
                           <video
                             src={editdata.video}
                             controls
-                            className="w-full max-h-96 rounded-2xl border border-[var(--color-secondary)]/50"
+                            className="w-full max-h-96 rounded-2xl border border-gray-600/50"
                           />
                           <button
                             onClick={() =>
                               seteditdata({ ...editdata, video: "" })
                             }
-                            className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-[var(--color-text)] rounded-full p-2 transition-all duration-300 transform hover:scale-110"
+                            className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-all duration-300 transform hover:scale-110"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -885,9 +885,9 @@ const ProfileUpdate = () => {
 
                       {/* Upload Buttons */}
                       <div className="flex items-center gap-4">
-                        <label className="cursor-pointer bg-[var(--color-secondary)]/75 hover:bg-[var(--color-secondary)]/60 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105">
-                          <Camera className="w-5 h-5 text-[var(--color-highlight)]" />
-                          <span className="text-sm ml-2 text-[var(--color-muted)]">Add Image</span>
+                        <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105">
+                          <Camera className="w-5 h-5 text-blue-400" />
+                          <span className="text-sm ml-2 text-gray-300">Add Image</span>
                           <input
                             type="file"
                             accept="image/*"
@@ -896,9 +896,9 @@ const ProfileUpdate = () => {
                           />
                         </label>
 
-                        <label className="cursor-pointer bg-[var(--color-secondary)]/75 hover:bg-[var(--color-secondary)]/60 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105">
-                          <Download className="w-5 h-5 text-[var(--color-highlight)]" />
-                          <span className="text-sm ml-2 text-[var(--color-muted)]">Add Video</span>
+                        <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105">
+                          <Download className="w-5 h-5 text-pink-400" />
+                          <span className="text-sm ml-2 text-gray-300">Add Video</span>
                           <input
                             type="file"
                             accept="video/*"
@@ -912,7 +912,7 @@ const ProfileUpdate = () => {
                       <div className="flex gap-4 pt-4">
                         <button
                           onClick={handleSaveEdit}
-                          className="bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] px-6 py-3 rounded-2xl text-[var(--color-text)] font-semibold transition-all duration-300 transform hover:scale-105"
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-6 py-3 rounded-2xl text-white font-semibold transition-all duration-300 transform hover:scale-105"
                         >
                           Save Changes
                         </button>
@@ -922,7 +922,7 @@ const ProfileUpdate = () => {
                             setEditPostId(null);
                             seteditdata({ content: "", image: "", video: "" });
                           }}
-                          className="bg-[var(--color-secondary)]/60 hover:bg-[var(--color-secondary)]/75 px-6 py-3 rounded-2xl text-[var(--color-text)] font-semibold transition-all duration-300 transform hover:scale-105"
+                          className="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-2xl text-white font-semibold transition-all duration-300 transform hover:scale-105"
                         >
                           Cancel
                         </button>
@@ -933,7 +933,7 @@ const ProfileUpdate = () => {
                       {/* Post Content */}
                       <div className="mb-4">
                         <p
-                          className={`text-[var(--color-text)] leading-relaxed ${
+                          className={`text-gray-200 leading-relaxed ${
                             expandedPostId === post._id ? "" : "line-clamp-3"
                           }`}
                         >
@@ -941,7 +941,7 @@ const ProfileUpdate = () => {
                         </p>
                         {post.content.length > 150 && (
                           <button
-                            className="text-[var(--color-highlight)] hover:text-[var(--color-highlight)] font-medium text-sm mt-2 transition-colors"
+                            className="text-blue-400 hover:text-blue-300 font-medium text-sm mt-2 transition-colors"
                             onClick={() =>
                               setExpandedPostId(
                                 expandedPostId === post._id ? null : post._id
@@ -955,7 +955,7 @@ const ProfileUpdate = () => {
 
                       {/* Media */}
                       {post.image && (
-                        <div className="mb-4 rounded-2xl overflow-hidden border border-[var(--color-secondary)]/50">
+                        <div className="mb-4 rounded-2xl overflow-hidden border border-gray-600/50">
                           <img
                             src={post.image}
                             alt="Post"
@@ -966,7 +966,7 @@ const ProfileUpdate = () => {
                       )}
 
                       {post.video && (
-                        <div className="mb-4 rounded-2xl overflow-hidden border border-[var(--color-secondary)]/50">
+                        <div className="mb-4 rounded-2xl overflow-hidden border border-gray-600/50">
                           <video
                             src={post.video}
                             controls
@@ -976,7 +976,7 @@ const ProfileUpdate = () => {
                       )}
 
                       {/* Actions */}
-                      <div className="flex items-center justify-between pt-4 border-t border-[var(--color-secondary)]/50">
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-600/50">
                         <div className="flex items-center space-x-6">
                           <button
                             className="flex items-center space-x-2 group transition-all duration-300"
@@ -985,12 +985,12 @@ const ProfileUpdate = () => {
                             <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${
                               post.likes?.includes(user._id) 
                                 ? "bg-red-500/20 text-red-400" 
-                                : "bg-[var(--color-secondary)]/50 text-[var(--color-muted)] group-hover:bg-red-500/20 group-hover:text-red-400"
+                                : "bg-gray-600/50 text-gray-400 group-hover:bg-red-500/20 group-hover:text-red-400"
                             }`}>
                               <ThumbsUp className="w-5 h-5" />
                             </div>
                             <span className={`font-medium ${
-                              post.likes?.includes(user._id) ? "text-red-400" : "text-[var(--color-muted)]"
+                              post.likes?.includes(user._id) ? "text-red-400" : "text-gray-400"
                             }`}>
                               {post.likes?.length || 0}
                             </span>
@@ -1005,10 +1005,10 @@ const ProfileUpdate = () => {
                               setCommentIdForFetching(post._id);
                             }}
                           >
-                            <div className="p-2 rounded-xl bg-[var(--color-secondary)]/50 text-[var(--color-muted)] group-hover:bg-[var(--color-secondary)]/20 group-hover:text-[var(--color-highlight)] transition-all duration-300 group-hover:scale-110">
+                            <div className="p-2 rounded-xl bg-gray-600/50 text-gray-400 group-hover:bg-blue-500/20 group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110">
                               <MessageCircle className="w-5 h-5" />
                             </div>
-                            <span className="text-[var(--color-muted)] font-medium group-hover:text-[var(--color-highlight)] transition-colors">
+                            <span className="text-gray-400 font-medium group-hover:text-blue-400 transition-colors">
                               {post.comments?.length || 0}
                             </span>
                           </button>
@@ -1017,7 +1017,7 @@ const ProfileUpdate = () => {
 
                       {/* Comment Section */}
                       {openCommentBoxId === post._id && (
-                        <div className="mt-6 pt-6 border-t border-[var(--color-secondary)]/50">
+                        <div className="mt-6 pt-6 border-t border-gray-600/50">
                           <Comment id={post._id} />
                         </div>
                       )}
@@ -1026,13 +1026,13 @@ const ProfileUpdate = () => {
                 </div>
               ))
             ) : (
-              <div className="text-center py-16 bg-[var(--color-secondary)]/30 rounded-2xl border border-[var(--color-secondary)]/50">
-                <MessageSquare className="w-16 h-16 text-[var(--color-muted)] mx-auto mb-4" />
-                <h4 className="text-xl font-semibold text-[var(--color-muted)] mb-2">No posts yet</h4>
-                <p className="text-[var(--color-muted)] mb-6">Start sharing your thoughts with the world!</p>
+              <div className="text-center py-16 bg-gray-700/30 rounded-2xl border border-gray-600/50">
+                <MessageSquare className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                <h4 className="text-xl font-semibold text-gray-400 mb-2">No posts yet</h4>
+                <p className="text-gray-500 mb-6">Start sharing your thoughts with the world!</p>
                 <Link
                   to="/create-post"
-                  className="bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-highlight)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] px-8 py-4 rounded-2xl inline-flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-4 rounded-2xl inline-flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
                 >
                   <Sparkles className="w-5 h-5" />
                   Create Your First Post
@@ -1046,7 +1046,7 @@ const ProfileUpdate = () => {
       <ToastContainer 
         position="top-right"
         theme="dark"
-        toastClassName="bg-[var(--color-secondary)]/95 backdrop-blur-xl border border-[var(--color-secondary)]/50"
+        toastClassName="bg-gray-800/95 backdrop-blur-xl border border-gray-700/50"
       />
     </div>
   );

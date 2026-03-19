@@ -80,13 +80,13 @@ const User_Profile = () => {
     }
   }, []);
 
-  if (loading) return <div className="bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)] min-h-screen text-[var(--color-text)]"> Loading...</div>;
+  if (loading) return <div className="bg-gradient-to-br from-gray-900 via-gray-950 to-black min-h-screen text-gray-100"> Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-[var(--color-primary)] text-[var(--color-text)]">
+    <div className="min-h-screen bg-gray-900 text-white">
       <div className="max-w-full mx-auto p-6 ">
         {/* Cover Photo */}
-        <div className="relative h-64 bg-gradient-to-r from-[var(--color-highlight)] to-[var(--color-highlight)] rounded-lg mb-6">
+        <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg mb-6">
           {user.coverPic && (
             <img
               src={user.coverPic}
@@ -100,7 +100,7 @@ const User_Profile = () => {
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-start md:items-end gap-6 mb-8">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-[var(--color-secondary)]/75 flex items-center justify-center overflow-hidden">
+            <div className="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
               {user.profilePic ? (
                 <img
                   src={
@@ -111,7 +111,7 @@ const User_Profile = () => {
                   onClick={()=>setShowImage(user.profilePic || "/defaultProfile.png")}
                 />
               ) : (
-                <User className="w-16 h-16 text-[var(--color-muted)]" />
+                <User className="w-16 h-16 text-gray-400" />
               )}
             </div>
           </div>
@@ -122,15 +122,15 @@ const User_Profile = () => {
                 {user.fullname || user.username || "Anonymous User"}
               </h1>
               {user.isVerified && (
-                <div className="bg-[var(--color-secondary)] text-[var(--color-text)] px-2 py-1 rounded-full text-xs font-semibold">
+                <div className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
                   Verified
                 </div>
               )}
             </div>
-            <p className="text-[var(--color-muted)] mb-2">@{user.username || "username"}</p>
-            {user.bio && <p className="text-[var(--color-muted)] mb-4">{user.bio}</p>}
+            <p className="text-gray-400 mb-2">@{user.username || "username"}</p>
+            {user.bio && <p className="text-gray-300 mb-4">{user.bio}</p>}
 
-            <div className="flex flex-wrap gap-4 text-sm text-[var(--color-muted)]">
+            <div className="flex flex-wrap gap-4 text-sm text-gray-400">
               {user.location && (
                 <div className="flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
@@ -144,7 +144,7 @@ const User_Profile = () => {
                     href={user.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-[var(--color-highlight)]"
+                    className="hover:text-blue-400"
                   >
                     {user.website}
                   </a>
@@ -162,34 +162,34 @@ const User_Profile = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-4 gap-2 mb-8">
-          <div className="bg-[var(--color-secondary)]/60 p-4 rounded-lg text-center text-[var(--color-text)]">
+          <div className="bg-gray-600 p-4 rounded-lg text-center text-white">
             <div className="text-2xl font-bold">{user.posts?.length || 0}</div>
-            <div className="text-[var(--color-muted)]">Posts</div>
+            <div className="text-blue-200">Posts</div>
           </div>
-          <div className="bg-[var(--color-accent)] p-4 rounded-lg text-center text-[var(--color-text)]">
+          <div className="bg-green-600 p-4 rounded-lg text-center text-white">
             <div className="text-2xl font-bold">
               {user.friends?.length || 0}
             </div>
-            <div className="text-[var(--color-muted)]">Friends</div>
+            <div className="text-green-200">Friends</div>
           </div>
-          <div className="bg-[var(--color-secondary)] p-3 rounded-lg text-center text-[var(--color-text)]">
+          <div className="bg-blue-600 p-3 rounded-lg text-center text-white">
             <div className="text-2xl font-bold">
               {user.followers?.length || 0}
             </div>
-            <div className="text-[var(--color-text)]">Followers</div>
+            <div className="text-purple-200">Followers</div>
           </div>
-          <div className="bg-violet-600 p-3 rounded-lg text-center text-[var(--color-text)]">
+          <div className="bg-violet-600 p-3 rounded-lg text-center text-white">
             <div className="text-2xl font-bold">
               {user.following?.length || 0}
             </div>
-            <div className="text-[var(--color-muted)]">Following</div>
+            <div className="text-red-200">Following</div>
           </div>
         </div>
 
         {/* Social Links Display */}
         {user.socialLinks &&
           Object.values(user.socialLinks).some((link) => link) && (
-            <div className="bg-[var(--color-secondary)] p-6 rounded-lg mt-6">
+            <div className="bg-gray-800 p-6 rounded-lg mt-6">
               <h3 className="text-lg font-semibold mb-4">Social Links</h3>
               <div className="flex flex-wrap gap-4">
                 {user.socialLinks.twitter && (
@@ -197,7 +197,7 @@ const User_Profile = () => {
                     href={user.socialLinks.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[var(--color-highlight)] hover:text-[var(--color-highlight)] flex items-center gap-2"
+                    className="text-blue-400 hover:text-blue-300 flex items-center gap-2"
                   >
                     <span>Twitter</span>
                   </a>
@@ -207,7 +207,7 @@ const User_Profile = () => {
                     href={user.socialLinks.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[var(--color-highlight)] hover:text-pink-300 flex items-center gap-2"
+                    className="text-pink-400 hover:text-pink-300 flex items-center gap-2"
                   >
                     <span>Instagram</span>
                   </a>
@@ -217,7 +217,7 @@ const User_Profile = () => {
                     href={user.socialLinks.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[var(--color-highlight)] hover:text-[var(--color-highlight)] flex items-center gap-2"
+                    className="text-blue-600 hover:text-blue-500 flex items-center gap-2"
                   >
                     <span>LinkedIn</span>
                   </a>
@@ -227,7 +227,7 @@ const User_Profile = () => {
                     href={user.socialLinks.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[var(--color-muted)] hover:text-[var(--color-muted)] flex items-center gap-2"
+                    className="text-gray-400 hover:text-gray-300 flex items-center gap-2"
                   >
                     <span>GitHub</span>
                   </a>
@@ -238,13 +238,13 @@ const User_Profile = () => {
 
         {/* Interests */}
         {user.interests && user.interests.length > 0 && (
-          <div className="bg-[var(--color-secondary)] p-6 rounded-lg mt-6">
+          <div className="bg-gray-800 p-6 rounded-lg mt-6">
             <h3 className="text-lg font-semibold mb-4">Interests</h3>
             <div className="flex flex-wrap gap-2">
               {user.interests.map((interest, index) => (
                 <span
                   key={index}
-                  className="bg-[var(--color-secondary)] text-[var(--color-text)] px-3 py-1 rounded-full text-sm"
+                  className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm"
                 >
                   {interest}
                 </span>
@@ -254,7 +254,7 @@ const User_Profile = () => {
         )}
 
         <div className="flex items-center justify-between mt-12 mb-6">
-          <h3 className="text-2xl text-[var(--color-text)] font-semibold">Recent Posts</h3>
+          <h3 className="text-2xl text-gray-200 font-semibold">Recent Posts</h3>
         </div>
 
         {posts
@@ -262,7 +262,7 @@ const User_Profile = () => {
           .map((post) => (
             <div
               key={post._id}
-              className="bg-[var(--color-secondary)] rounded-2xl shadow-lg p-4 space-y-3 max-w-4xl mb-6 mx-auto"
+              className="bg-gray-800 rounded-2xl shadow-lg p-4 space-y-3 max-w-4xl mb-6 mx-auto"
             >
               {/* User Info */}
               <div className="flex items-center space-x-3">
@@ -278,14 +278,14 @@ const User_Profile = () => {
                   >
                     @{post.user.username}
                   </Link>
-                  <p className="text-xs text-[var(--color-muted)]">
+                  <p className="text-xs text-gray-400">
                     {new Date(post.createdAt).toLocaleString()}
                   </p>
                 </div>
               </div>
 
               {/* Post Content */}
-              <p className="text-[var(--color-text)]">{post.content}</p>
+              <p className="text-gray-200">{post.content}</p>
 
               {post.image && (
                 <img
@@ -304,7 +304,7 @@ const User_Profile = () => {
               )}
 
               {/* Actions */}
-              <div className="flex space-x-6 text-[var(--color-muted)] mt-2">
+              <div className="flex space-x-6 text-gray-400 mt-2">
                 <button
                   className="flex items-center space-x-1 hover:text-red-400 transition-colors"
                   onClick={() => handleLike(post._id)}
@@ -318,7 +318,7 @@ const User_Profile = () => {
                 </button>
 
                 <button
-                  className="flex items-center space-x-1 hover:text-[var(--color-highlight)] transition-colors"
+                  className="flex items-center space-x-1 hover:text-blue-400 transition-colors"
                   onClick={() => {
                     setOpenCommentBoxId(
                       openCommentBoxId === post._id ? null : post._id

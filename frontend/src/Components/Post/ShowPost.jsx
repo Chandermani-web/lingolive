@@ -95,14 +95,14 @@ const ShowPost = () => {
 
   if (!posts) {
     return (
-      <div className="flex justify-center items-center h-screen text-[var(--color-text)]">
+      <div className="flex justify-center items-center h-screen text-white">
         <p>Please log in to view posts.</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto text-[var(--color-text)] mt-5">
+    <div className="max-w-5xl mx-auto text-white mt-5">
       {posts?.length > 0 ? (
         <div className="md:space-y-6 space-y-2">
           {posts.map((post) => (
@@ -125,7 +125,7 @@ const ShowPost = () => {
                   >
                     @{post.user.username}
                   </Link>
-                  <p className="text-xs text-[var(--color-muted)]">
+                  <p className="text-xs text-gray-400">
                     {new Date(post.createdAt).toLocaleString()}
                   </p>
                 </div>
@@ -133,7 +133,7 @@ const ShowPost = () => {
 
               {/* Post Content */}
               <p
-                className={`text-[var(--color-text)] ${
+                className={`text-gray-200 ${
                   expandedPostId === post._id ? "" : "line-clamp-3"
                 }`}
               >
@@ -141,7 +141,7 @@ const ShowPost = () => {
                 {post.content}
               </p>
               <button
-                className="text-[var(--color-highlight)] hover:underline"
+                className="text-blue-400 hover:underline"
                 onClick={() =>
                   setExpandedPostId(
                     expandedPostId === post._id ? null : post._id
@@ -173,15 +173,15 @@ const ShowPost = () => {
               )}
 
               {/* Actions */}
-              <div className="flex space-x-6 text-[var(--color-muted)] mt-2">
+              <div className="flex space-x-6 text-gray-400 mt-2">
                 {/* Like Button */}
                 <button
-                  className="flex items-center space-x-1 hover:text-[var(--color-highlight)] transition-colors"
+                  className="flex items-center space-x-1 hover:text-blue-400 transition-colors"
                   onClick={() => handleLike(post._id)}
                 >
                   <ThumbsUp
                     className={`w-5 h-5 ${
-                      post.likes?.includes(user?._id) ? "text-[var(--color-highlight)]" : ""
+                      post.likes?.includes(user?._id) ? "text-blue-500" : ""
                     }`}
                   />
                   <span>{post.likes?.length || 0}</span>
@@ -189,7 +189,7 @@ const ShowPost = () => {
 
                 {/* Comment Button */}
                 <button
-                  className="flex items-center space-x-1 hover:text-[var(--color-highlight)] transition-colors"
+                  className="flex items-center space-x-1 hover:text-blue-400 transition-colors"
                   onClick={() => {
                     setOpenCommentBoxId(
                       openCommentBoxId === post._id ? null : post._id
@@ -210,7 +210,7 @@ const ShowPost = () => {
           ))}
         </div>
       ) : (
-        <p className="text-center text-[var(--color-muted)]">No posts yet.</p>
+        <p className="text-center text-gray-400">No posts yet.</p>
       )}
     </div>
   );
