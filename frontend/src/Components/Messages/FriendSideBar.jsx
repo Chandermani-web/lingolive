@@ -32,9 +32,9 @@ const FriendsSidebar = ({ onSelectFriend, selectedUser }) => {
   );
 
   return (
-    <div className="w-80 bg-black/50 backdrop-blur-xl h-full overflow-y-auto border-r border-gray-700/50">
+    <div className="w-80 bg-[#050A15] backdrop-blur-xl h-full overflow-y-auto border-r border-gray-700/50">
       {/* Header */}
-      <div className="sticky top-0 z-10 p-6 border-b border-gray-700/50 bg-black/50 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 p-6 border-b border-gray-700/50 bg-[#050A15] backdrop-blur-xl">
         
         <div className="flex items-center gap-1 mb-4">
             <MessageSquare className="w-6 h-6 text-white" />
