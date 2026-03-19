@@ -82,7 +82,7 @@ const YourTotalConnection = () => {
 
               <div className="flex gap-5">
                 <button className="mt-4 bg-gradient-to-r from-blue-500 to-indigo-400 hover:from-green-600 hover:to-teal-500 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex-1" onClick={()=>{
-                  navigate(`/message/${friend._id}`)
+                  navigate(`/message/`)
                 }}>
                   Message
                 </button>
