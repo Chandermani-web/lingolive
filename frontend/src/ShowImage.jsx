@@ -9,9 +9,9 @@ const ShowImage = () => {
   return (
     <div>
       {showImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-[var(--color-primary)] bg-opacity-10 flex items-center justify-center z-50">
           <button 
-          className="absolute top-5 right-5 text-4xl pointer-cursor text-white hover:text-gray-300"
+          className="absolute top-5 right-5 text-4xl pointer-cursor text-[var(--color-text)] hover:text-[var(--color-muted)]"
           onClick={() => setShowImage(null)}>
             <i className="ri-close-line"></i>
           </button>

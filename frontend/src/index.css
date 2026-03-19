@@ -1,5 +1,82 @@
 @import 'tailwindcss';
 
+:root {
+  --color-primary: #091413;
+  --color-secondary: #285a48;
+  --color-accent: #08a71b;
+  /* User-provided highlight was #0E4CC (invalid 5-digit hex); using closest valid form. */
+  --color-highlight: #0e4ccc;
+  --color-text: #e8f3ef;
+  --color-muted: #9eb8ae;
+  --color-border: #285a48;
+  --color-surface: #133129;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+a {
+  color: var(--color-highlight);
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+button,
+[type='button'],
+[type='submit'],
+[type='reset'] {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+button:hover,
+[type='button']:hover,
+[type='submit']:hover,
+[type='reset']:hover {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+button:disabled,
+[type='button']:disabled,
+[type='submit']:disabled,
+[type='reset']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+input,
+select,
+textarea {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-muted);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-highlight);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-highlight) 30%, transparent);
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(100%);

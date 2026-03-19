@@ -54,10 +54,10 @@ const ShowNotification = () => {
 
   if (!user || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050A15]">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-primary)]">
         <div className="text-center space-y-4">
-          <Loader className="w-10 h-10 text-blue-400 animate-spin mx-auto" />
-          <p className="text-blue-300 font-light">Loading notifications...</p>
+          <Loader className="w-10 h-10 text-[var(--color-accent)] animate-spin mx-auto" />
+          <p className="text-[var(--color-muted)] font-light">Loading notifications...</p>
         </div>
       </div>
     );
@@ -65,15 +65,15 @@ const ShowNotification = () => {
 
   if (notifications.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050A15]">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-primary)]">
         <div className="text-center space-y-6">
-          <div className="w-28 h-28 bg-gradient-to-tr from-blue-600/20 to-cyan-500/10 border border-blue-400/30 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-blue-900/40">
-            <Bell className="w-14 h-14 text-blue-400 opacity-70" />
+          <div className="w-28 h-28 bg-gradient-to-tr from-[var(--color-secondary)]/30 to-[var(--color-highlight)]/20 border border-[var(--color-highlight)]/30 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-[var(--color-secondary)]/40">
+            <Bell className="w-14 h-14 text-[var(--color-highlight)] opacity-70" />
           </div>
-          <h2 className="text-3xl font-semibold bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-semibold bg-gradient-to-r from-[var(--color-highlight)] via-[var(--color-accent)] to-[var(--color-secondary)] bg-clip-text text-transparent">
             All Caught Up!
           </h2>
-          <p className="text-gray-400 max-w-sm mx-auto">
+          <p className="text-[var(--color-muted)] max-w-sm mx-auto">
             You’re all set — no new notifications right now. We’ll notify you
             when something exciting happens!
           </p>
@@ -83,16 +83,16 @@ const ShowNotification = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#050A15] text-gray-100 px-4 py-10">
+    <div className="min-h-screen bg-[var(--color-primary)] text-[var(--color-text)] px-4 py-10">
       <div className="max-w-3xl mx-auto relative">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-3 rounded-2xl shadow-lg shadow-blue-900/20">
-            <Bell className="w-6 h-6 text-blue-400 animate-bounce" />
-            <h1 className="text-2xl font-semibold bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+          <div className="inline-flex items-center gap-3 bg-[var(--color-highlight)]/5 backdrop-blur-md border border-[var(--color-secondary)]/30 px-6 py-3 rounded-2xl shadow-lg shadow-[var(--color-secondary)]/20">
+            <Bell className="w-6 h-6 text-[var(--color-accent)] animate-bounce" />
+            <h1 className="text-2xl font-semibold bg-gradient-to-r from-[var(--color-highlight)] via-[var(--color-accent)] to-[var(--color-secondary)] bg-clip-text text-transparent">
               Notifications
             </h1>
-            <span className="bg-blue-600 text-white text-sm px-2 py-1 rounded-full">
+            <span className="bg-[var(--color-secondary)] text-[var(--color-text)] text-sm px-2 py-1 rounded-full">
               {notifications.filter((u) => u.isRead === false).length}
             </span>
           </div>
@@ -104,54 +104,54 @@ const ShowNotification = () => {
             <div
               key={n._id || index}
               onClick={() => handleNotificationClick(n)}
-              className={`group flex items-start gap-4 p-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 hover:bg-gradient-to-br hover:from-blue-500/10 hover:to-purple-500/10 hover:border-blue-500/30 hover:scale-[1.02] cursor-pointer relative`}
+              className={`group flex items-start gap-4 p-5 rounded-2xl border border-[var(--color-secondary)]/30 bg-[var(--color-highlight)]/5 backdrop-blur-md transition-all duration-300 hover:bg-gradient-to-br hover:from-[var(--color-secondary)]/20 hover:to-[var(--color-highlight)]/20 hover:border-[var(--color-accent)]/40 hover:scale-[1.02] cursor-pointer relative`}
             >
               {!n.isRead && (
-                <span className="absolute -left-1 -top-1 w-5 h-5 bg-green-400 rounded-full animate-pulse"></span>
+                <span className="absolute -left-1 -top-1 w-5 h-5 bg-[var(--color-accent)] rounded-full animate-pulse"></span>
               )}
               <img
                 src={n.fromUser?.profilePic || "/avatar.svg"}
-                className="h-12 w-12 rounded-full border-2 border-blue-500/30 object-cover shadow-md"
+                className="h-12 w-12 rounded-full border-2 border-[var(--color-highlight)]/40 object-cover shadow-md"
                 alt="user"
               />
 
               <div className="flex-1 space-y-1">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-blue-300 font-medium">
+                  <h3 className="text-[var(--color-highlight)] font-medium">
                     @{n.fromUser?.username || "Unknown User"}
                   </h3>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-[var(--color-muted)]">
                     {new Date(n.createdAt).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
                   </span>
                 </div>
-                <p className="text-gray-300 text-sm leading-snug">
+                <p className="text-[var(--color-muted)] text-sm leading-snug">
                   {n.message || "No message available"}
                 </p>
 
                 {/* Like Notification */}
                 {n.type === "like" && (
-                  <div className="mt-3 flex items-center gap-3 bg-[#091530] border border-blue-500/20 rounded-xl p-2.5 relative">
-                    <ThumbsUp className="w-5 h-5 text-blue-400 absolute top-0 right-0" />
-                    <div className="mt-3 flex items-center gap-3 bg-blue-500/5 border border-blue-500/20 rounded-xl p-2.5">
+                  <div className="mt-3 flex items-center gap-3 bg-[var(--color-secondary)]/20 border border-[var(--color-highlight)]/30 rounded-xl p-2.5 relative">
+                    <ThumbsUp className="w-5 h-5 text-[var(--color-highlight)] absolute top-0 right-0" />
+                    <div className="mt-3 flex items-center gap-3 bg-[var(--color-secondary)]/20 border border-[var(--color-highlight)]/30 rounded-xl p-2.5">
                       {n.post?.image && (
                         <img
                           src={n.post.image}
-                          className="h-1/2 w-1/2 object-cover rounded-lg border border-white/10"
+                          className="h-1/2 w-1/2 object-cover rounded-lg border border-[var(--color-secondary)]/30"
                           alt="Post"
                         />
                       )}
                       {n.post?.video && (
                         <video
                           src={n.post.video}
-                          className="w-1/2 h-1/2 object-cover rounded-lg border border-white/10"
+                          className="w-1/2 h-1/2 object-cover rounded-lg border border-[var(--color-secondary)]/30"
                           alt="Post"
                           controls
                         />
                       )}
-                      <p className="text-gray-400 text-xs line-clamp-2">
+                      <p className="text-[var(--color-muted)] text-xs line-clamp-2">
                         {n.post?.content || "Post liked"}
                       </p>
                     </div>
@@ -160,15 +160,15 @@ const ShowNotification = () => {
 
                 {/* Post Notification */}
                 {n.type === "post" && (
-                  <div className="mt-3 flex items-center gap-3 bg-[#091530] border border-blue-500/20 rounded-xl p-2.5">
+                  <div className="mt-3 flex items-center gap-3 bg-[var(--color-secondary)]/20 border border-[var(--color-highlight)]/30 rounded-xl p-2.5">
                     {n.post?.image && (
                       <img
                         src={n.post.image}
-                        className="h-12 w-12 object-cover rounded-lg border border-white/10"
+                        className="h-12 w-12 object-cover rounded-lg border border-[var(--color-secondary)]/30"
                         alt="Post"
                       />
                     )}
-                    <p className="text-gray-400 text-xs line-clamp-2">
+                    <p className="text-[var(--color-muted)] text-xs line-clamp-2">
                       {n.post?.content || "Post liked"}
                     </p>
                   </div>
@@ -176,9 +176,9 @@ const ShowNotification = () => {
 
                 {/* Friend Request */}
                 {n.type === "friend_request" && (
-                  <div className="mt-3 flex items-center gap-2 bg-[#091530] border border-green-500/20 rounded-xl p-2.5">
-                    <UserPlus className="w-5 h-5 text-green-400" />
-                    <p className="text-gray-400 text-xs">
+                  <div className="mt-3 flex items-center gap-2 bg-[var(--color-secondary)]/20 border border-[var(--color-accent)]/40 rounded-xl p-2.5">
+                    <UserPlus className="w-5 h-5 text-[var(--color-accent)]" />
+                    <p className="text-[var(--color-muted)] text-xs">
                       {n.message || "Sent you a friend request"}
                     </p>
                   </div>
@@ -186,9 +186,9 @@ const ShowNotification = () => {
 
                 {/* Message */}
                 {n.type === "message" && (
-                  <div className="mt-3 flex items-center gap-2 bg-[#091530] border border-purple-500/20 rounded-xl p-2.5">
-                    <MessageCircle className="w-5 h-5 text-purple-400" />
-                    <p className="text-gray-400 text-xs">
+                  <div className="mt-3 flex items-center gap-2 bg-[var(--color-secondary)]/20 border border-[var(--color-highlight)]/30 rounded-xl p-2.5">
+                    <MessageCircle className="w-5 h-5 text-[var(--color-highlight)]" />
+                    <p className="text-[var(--color-muted)] text-xs">
                       {n.message || "New message received"}
                     </p>
                   </div>
@@ -197,31 +197,31 @@ const ShowNotification = () => {
                 {/* Comment Notification */}
                 {n.type === "comment" && (
                   <div className="flex flex-col">
-                    <div className="mt-3 flex items-center gap-3 bg-[#091530] border border-blue-500/20 rounded-xl p-2.5">
-                      <MessageCircle className="w-5 h-5 text-blue-400" />
+                    <div className="mt-3 flex items-center gap-3 bg-[var(--color-secondary)]/20 border border-[var(--color-highlight)]/30 rounded-xl p-2.5">
+                      <MessageCircle className="w-5 h-5 text-[var(--color-highlight)]" />
                       {n.post?.image && (
                         <img
                           src={n.post.image}
-                          className="h-1/2 w-1/2 object-cover rounded-lg border border-white/10"
+                          className="h-1/2 w-1/2 object-cover rounded-lg border border-[var(--color-secondary)]/30"
                           alt="Post"
                         />
                       )}
                       {n.post?.video && (
                         <video
                           src={n.post.video}
-                          className="w-1/2 h-1/2 object-cover rounded-lg border border-white/10"
+                          className="w-1/2 h-1/2 object-cover rounded-lg border border-[var(--color-secondary)]/30"
                           alt="Post"
                           controls
                         />
                       )}
-                      <p className="text-gray-400 text-xs line-clamp-2">
+                      <p className="text-[var(--color-muted)] text-xs line-clamp-2">
                         {n.post?.content || "Post liked"}
                       </p>
                     </div>
 
-                    <div className="mt-3 flex items-center gap-2 bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-2.5">
-                      <MessageCircle className="w-5 h-5 text-yellow-400" />
-                      <p className="text-gray-400 text-xs">
+                    <div className="mt-3 flex items-center gap-2 bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-xl p-2.5">
+                      <MessageCircle className="w-5 h-5 text-[var(--color-accent)]" />
+                      <p className="text-[var(--color-muted)] text-xs">
                         {Array.isArray(n.post?.comments) &&
                         n.post.comments.length > 0
                           ? n.post.comments[n.post.comments.length - 1]?.text

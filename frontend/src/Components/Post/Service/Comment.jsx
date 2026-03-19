@@ -66,7 +66,7 @@ const Comment = ({ id }) => {
     <div className="mt-4">
       <textarea placeholder="Write a comment..." className="w-full p-2 border border-gray-300 rounded-lg"
         value={comment} onChange={(e) => setComment(e.target.value)}></textarea>
-      <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer" onClick={handleComment}>Post Comment</button>
+      <button className="mt-2 bg-[var(--color-secondary)] text-[var(--color-text)] px-4 py-2 rounded-lg cursor-pointer" onClick={handleComment}>Post Comment</button>
 
       <div className="mt-6 mx-3">
         {commentsArr.length > 0 ? commentsArr.map((cmt) => (
@@ -75,19 +75,19 @@ const Comment = ({ id }) => {
               { /* show delete only if current user owns it; implement check with context user if available */ }
               <i className="ri-more-2-fill" onClick={() => setDeleteOptionOpen(deleteOptionOpen === cmt._id ? null : cmt._id)}></i>
               <div className={`absolute right-0 border-2 border-gray-400 rounded-lg shadow-lg ${deleteOptionOpen === cmt._id ? 'block' : 'hidden'}`}>
-                <button className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-lg" onClick={() => handleDeleteComment(cmt._id)}>Delete</button>
+                <button className="w-full text-left px-4 py-2 hover:bg-[var(--color-secondary)]/75 rounded-lg" onClick={() => handleDeleteComment(cmt._id)}>Delete</button>
               </div>
             </div>
             <div className="flex items-center mb-2 space-x-2">
               <img src={cmt?.user?.profilePic} alt="" className="w-5 h-5 rounded-full" />
               <div className="leading-4">
-                <h1 className="font-semibold text-gray-300" onClick={() => navigate(`/profile/${cmt.user?._id}`)}>@{cmt.user?.username}</h1>
-                <span className="text-xs text-gray-500">{new Date(cmt.createdAt).toLocaleString()}</span>
+                <h1 className="font-semibold text-[var(--color-muted)]" onClick={() => navigate(`/profile/${cmt.user?._id}`)}>@{cmt.user?.username}</h1>
+                <span className="text-xs text-[var(--color-muted)]">{new Date(cmt.createdAt).toLocaleString()}</span>
               </div>
             </div>
             <p className="text-sm">{cmt.text}</p>
           </div>
-        )) : <p className="mt-4 text-gray-500">No comments yet.</p>}
+        )) : <p className="mt-4 text-[var(--color-muted)]">No comments yet.</p>}
       </div>
     </div>
   );

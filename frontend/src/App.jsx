@@ -30,16 +30,16 @@ const App = () => {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)]">
         <div className="text-center">
-          <Loader className="h-12 w-12 animate-spin text-blue-500 mx-auto mb-4" />
-          <p className="text-gray-400">Loading...</p>
+          <Loader className="h-12 w-12 animate-spin text-[var(--color-accent)] mx-auto mb-4" />
+          <p className="text-[var(--color-muted)]">Loading...</p>
         </div>
       </div>
     );
 
   return (
-    <div className="bg-[#050A15] min-h-screen text-gray-100">
+    <div className="bg-[var(--color-primary)] min-h-screen text-[var(--color-text)]">
       <ShowImage />
       <Navbar />
       
@@ -57,10 +57,10 @@ const App = () => {
 
       <Suspense
         fallback={
-          <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black">
+          <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)]">
             <div className="text-center">
-              <Loader className="h-12 w-12 animate-spin text-blue-500 mx-auto mb-4" />
-              <p className="text-gray-400">Loading...</p>
+              <Loader className="h-12 w-12 animate-spin text-[var(--color-accent)] mx-auto mb-4" />
+              <p className="text-[var(--color-muted)]">Loading...</p>
             </div>
           </div>
         }

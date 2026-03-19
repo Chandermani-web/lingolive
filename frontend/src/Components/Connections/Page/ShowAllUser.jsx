@@ -55,7 +55,7 @@ const ShowAllUser = () => {
     <div>
       {requests.length > 0 && (
         <>
-          <h1 className="text-white text-2xl ml-4">
+          <h1 className="text-[var(--color-text)] text-2xl ml-4">
             Receive Connection Requests
           </h1>
           <ReceiveRequestConnection />
@@ -67,7 +67,7 @@ const ShowAllUser = () => {
           displayUsers.map((u) => (
             <div
               key={u._id}
-              className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
+              className="bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-secondary)] to-[var(--color-primary)] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300"
             >
               {/* Cover Image */}
               <div className="h-28 w-full overflow-hidden">
@@ -78,7 +78,7 @@ const ShowAllUser = () => {
                 />
               </div>
 
-              <div className="p-5 text-white">
+              <div className="p-5 text-[var(--color-text)]">
                 {/* Profile Info */}
                 <div className="flex items-center space-x-4 ">
                   <img
@@ -87,7 +87,7 @@ const ShowAllUser = () => {
                     className="w-16 h-16 rounded-full border-4 border-indigo-500 object-cover -mt-10"
                   />
                   <div>
-                    <h3 className="font-bold text-lg text-white cursor-pointer hover:underline" onClick={() => navigate(`/profile/${u._id}`)}>
+                    <h3 className="font-bold text-lg text-[var(--color-text)] cursor-pointer hover:underline" onClick={() => navigate(`/profile/${u._id}`)}>
                       {u.fullname}
                     </h3>
                     <p className="text-sm text-indigo-400 cursor-pointer hover:underline" onClick={() => navigate(`/profile/${u._id}`)}>@{u.username}</p>
@@ -95,23 +95,23 @@ const ShowAllUser = () => {
                 </div>
 
                 {/* Bio */}
-                <p className="text-sm text-gray-300 mt-3 line-clamp-2">
+                <p className="text-sm text-[var(--color-muted)] mt-3 line-clamp-2">
                   {u.bio || "No bio available"}
                 </p>
 
                 {/* Email & Location */}
                 <div className="mt-3 flex items-center justify-between">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-xs text-gray-400">{u.email}</p>
+                    <p className="text-xs text-[var(--color-muted)]">{u.email}</p>
                     {u.location && (
-                      <p className="text-xs text-gray-400">📍 {u.location}</p>
+                      <p className="text-xs text-[var(--color-muted)]">📍 {u.location}</p>
                     )}
                   </div>
                 </div>
 
                 {/* Friend Button */}
                 <button
-                  className="mt-4 bg-gradient-to-r from-green-500 to-teal-400 hover:from-green-600 hover:to-teal-500 text-white py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+                  className="mt-4 bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-highlight)] hover:from-[var(--color-accent)] hover:to-[var(--color-highlight)] text-[var(--color-text)] py-2 px-4 rounded-xl w-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
                   onClick={() => handleSendFriendRequest(u._id)}
                 >
                   <i className="ri-user-add-line mr-2"></i>
@@ -121,8 +121,8 @@ const ShowAllUser = () => {
             </div>
           ))
         ) : (
-          <div className="col-span-full text-center text-gray-400">
-            <h1 className="text-white text-2xl">
+          <div className="col-span-full text-center text-[var(--color-muted)]">
+            <h1 className="text-[var(--color-text)] text-2xl">
               Suggestion For You
             </h1>
             <p className="text-center leading-10">No users available to connect.</p>
