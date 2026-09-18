@@ -1,75 +1,35 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import {
-  User,
-  MapPin,
-  Globe,
-  Calendar,
-  Camera,
-  Edit3,
-  Save,
-  X,
-  MessageCircle,
-  Loader,
-  ThumbsUp,
-  Share,
-  Download,
-  MoreHorizontal,
-  Sparkles,
-  Heart,
-  MessageSquare,
-  BarChart3,
-  Users,
-  Link2,
-  Bookmark
+  User, MapPin, Globe, Calendar, Camera, Edit3, Save, X,
+  MessageCircle, ThumbsUp, MoreHorizontal, Sparkles, Heart,
+  MessageSquare, BarChart3, Users, Link2, Trash2, Image as ImageIcon,
+  Video as VideoIcon, Share2, Bookmark
 } from "lucide-react";
 import AppContext from "../../Context/UseContext.jsx";
-import { Link } from "react-router-dom";
 import Comment from "../Post/Service/Comment.jsx";
-import "remixicon/fonts/remixicon.css";
 
 const ProfileUpdate = () => {
   const {
-    user,
-    setUser,
-    posts,
-    setPosts,
-    // fetchUser,
-    // fetchComments,
-    fetchPosts,
-    setCommentIdForFetching,
-    setShowImage
+    user, setUser, posts, setPosts, fetchPosts,
+    setCommentIdForFetching, setShowImage, BASE_URL,
   } = useContext(AppContext);
 
-  const [expandedPostId, setExpandedPostId] = useState(null)
+  const [expandedPostId, setExpandedPostId] = useState(null);
   const [openCommentBoxId, setOpenCommentBoxId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [formData, setFormData] = useState({
-    fullname: "",
-    bio: "",
-    location: "",
-    username: "",
-    website: "",
-    phone: "",
-    dateOfBirth: "",
-    interests: "",
-    socialLinks: {
-      twitter: "",
-      instagram: "",
-      linkedin: "",
-      github: "",
-    },
-  });
-
   const [openMenuId, setOpenMenuId] = useState(null);
   const [editOn, setEditOn] = useState(false);
   const [editPostId, setEditPostId] = useState(null);
-  const [editdata, seteditdata] = useState({
-    content: "",
-    video: "",
-    image: "",
+  const [editdata, seteditdata] = useState({ content: "", video: "", image: "" });
+
+  const [formData, setFormData] = useState({
+    fullname: "", bio: "", location: "", username: "",
+    website: "", phone: "", dateOfBirth: "", interests: "",
+    socialLinks: { twitter: "", instagram: "", linkedin: "", github: "" },
   });
 
   useEffect(() => {
@@ -95,147 +55,16 @@ const ProfileUpdate = () => {
     }
   }, [user]);
 
-  const handleEdit = (id, currentContent, currentImage, currentVideo) => {
-    setOpenMenuId(null);
-    setEditOn(true);
-    setEditPostId(id);
-    seteditdata({
-      content: currentContent || "",
-      image: currentImage || "",
-      video: currentVideo || "",
-    });
-  };
-
-  // Handle new image selection
-  const handleEditImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        seteditdata((prev) => ({ ...prev, image: reader.result, video: "" }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Handle new video selection
-  const handleEditVideoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        seteditdata((prev) => ({ ...prev, video: reader.result, image: "" }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Save edited post
-  const handleSaveEdit = async () => {
-    if (!editPostId) return;
-    try {
-      const res = await fetch(`https://lingolive.onrender.com/api/posts/${editPostId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(editdata),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        toast.success("Post updated successfully", {
-          autoClose: 1000,
-        });
-        const updatedPosts = posts.map((p) =>
-          p._id === editPostId ? { ...p, ...data.post } : p
-        );
-        setPosts(updatedPosts);
-        setEditOn(false);
-        setEditPostId(null);
-        fetchPosts();
-      } else {
-        toast.error(data.message || "Failed to update post");
-      }
-    } catch (err) {
-      toast.error("Error updating post: " + err.message);
-    }
-  };
-
-  // Delete post
-  const handleDelete = async (id) => {
-    try {
-      const res = await fetch(`https://lingolive.onrender.com/api/posts/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        toast.success("Post deleted successfully");
-        setPosts(posts.filter((p) => p._id !== id));
-      } else {
-        toast.error(data.message || "Failed to delete post");
-      }
-    } catch (err) {
-      toast.error("Error deleting post: " + err.message);
-    }
-  };
-
-  const handleShare = (id) => {
-    ("Share post:", id);
-  };
-
-  const handleSave = (id) => {
-    ("Save post:", id);
-  };
-
-  const handleLike = async (postId) => {
-    try {
-      const response = await fetch(
-        `https://lingolive.onrender.com/api/posts/${postId}/likeandunlike`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();
-      ("Like response:", data);
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to like post");
-      }
-
-      if (data.success) {
-        // immutably update posts
-        const updatedPosts = posts.map((post) =>
-          post._id === postId ? { ...post, likes: data.updatedLikes } : post
-        );
-        setPosts(updatedPosts);
-      }
-    } catch (err) {
-      console.error("Error liking post:", err);
-    }
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name.startsWith("socialLinks.")) {
-      const socialKey = name.split(".")[1];
-      setFormData((prev) => ({
-        ...prev,
-        socialLinks: {
-          ...prev.socialLinks,
-          [socialKey]: value,
-        },
+      const key = name.split(".")[1];
+      setFormData((p) => ({
+        ...p,
+        socialLinks: { ...p.socialLinks, [key]: value },
       }));
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      setFormData((p) => ({ ...p, [name]: value }));
     }
   };
 
@@ -247,32 +76,25 @@ const ProfileUpdate = () => {
         ...formData,
         interests: formData.interests
           .split(",")
-          .map((item) => item.trim())
-          .filter((item) => item),
+          .map((i) => i.trim())
+          .filter(Boolean),
       };
-
-      const response = await fetch(
-        "https://lingolive.onrender.com/api/auth/updateprofile",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(submitData),
-        }
-      );
-
-      const data = await response.json();
-      if (response.ok) {
+      const res = await fetch(`${BASE_URL}/api/auth/updateprofile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(submitData),
+      });
+      const data = await res.json();
+      if (res.ok) {
         setUser(data.user);
         setIsEditing(false);
-        toast.success("Profile updated successfully!");
+        toast.success("Profile updated");
       } else {
-        toast.error(data.message || "Failed to update profile");
+        toast.error(data.message || "Update failed");
       }
     } catch (error) {
-      toast.error(`Error updating profile, ${error.message}`);
+      toast.error("Error updating profile");
     } finally {
       setLoading(false);
     }
@@ -281,82 +103,143 @@ const ProfileUpdate = () => {
   const handlePhotoUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setUploading(true);
-    const formData = new FormData();
-    formData.append(type === "profile" ? "profilePic" : "coverPic", file);
-
+    const fd = new FormData();
+    fd.append(type === "profile" ? "profilePic" : "coverPic", file);
     try {
-      const response = await fetch(
-        `https://lingolive.onrender.com/api/auth/upload-${type}-pic`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        }
-      );
-
-      const data = await response.json();
-      if (response.ok) {
+      const res = await fetch(`${BASE_URL}/api/auth/upload-${type}-pic`, {
+        method: "POST",
+        credentials: "include",
+        body: fd,
+      });
+      const data = await res.json();
+      if (res.ok) {
         setUser((prev) => ({
           ...prev,
           [type === "profile" ? "profilePic" : "coverPic"]:
             data[type === "profile" ? "profilePic" : "coverPic"],
         }));
-        toast.success(
-          `${
-            type === "profile" ? "Profile" : "Cover"
-          } picture updated successfully!`
-        );
+        toast.success(`${type === "profile" ? "Profile" : "Cover"} updated`);
       } else {
-        toast.error(data.message || "Failed to upload image");
+        toast.error(data.message || "Upload failed");
       }
     } catch (error) {
-      toast.error(`Error uploading image, ${error.message}`);
+      toast.error("Upload failed");
     } finally {
       setUploading(false);
     }
   };
 
-  // useEffect(() => {
-  //   fetchComments();
-  //   if (openCommentBoxId) {
-  //     fetchUser();
-  //   }
-  // }, [openCommentBoxId]);
+  const handleEdit = (id, content, image, video) => {
+    setOpenMenuId(null);
+    setEditOn(true);
+    setEditPostId(id);
+    seteditdata({ content: content || "", image: image || "", video: video || "" });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editPostId) return;
+    try {
+      const res = await fetch(`${BASE_URL}/api/posts/${editPostId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(editdata),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("Post updated");
+        setPosts(posts.map((p) => (p._id === editPostId ? { ...p, ...data.post } : p)));
+        setEditOn(false);
+        setEditPostId(null);
+        fetchPosts();
+      } else {
+        toast.error(data.message || "Update failed");
+      }
+    } catch (err) {
+      toast.error("Error updating post");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this post?")) return;
+    try {
+      const res = await fetch(`${BASE_URL}/api/posts/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (res.ok) {
+        toast.success("Post deleted");
+        setPosts(posts.filter((p) => p._id !== id));
+      }
+    } catch (err) {
+      toast.error("Error deleting post");
+    }
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/posts/${postId}/likeandunlike`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPosts(posts.map((p) =>
+          p._id === postId ? { ...p, likes: data.updatedLikes } : p
+        ));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Loader className="w-12 h-12 text-gray-500 animate-spin mx-auto mb-4" />
-        </div>
+      <div className="min-h-screen bg-[#05070A] flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-[#18202B] border-t-[#7C3AED] rounded-full animate-spin" />
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black text-white relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-32 right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </div>
+  const stats = [
+    { label: "Posts", value: user.posts?.length || 0, color: "#22D3EE", icon: BarChart3 },
+    { label: "Friends", value: user.friends?.length || 0, color: "#10B981", icon: Users },
+    { label: "Followers", value: user.followers?.length || 0, color: "#EC4899", icon: Heart },
+    { label: "Following", value: user.following?.length || 0, color: "#F59E0B", icon: User },
+  ];
 
-      <div className="max-w-6xl mx-auto p-2 md:p-6 relative z-10">
+  const socials = [
+    { key: "twitter", label: "Twitter", color: "#22D3EE" },
+    { key: "instagram", label: "Instagram", color: "#EC4899" },
+    { key: "linkedin", label: "LinkedIn", color: "#3B82F6" },
+    { key: "github", label: "GitHub", color: "#8B5CF6" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#05070A] relative overflow-hidden">
+      <div className="bg-app-fixed" />
+
+      <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-6">
         {/* Cover Photo */}
-        <div className="relative h-80 md:rounded-3xl mb-8 overflow-hidden border border-gray-700/50 shadow-2xl">
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20"></div>
+        <div className="relative h-56 md:h-72 rounded-2xl overflow-hidden bg-gradient-to-br from-[#7C3AED]/25 via-[#3B82F6]/15 to-[#22D3EE]/15 mb-6 border border-[#18202B] animate-fadeUp">
           {user.coverPic && (
             <img
               src={user.coverPic}
               alt="Cover"
-              className="w-full h-full object-cover"
-              onClick={()=>setShowImage(user.coverPic)}
+              className="w-full h-full object-cover cursor-pointer"
+              onClick={() => setShowImage(user.coverPic)}
             />
           )}
-          <label className={`absolute top-6 right-6 bg-black/50 backdrop-blur-sm p-3 rounded-2xl cursor-pointer hover:bg-black/70 transition-all duration-300 transform hover:scale-105 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
-            <Camera className="w-6 h-6" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#05070A]/70 via-transparent to-transparent" />
+
+          <label
+            className={`absolute top-4 right-4 w-10 h-10 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer hover:bg-black/70 transition-all ${
+              uploading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            <Camera className="w-4 h-4 text-white" />
             <input
               type="file"
               accept="image/*"
@@ -364,33 +247,34 @@ const ProfileUpdate = () => {
               className="hidden"
               disabled={uploading}
             />
-            {uploading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-2xl">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              </div>
-            )}
           </label>
         </div>
 
         {/* Profile Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-end gap-8 mb-12 -mt-20 md:-mt-24 relative z-20">
+        <div className="flex flex-col md:flex-row md:items-end gap-5 -mt-16 md:-mt-20 mb-8 relative z-20 animate-fadeUp">
           <div className="relative">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-r from-blue-500 to-purple-600 p-1.5 shadow-2xl">
-              <div className="w-full h-full rounded-2xl bg-gray-800 flex items-center justify-center overflow-hidden">
+            <div className="w-28 h-28 md:w-32 md:h-32 rounded-full p-[3px] bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] shadow-2xl shadow-purple-500/20">
+              <div className="w-full h-full rounded-full overflow-hidden bg-[#0A0E14]">
                 {user.profilePic ? (
                   <img
-                    src={user.profilePic || "/defaultProfile.png"}
+                    src={user.profilePic}
                     alt="Profile"
-                    className="w-full h-full object-cover"
-                    onClick={()=>setShowImage(user.profilePic)}
+                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={() => setShowImage(user.profilePic)}
                   />
                 ) : (
-                  <User className="w-16 h-16 text-gray-400" />
+                  <div className="w-full h-full flex items-center justify-center">
+                    <User className="w-12 h-12 text-[#71717A]" />
+                  </div>
                 )}
               </div>
             </div>
-            <label className={`absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-2xl cursor-pointer hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
-              <Camera className="w-4 h-4 text-white" />
+            <label
+              className={`absolute bottom-0 right-0 w-9 h-9 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] border-2 border-[#05070A] flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-lg ${
+                uploading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <Camera className="w-3.5 h-3.5 text-white" />
               <input
                 type="file"
                 accept="image/*"
@@ -399,48 +283,54 @@ const ProfileUpdate = () => {
                 disabled={uploading}
               />
             </label>
-            {user.isVerified && (
-              <div className="absolute -top-2 -right-2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                ✓ Verified
-              </div>
-            )}
+            <span className="absolute bottom-2 right-10 w-5 h-5 bg-[#10B981] border-4 border-[#05070A] rounded-full" />
           </div>
 
-          <div className="flex-1 bg-gray-800/40 backdrop-blur-xl rounded-3xl p-8 border border-gray-700/50 shadow-xl">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex-1 card-static p-5">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex-1">
-                <div className="flex items-center gap-4 mb-3">
-                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                    {user.fullname || user.username || "Anonymous User"}
+                <div className="flex items-center gap-2 mb-2">
+                  <h1 className="heading-lg text-white">
+                    {user.fullname || user.username || "Anonymous"}
                   </h1>
+                  {user.isVerified && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-[#7C3AED] to-[#3B82F6] text-white text-[10px] font-bold">
+                      <Sparkles className="w-3 h-3" />
+                      Verified
+                    </span>
+                  )}
                 </div>
-                <p className="text-gray-400 text-lg mb-4">@{user.username || "username"}</p>
-                {user.bio && <p className="text-gray-300 text-lg leading-relaxed mb-6">{user.bio}</p>}
+                <p className="text-sm text-[#8B5CF6] mb-3">@{user.username}</p>
+                {user.bio && (
+                  <p className="text-sm text-[#A1A1AA] leading-relaxed mb-4">
+                    {user.bio}
+                  </p>
+                )}
 
-                <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex flex-wrap gap-2">
                   {user.location && (
-                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
-                      <MapPin className="w-4 h-4" />
-                      {user.location}
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#0F141C] border border-[#18202B]">
+                      <MapPin className="w-3 h-3 text-[#EC4899]" />
+                      <span className="text-xs text-[#A1A1AA]">{user.location}</span>
                     </div>
                   )}
                   {user.website && (
-                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
-                      <Globe className="w-4 h-4" />
-                      <a
-                        href={user.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-blue-400 transition-colors"
-                      >
-                        Website
-                      </a>
-                    </div>
+                    <a
+                      href={user.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#0F141C] border border-[#18202B] hover:border-[#293445] transition-colors"
+                    >
+                      <Globe className="w-3 h-3 text-[#8B5CF6]" />
+                      <span className="text-xs text-[#A1A1AA]">Website</span>
+                    </a>
                   )}
                   {user.dateOfBirth && (
-                    <div className="flex items-center gap-2 text-gray-400 bg-gray-700/50 px-4 py-2 rounded-xl border border-gray-600/50">
-                      <Calendar className="w-4 h-4" />
-                      {new Date(user.dateOfBirth).toLocaleDateString()}
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#0F141C] border border-[#18202B]">
+                      <Calendar className="w-3 h-3 text-[#F59E0B]" />
+                      <span className="text-xs text-[#A1A1AA]">
+                        {new Date(user.dateOfBirth).toLocaleDateString()}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -448,9 +338,9 @@ const ProfileUpdate = () => {
 
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-6 py-3 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="btn-primary flex-shrink-0"
               >
-                <Edit3 className="w-5 h-5" />
+                <Edit3 className="w-4 h-4" />
                 {isEditing ? "Cancel" : "Edit Profile"}
               </button>
             </div>
@@ -458,24 +348,15 @@ const ProfileUpdate = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {[
-            { label: "Posts", value: user.posts?.length || 0, icon: BarChart3, color: "from-blue-500 to-cyan-500" },
-            { label: "Friends", value: user.friends?.length || 0, icon: Users, color: "from-green-500 to-emerald-500" },
-            { label: "Followers", value: user.followers?.length || 0, icon: Heart, color: "from-purple-500 to-pink-500" },
-            { label: "Following", value: user.following?.length || 0, icon: User, color: "from-orange-500 to-red-500" }
-          ].map((stat, index) => (
-            <div key={index} className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-400 text-sm mt-1">{stat.label}</div>
-                </div>
-                <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center shadow-lg`}>
-                  <stat.icon className="w-6 h-6 text-white" />
-                </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 animate-fadeUp delay-1">
+          {stats.map((stat) => (
+            <div key={stat.label} className="card-static p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
+              </div>
+              <div className="text-2xl font-bold text-white mb-0.5">{stat.value}</div>
+              <div className="text-[11px] uppercase tracking-wider text-[#71717A]">
+                {stat.label}
               </div>
             </div>
           ))}
@@ -483,21 +364,20 @@ const ProfileUpdate = () => {
 
         {/* Edit Form */}
         {isEditing && (
-          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-2xl mb-12">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
+          <div className="card-static p-6 md:p-8 mb-8 animate-scaleIn">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                Edit Your Profile
-              </h2>
+              <h2 className="heading-md text-white">Edit Profile</h2>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {/* Left Column */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-gray-300">
+                    <label className="block text-xs font-medium text-[#A1A1AA] mb-2 uppercase tracking-wide">
                       Full Name
                     </label>
                     <input
@@ -505,12 +385,12 @@ const ProfileUpdate = () => {
                       name="fullname"
                       value={formData.fullname}
                       onChange={handleInputChange}
-                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                      className="input"
                       placeholder="Enter your full name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-gray-300">
+                    <label className="block text-xs font-medium text-[#A1A1AA] mb-2 uppercase tracking-wide">
                       Username
                     </label>
                     <input
@@ -518,12 +398,12 @@ const ProfileUpdate = () => {
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                      className="input"
                       placeholder="Choose a username"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-gray-300">
+                    <label className="block text-xs font-medium text-[#A1A1AA] mb-2 uppercase tracking-wide">
                       Bio
                     </label>
                     <textarea
@@ -532,19 +412,20 @@ const ProfileUpdate = () => {
                       onChange={handleInputChange}
                       rows={4}
                       maxLength={500}
-                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
+                      className="input resize-none"
                       placeholder="Tell us about yourself..."
                     />
-                    <div className="text-sm text-gray-400 mt-2 text-right">
+                    <p className="text-[10px] text-[#71717A] mt-1 text-right">
                       {formData.bio.length}/500
-                    </div>
+                    </p>
                   </div>
                 </div>
 
+                {/* Right Column */}
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-semibold mb-3 text-gray-300">
+                      <label className="block text-xs font-medium text-[#A1A1AA] mb-2 uppercase tracking-wide">
                         Location
                       </label>
                       <input
@@ -552,28 +433,12 @@ const ProfileUpdate = () => {
                         name="location"
                         value={formData.location}
                         onChange={handleInputChange}
-                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
-                        placeholder="Your city"
+                        className="input"
+                        placeholder="City"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold mb-3 text-gray-300">
-                        Website
-                      </label>
-                      <input
-                        type="url"
-                        name="website"
-                        value={formData.website}
-                        onChange={handleInputChange}
-                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
-                        placeholder="https://example.com"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-semibold mb-3 text-gray-300">
+                      <label className="block text-xs font-medium text-[#A1A1AA] mb-2 uppercase tracking-wide">
                         Phone
                       </label>
                       <input
@@ -581,77 +446,87 @@ const ProfileUpdate = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
-                        placeholder="+1 (555) 000-0000"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold mb-3 text-gray-300">
-                        Date of Birth
-                      </label>
-                      <input
-                        type="date"
-                        name="dateOfBirth"
-                        value={formData.dateOfBirth}
-                        onChange={handleInputChange}
-                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                        className="input"
+                        placeholder="+1 555..."
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-gray-300">
-                      Interests (comma-separated)
+                    <label className="block text-xs font-medium text-[#A1A1AA] mb-2 uppercase tracking-wide">
+                      Website
+                    </label>
+                    <input
+                      type="url"
+                      name="website"
+                      value={formData.website}
+                      onChange={handleInputChange}
+                      className="input"
+                      placeholder="https://example.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-[#A1A1AA] mb-2 uppercase tracking-wide">
+                      Date of Birth
+                    </label>
+                    <input
+                      type="date"
+                      name="dateOfBirth"
+                      value={formData.dateOfBirth}
+                      onChange={handleInputChange}
+                      className="input"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-[#A1A1AA] mb-2 uppercase tracking-wide">
+                      Interests (comma separated)
                     </label>
                     <input
                       type="text"
                       name="interests"
                       value={formData.interests}
                       onChange={handleInputChange}
-                      className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
-                      placeholder="Technology, Music, Travel, Art..."
+                      className="input"
+                      placeholder="Technology, Music, Travel"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Social Links */}
-              <div className="bg-gray-700/30 rounded-2xl p-6 border border-gray-600/30">
-                <h3 className="text-lg font-semibold mb-4 text-gray-300">Social Links</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    { name: "socialLinks.twitter", placeholder: "Twitter URL", color: "border-blue-400/50" },
-                    { name: "socialLinks.instagram", placeholder: "Instagram URL", color: "border-pink-400/50" },
-                    { name: "socialLinks.linkedin", placeholder: "LinkedIn URL", color: "border-blue-500/50" },
-                    { name: "socialLinks.github", placeholder: "GitHub URL", color: "border-gray-400/50" }
-                  ].map((social, index) => (
+              <div className="pt-4 border-t border-[#111820]">
+                <h3 className="heading-sm text-white mb-4">Social Links</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {socials.map((s) => (
                     <input
-                      key={index}
+                      key={s.key}
                       type="url"
-                      name={social.name}
-                      value={formData.socialLinks[social.name.split('.')[1]]}
+                      name={`socialLinks.${s.key}`}
+                      value={formData.socialLinks[s.key]}
                       onChange={handleInputChange}
-                      placeholder={social.placeholder}
-                      className={`w-full p-4 bg-gray-700/50 border ${social.color} rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300`}
+                      placeholder={`${s.label} URL`}
+                      className="input"
                     />
                   ))}
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
+                  className="btn-primary"
                 >
                   {loading ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                       Saving...
                     </>
                   ) : (
                     <>
-                      <Save className="w-5 h-5" />
+                      <Save className="w-4 h-4" />
                       Save Changes
                     </>
                   )}
@@ -659,9 +534,9 @@ const ProfileUpdate = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="bg-gray-700/50 hover:bg-gray-600/50 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 border border-gray-600/50"
+                  className="btn-secondary"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                   Cancel
                 </button>
               </div>
@@ -670,34 +545,24 @@ const ProfileUpdate = () => {
         )}
 
         {/* Social Links Display */}
-        {user.socialLinks && Object.values(user.socialLinks).some((link) => link) && (
-          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center">
-                <Link2 className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent">
-                Connect With Me
-              </h3>
+        {user.socialLinks && Object.values(user.socialLinks).some((l) => l) && (
+          <div className="card-static p-5 mb-6 animate-fadeUp delay-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Link2 className="w-4 h-4 text-[#8B5CF6]" />
+              <h3 className="heading-sm text-white">Connect With Me</h3>
             </div>
-            <div className="flex flex-wrap gap-4">
-              {[
-                { platform: 'twitter', url: user.socialLinks.twitter, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-                { platform: 'instagram', url: user.socialLinks.instagram, color: 'bg-pink-500/20 text-pink-400 border-pink-500/30' },
-                { platform: 'linkedin', url: user.socialLinks.linkedin, color: 'bg-blue-600/20 text-blue-500 border-blue-600/30' },
-                { platform: 'github', url: user.socialLinks.github, color: 'bg-gray-500/20 text-gray-300 border-gray-500/30' }
-              ].map((social) => (
-                social.url && (
-                  <a
-                    key={social.platform}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`flex items-center gap-3 px-6 py-3 rounded-2xl border ${social.color} hover:scale-105 transition-all duration-300 font-semibold`}
-                  >
-                    <span>{social.platform.charAt(0).toUpperCase() + social.platform.slice(1)}</span>
-                  </a>
-                )
+            <div className="flex flex-wrap gap-2">
+              {socials.map((s) => user.socialLinks[s.key] && (
+                <a
+                  key={s.key}
+                  href={user.socialLinks[s.key]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#0F141C] border border-[#18202B] hover:border-[#293445] transition-all"
+                >
+                  <span className="w-2 h-2 rounded-full" style={{ background: s.color }} />
+                  <span className="text-xs text-[#A1A1AA] font-medium">{s.label}</span>
+                </a>
               ))}
             </div>
           </div>
@@ -705,20 +570,16 @@ const ProfileUpdate = () => {
 
         {/* Interests */}
         {user.interests && user.interests.length > 0 && (
-          <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl mb-12">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-white to-pink-200 bg-clip-text text-transparent">
-                Interests & Passions
-              </h3>
+          <div className="card-static p-5 mb-6 animate-fadeUp delay-3">
+            <div className="flex items-center gap-2 mb-4">
+              <Heart className="w-4 h-4 text-[#EC4899]" />
+              <h3 className="heading-sm text-white">Interests & Passions</h3>
             </div>
-            <div className="flex flex-wrap gap-3">
-              {user.interests.map((interest, index) => (
+            <div className="flex flex-wrap gap-2">
+              {user.interests.map((interest, i) => (
                 <span
-                  key={index}
-                  className="bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg hover:scale-105 transition-transform duration-300"
+                  key={i}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#A1A1AA] bg-[#0F141C] border border-[#18202B]"
                 >
                   {interest}
                 </span>
@@ -727,327 +588,192 @@ const ProfileUpdate = () => {
           </div>
         )}
 
-        {/* Posts Section */}
-        <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-3xl p-2 md:p-8 border border-gray-700/50 shadow-xl">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-            <div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
-                My Posts
-              </h3>
-              <p className="text-gray-400">
-                {user.posts?.length || 0} posts created
-              </p>
-            </div>
-            <Link
-              to="/create-post"
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-4 rounded-2xl flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              <Sparkles className="w-5 h-5" />
-              Create New Post
+        {/* Posts */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="heading-md text-white">My Posts</h3>
+            <Link to="/create-post" className="btn-primary text-xs py-2 px-4">
+              <Sparkles className="w-3.5 h-3.5" />
+              New Post
             </Link>
           </div>
 
-          <div className="space-y-6">
-            {user.posts?.length > 0 ? (
-              user.posts.map((post) => (
-                <div
-                  key={post._id}
-                  className="bg-gray-700/30 backdrop-blur-xl md:rounded-2xl p-2 md:p-6 border border-gray-600/50 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  {/* User Info */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 p-0.5">
-                          <img
-                            src={user.profilePic || "/avatar.svg"}
-                            alt="Profile"
-                            className="w-full h-full rounded-2xl object-cover bg-gray-800"
-                            onClick={()=>setShowImage(user.profilePic)}
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <Link
-                          to={`/profile/${post.user._id}`}
-                          className="font-semibold text-white hover:text-blue-400 transition-colors"
-                        >
-                          @{user.username}
-                        </Link>
-                        <p className="text-xs text-gray-400">
-                          {new Date(post.createdAt).toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Menu Button */}
-                    <div className="relative">
-                      <button
-                        className="p-2 text-gray-400 hover:text-white hover:bg-gray-600/50 rounded-xl transition-all duration-300"
-                        onClick={() =>
-                          setOpenMenuId(openMenuId === post._id ? null : post._id)
-                        }
+          {user.posts?.length > 0 ? (
+            user.posts.map((post, i) => (
+              <article
+                key={post._id}
+                className="card-static p-4 md:p-5 animate-fadeUp"
+                style={{ animationDelay: `${i * 0.05}s` }}
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={user.profilePic || "/avatar.svg"}
+                      alt=""
+                      className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                      onClick={() => setShowImage(user.profilePic)}
+                    />
+                    <div>
+                      <Link
+                        to={`/profile/${post.user._id}`}
+                        className="text-sm font-semibold text-white hover:text-[#8B5CF6] transition-colors"
                       >
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
-
-                      {openMenuId === post._id && (
-                        <div className="absolute right-0 top-12 w-48 bg-gray-800/95 backdrop-blur-xl rounded-xl border border-gray-700/50 shadow-2xl z-10 overflow-hidden">
-                          <button
-                            onClick={() =>
-                              handleEdit(
-                                post._id,
-                                post.content,
-                                post.image,
-                                post.video
-                              )
-                            }
-                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
-                          >
-                            <Edit3 className="w-4 h-4" />
-                            Edit Post
-                          </button>
-                          <button
-                            onClick={() => handleDelete(post._id)}
-                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-red-500/10 text-red-400 transition-colors"
-                          >
-                            <X className="w-4 h-4" />
-                            Delete
-                          </button>
-                          <button
-                            onClick={() => handleShare(post._id)}
-                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
-                          >
-                            <Share className="w-4 h-4" />
-                            Share
-                          </button>
-                          <button
-                            onClick={() => handleSave(post._id)}
-                            className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm hover:bg-gray-700/50 text-gray-200 transition-colors"
-                          >
-                            <Bookmark className="w-4 h-4" />
-                            Save
-                          </button>
-                        </div>
-                      )}
+                        @{user.username}
+                      </Link>
+                      <p className="text-[11px] text-[#71717A]">
+                        {new Date(post.createdAt).toLocaleString()}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Editing Interface */}
-                  {editOn && editPostId === post._id ? (
-                    <div className="bg-gray-800/50 rounded-2xl p-2 md:p-6 space-y-4 border border-gray-600/50">
-                      <textarea
-                        className="w-full p-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
-                        value={editdata.content}
-                        onChange={(e) =>
-                          seteditdata({ ...editdata, content: e.target.value })
-                        }
-                        rows={6}
-                        placeholder="What's on your mind?"
-                      />
-
-                      {/* Media Preview */}
-                      {editdata.image && (
-                        <div className="relative">
-                          <img
-                            src={editdata.image}
-                            alt="Preview"
-                            className="w-full max-h-96 object-contain rounded-2xl border border-gray-600/50"
-                          />
-                          <button
-                            onClick={() =>
-                              seteditdata({ ...editdata, image: "" })
-                            }
-                            className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-all duration-300 transform hover:scale-110"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-
-                      {editdata.video && (
-                        <div className="relative">
-                          <video
-                            src={editdata.video}
-                            controls
-                            className="w-full max-h-96 rounded-2xl border border-gray-600/50"
-                          />
-                          <button
-                            onClick={() =>
-                              seteditdata({ ...editdata, video: "" })
-                            }
-                            className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-all duration-300 transform hover:scale-110"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Upload Buttons */}
-                      <div className="flex items-center gap-4">
-                        <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105">
-                          <Camera className="w-5 h-5 text-blue-400" />
-                          <span className="text-sm ml-2 text-gray-300">Add Image</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleEditImageChange}
-                            className="hidden"
-                          />
-                        </label>
-
-                        <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105">
-                          <Download className="w-5 h-5 text-pink-400" />
-                          <span className="text-sm ml-2 text-gray-300">Add Video</span>
-                          <input
-                            type="file"
-                            accept="video/*"
-                            onChange={handleEditVideoChange}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex gap-4 pt-4">
+                  <div className="relative">
+                    <button
+                      className="btn-ghost p-1.5"
+                      onClick={() => setOpenMenuId(openMenuId === post._id ? null : post._id)}
+                    >
+                      <MoreHorizontal className="w-4 h-4" />
+                    </button>
+                    {openMenuId === post._id && (
+                      <div className="absolute right-0 top-9 w-40 bg-[#0F141C] border border-[#18202B] rounded-xl overflow-hidden z-20 shadow-2xl">
                         <button
-                          onClick={handleSaveEdit}
-                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-6 py-3 rounded-2xl text-white font-semibold transition-all duration-300 transform hover:scale-105"
+                          onClick={() => handleEdit(post._id, post.content, post.image, post.video)}
+                          className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-[#A1A1AA] hover:bg-white/[0.03] transition-colors"
                         >
-                          Save Changes
+                          <Edit3 className="w-3.5 h-3.5" />
+                          Edit
                         </button>
                         <button
-                          onClick={() => {
-                            setEditOn(false);
-                            setEditPostId(null);
-                            seteditdata({ content: "", image: "", video: "" });
-                          }}
-                          className="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-2xl text-white font-semibold transition-all duration-300 transform hover:scale-105"
+                          onClick={() => handleDelete(post._id)}
+                          className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-[#F43F5E] hover:bg-[#F43F5E]/5 transition-colors"
                         >
-                          Cancel
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Delete
+                        </button>
+                        <button className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-[#A1A1AA] hover:bg-white/[0.03] transition-colors">
+                          <Share2 className="w-3.5 h-3.5" />
+                          Share
+                        </button>
+                        <button className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-[#A1A1AA] hover:bg-white/[0.03] transition-colors">
+                          <Bookmark className="w-3.5 h-3.5" />
+                          Save
                         </button>
                       </div>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Post Content */}
-                      <div className="mb-4">
-                        <p
-                          className={`text-gray-200 leading-relaxed ${
-                            expandedPostId === post._id ? "" : "line-clamp-3"
-                          }`}
-                        >
-                          {post.content}
-                        </p>
-                        {post.content.length > 150 && (
-                          <button
-                            className="text-blue-400 hover:text-blue-300 font-medium text-sm mt-2 transition-colors"
-                            onClick={() =>
-                              setExpandedPostId(
-                                expandedPostId === post._id ? null : post._id
-                              )
-                            }
-                          >
-                            {expandedPostId === post._id ? "See Less" : "See More"}
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Media */}
-                      {post.image && (
-                        <div className="mb-4 rounded-2xl overflow-hidden border border-gray-600/50">
-                          <img
-                            src={post.image}
-                            alt="Post"
-                            className="w-full h-auto max-h-96 object-cover"
-                            onClick={()=>setShowImage(post.image)}
-                          />
-                        </div>
-                      )}
-
-                      {post.video && (
-                        <div className="mb-4 rounded-2xl overflow-hidden border border-gray-600/50">
-                          <video
-                            src={post.video}
-                            controls
-                            className="w-full h-auto max-h-96 object-cover"
-                          />
-                        </div>
-                      )}
-
-                      {/* Actions */}
-                      <div className="flex items-center justify-between pt-4 border-t border-gray-600/50">
-                        <div className="flex items-center space-x-6">
-                          <button
-                            className="flex items-center space-x-2 group transition-all duration-300"
-                            onClick={() => handleLike(post._id)}
-                          >
-                            <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${
-                              post.likes?.includes(user._id) 
-                                ? "bg-red-500/20 text-red-400" 
-                                : "bg-gray-600/50 text-gray-400 group-hover:bg-red-500/20 group-hover:text-red-400"
-                            }`}>
-                              <ThumbsUp className="w-5 h-5" />
-                            </div>
-                            <span className={`font-medium ${
-                              post.likes?.includes(user._id) ? "text-red-400" : "text-gray-400"
-                            }`}>
-                              {post.likes?.length || 0}
-                            </span>
-                          </button>
-
-                          <button
-                            className="flex items-center space-x-2 group transition-all duration-300"
-                            onClick={() => {
-                              setOpenCommentBoxId(
-                                openCommentBoxId === post._id ? null : post._id
-                              );
-                              setCommentIdForFetching(post._id);
-                            }}
-                          >
-                            <div className="p-2 rounded-xl bg-gray-600/50 text-gray-400 group-hover:bg-blue-500/20 group-hover:text-blue-400 transition-all duration-300 group-hover:scale-110">
-                              <MessageCircle className="w-5 h-5" />
-                            </div>
-                            <span className="text-gray-400 font-medium group-hover:text-blue-400 transition-colors">
-                              {post.comments?.length || 0}
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Comment Section */}
-                      {openCommentBoxId === post._id && (
-                        <div className="mt-6 pt-6 border-t border-gray-600/50">
-                          <Comment id={post._id} />
-                        </div>
-                      )}
-                    </>
-                  )}
+                    )}
+                  </div>
                 </div>
-              ))
-            ) : (
-              <div className="text-center py-16 bg-gray-700/30 rounded-2xl border border-gray-600/50">
-                <MessageSquare className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                <h4 className="text-xl font-semibold text-gray-400 mb-2">No posts yet</h4>
-                <p className="text-gray-500 mb-6">Start sharing your thoughts with the world!</p>
-                <Link
-                  to="/create-post"
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-4 rounded-2xl inline-flex items-center gap-3 font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  <Sparkles className="w-5 h-5" />
-                  Create Your First Post
-                </Link>
+
+                {/* Edit Mode */}
+                {editOn && editPostId === post._id ? (
+                  <div className="space-y-3">
+                    <textarea
+                      value={editdata.content}
+                      onChange={(e) => seteditdata({ ...editdata, content: e.target.value })}
+                      rows={5}
+                      className="input resize-none"
+                      placeholder="What's on your mind?"
+                    />
+                    <div className="flex gap-2 pt-1">
+                      <button onClick={handleSaveEdit} className="btn-primary text-xs py-2">
+                        Save Changes
+                      </button>
+                      <button
+                        onClick={() => { setEditOn(false); setEditPostId(null); }}
+                        className="btn-secondary text-xs py-2"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {/* Content */}
+                    <p
+                      className={`text-sm text-[#A1A1AA] leading-relaxed mb-3 ${
+                        expandedPostId === post._id ? "" : "line-clamp-3"
+                      }`}
+                    >
+                      {post.content}
+                    </p>
+                    {post.content?.length > 180 && (
+                      <button
+                        onClick={() => setExpandedPostId(expandedPostId === post._id ? null : post._id)}
+                        className="text-xs text-[#8B5CF6] hover:text-[#A78BFA] font-medium mb-3"
+                      >
+                        {expandedPostId === post._id ? "Show less" : "Read more"}
+                      </button>
+                    )}
+
+                    {/* Media */}
+                    {post.image && (
+                      <img
+                        src={post.image}
+                        alt=""
+                        className="rounded-lg w-full max-h-96 object-cover cursor-pointer border border-[#18202B] mb-3"
+                        onClick={() => setShowImage(post.image)}
+                      />
+                    )}
+                    {post.video && (
+                      <video
+                        src={post.video}
+                        controls
+                        className="rounded-lg w-full max-h-96 border border-[#18202B] mb-3"
+                      />
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1 pt-3 border-t border-[#111820]">
+                      <button
+                        onClick={() => handleLike(post._id)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                          post.likes?.includes(user._id)
+                            ? "text-[#3B82F6]"
+                            : "text-[#A1A1AA] hover:text-white hover:bg-white/[0.03]"
+                        }`}
+                      >
+                        <ThumbsUp className={`w-4 h-4 ${post.likes?.includes(user._id) ? "fill-current" : ""}`} />
+                        <span className="font-medium">{post.likes?.length || 0}</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setOpenCommentBoxId(openCommentBoxId === post._id ? null : post._id);
+                          setCommentIdForFetching(post._id);
+                        }}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-[#A1A1AA] hover:text-white hover:bg-white/[0.03] transition-all"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        <span className="font-medium">{post.comments?.length || 0}</span>
+                      </button>
+                    </div>
+
+                    {openCommentBoxId === post._id && (
+                      <div className="mt-3 pt-3 border-t border-[#111820]">
+                        <Comment id={post._id} />
+                      </div>
+                    )}
+                  </>
+                )}
+              </article>
+            ))
+          ) : (
+            <div className="card-static p-12 text-center">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-[#71717A]" />
               </div>
-            )}
-          </div>
+              <h4 className="heading-sm text-white mb-1">No posts yet</h4>
+              <p className="text-sm text-[#71717A] mb-5">
+                Start sharing your thoughts
+              </p>
+              <Link to="/create-post" className="btn-primary">
+                <Sparkles className="w-4 h-4" />
+                Create Post
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
-      <ToastContainer 
-        position="top-right"
-        theme="dark"
-        toastClassName="bg-gray-800/95 backdrop-blur-xl border border-gray-700/50"
-      />
+      <ToastContainer position="top-right" theme="dark" />
     </div>
   );
 };

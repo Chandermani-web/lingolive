@@ -1,67 +1,47 @@
-import React from 'react';
-import { Loader } from 'lucide-react';
+import React from "react";
 
 const Loading = () => {
   return (
-    <div className="min-h-screen bg-[#050A15] flex items-center justify-center p-4">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Animated gradient orbs */}
-        <div className="absolute -top-20 -left-20 w-72 h-72 bg-blue-500 rounded-full mix-blend-soft-light filter blur-xl opacity-50 animate-blob"></div>
-        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-blue-700 rounded-full mix-blend-soft-light filter blur-xl opacity-50 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-blue-900 rounded-full mix-blend-soft-light filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+    <div className="min-h-screen bg-[#05070A] flex items-center justify-center relative overflow-hidden">
+      {/* Ambient glows */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute top-1/4 left-1/4 w-[400px] h-[400px] rounded-full blur-3xl opacity-40"
+          style={{
+            background: "radial-gradient(circle, rgba(124,58,237,0.15), transparent 65%)",
+          }}
+        />
+        <div
+          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-3xl opacity-40"
+          style={{
+            background: "radial-gradient(circle, rgba(37,99,235,0.12), transparent 65%)",
+          }}
+        />
       </div>
 
-      {/* Main Loading Container */}
-      <div className="relative z-10 flex flex-col items-center justify-center">
-        {/* Loading Icon */}
-        <div className="relative mb-8">
-          <div className="w-20 h-20 border-4 border-white/20 rounded-full animate-spin"></div>
-          <Loader className="w-12 h-12 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-spin" />
+      <div className="relative z-10 flex flex-col items-center">
+        {/* Logo mark */}
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] flex items-center justify-center mb-6 shadow-2xl shadow-purple-500/20">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-white"
+          >
+            <path d="M3 12h3l3-8 4 16 3-8h5" />
+          </svg>
         </div>
 
-        {/* Loading Text */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Loading
-            <span className="inline-block ml-1">
-              <span className="animate-bounce">.</span>
-              <span className="animate-bounce animation-delay-100">.</span>
-              <span className="animate-bounce animation-delay-200">.</span>
-            </span>
-          </h1>
-        </div>
+        {/* Spinner */}
+        <div className="w-10 h-10 border-2 border-[#18202B] border-t-[#7C3AED] rounded-full animate-spin mb-4" />
+
+        <p className="text-sm text-[#A1A1AA]">Loading LingoLive...</p>
       </div>
-
-      {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-        
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
     </div>
   );
 };
