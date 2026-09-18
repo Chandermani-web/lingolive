@@ -55,7 +55,7 @@ const Connection = () => {
 
           {/* Search */}
           <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#71717A] pointer-events-none z-10" />
             <input
               type="text"
               placeholder="Search connections..."
@@ -63,7 +63,7 @@ const Connection = () => {
               onChange={handleSearch}
               onFocus={() => setShowSearch(true)}
               onBlur={() => setTimeout(() => setShowSearch(false), 200)}
-              className="input pl-11"
+              className="input-search"
             />
             {showSearch && searchTerm && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-[#0A0E14] border border-[#18202B] rounded-xl overflow-hidden z-20 max-h-72 overflow-y-auto custom-scrollbar shadow-2xl animate-fadeUp">
@@ -71,29 +71,18 @@ const Connection = () => {
                   searchResult.map((u) => (
                     <button
                       key={u._id}
-                      onClick={() => {
-                        navigate(`/profile/${u._id}`);
-                        setSearchTerm("");
-                      }}
+                      onClick={() => { navigate(`/profile/${u._id}`); setSearchTerm(""); }}
                       className="w-full flex items-center gap-3 p-3 hover:bg-white/[0.03] transition-colors border-b border-[#111820] last:border-b-0 text-left"
                     >
-                      <img
-                        src={u.profilePic || "/avatar.svg"}
-                        alt=""
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
+                      <img src={u.profilePic || "/avatar.svg"} alt="" className="w-8 h-8 rounded-full object-cover" />
                       <div className="min-w-0">
-                        <p className="text-sm text-white truncate font-medium">
-                          @{u.username}
-                        </p>
+                        <p className="text-sm text-white truncate font-medium">@{u.username}</p>
                         <p className="text-xs text-muted truncate">{u.fullname}</p>
                       </div>
                     </button>
                   ))
                 ) : (
-                  <p className="text-xs text-muted text-center py-4">
-                    No results found
-                  </p>
+                  <p className="text-xs text-muted text-center py-4">No results found</p>
                 )}
               </div>
             )}

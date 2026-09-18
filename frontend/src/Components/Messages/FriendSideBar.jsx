@@ -42,13 +42,13 @@ const FriendsSidebar = ({ onSelectFriend, selectedUser }) => {
         </div>
 
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#71717A] pointer-events-none z-10" />
           <input
             type="text"
             placeholder="Search conversations..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input pl-10 py-2.5 text-sm"
+            className="input-search py-2.5 text-sm"
           />
         </div>
       </div>

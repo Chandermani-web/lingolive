@@ -64,12 +64,12 @@ const Comment = ({ id }) => {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleComment()}
-            className="input py-2.5 pr-11 text-sm"
+            className="input-trailing py-2.5 text-sm"
           />
           <button
             onClick={handleComment}
             disabled={loading || !comment.trim()}
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] text-white disabled:opacity-40 z-10"
           >
             <Send className="w-3.5 h-3.5" />
           </button>

@@ -5,16 +5,12 @@ import { toast, ToastContainer } from "react-toastify";
 import AppContext from "../Context/UseContext";
 
 const Signup = () => {
-  const [formdata, setFormdata] = useState({
-    username: "", email: "", password: "",
-  });
+  const [formdata, setFormdata] = useState({ username: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setUser, BASE_URL } = useContext(AppContext);
 
-  const handleChange = (e) => {
-    setFormdata({ ...formdata, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormdata({ ...formdata, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,8 +40,10 @@ const Signup = () => {
   return (
     <div className="min-h-screen bg-app flex items-center justify-center p-4 relative overflow-hidden">
       <div className="bg-app-fixed" />
-      <div className="glow-blue" style={{ top: '-200px', right: '-200px' }} />
-      <div className="glow-purple" style={{ bottom: '-200px', left: '-200px' }} />
+      <div className="absolute top-[-200px] right-[-200px] w-[400px] h-[400px] rounded-full blur-3xl opacity-40"
+        style={{ background: "radial-gradient(circle, rgba(37,99,235,0.15), transparent 65%)" }} />
+      <div className="absolute bottom-[-200px] left-[-200px] w-[400px] h-[400px] rounded-full blur-3xl opacity-40"
+        style={{ background: "radial-gradient(circle, rgba(124,58,237,0.18), transparent 65%)" }} />
 
       <div className="relative z-10 w-full max-w-[420px] animate-fadeUp">
         <div className="text-center mb-8">
@@ -63,14 +61,14 @@ const Signup = () => {
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none z-10" />
                 <input
                   type="text"
                   name="username"
                   placeholder="Choose a username"
                   value={formdata.username}
                   onChange={handleChange}
-                  className="input pl-11"
+                  className="input-icon"
                   required
                 />
               </div>
@@ -81,14 +79,14 @@ const Signup = () => {
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none z-10" />
                 <input
                   type="email"
                   name="email"
                   placeholder="you@example.com"
                   value={formdata.email}
                   onChange={handleChange}
-                  className="input pl-11"
+                  className="input-icon"
                   required
                 />
               </div>
@@ -99,31 +97,27 @@ const Signup = () => {
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none z-10" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Create a strong password"
                   value={formdata.password}
                   onChange={handleChange}
-                  className="input pl-11 pr-11"
+                  className="input-password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-primary transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-primary transition-colors z-10"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full mt-2"
-            >
+            <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
               {loading ? (
                 <>
                   <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -141,7 +135,7 @@ const Signup = () => {
           <div className="mt-6 pt-6 border-t border-[#18202B] text-center">
             <p className="text-sm text-secondary">
               Already have an account?{" "}
-              <Link to="/login" className="text-gradient-brand font-semibold hover:opacity-80 transition-opacity">
+              <Link to="/login" className="text-gradient-brand font-semibold hover:opacity-80">
                 Sign in
               </Link>
             </p>
