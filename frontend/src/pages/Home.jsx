@@ -1,38 +1,35 @@
 import { useContext } from "react";
-import { User, MessageSquare, Plus, Camera, Loader, Sparkles } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Sparkles, Plus, Radio } from "lucide-react";
 import AppContext from "../Context/UseContext";
-import { useNavigate } from "react-router-dom";
 import LeftSideBar from "../Components/Home/LeftSideBar";
 import RightSideBar from "../Components/Home/RightSideBar";
 import ShowPost from "../Components/Post/ShowPost";
 
 const Home = () => {
-  const navigate = useNavigate();
   const { user, posts, auth } = useContext(AppContext);
+  const navigate = useNavigate();
 
   if (!auth) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black text-white flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-4 h-4 bg-blue-400 rounded-full animate-ping"></div>
-          <div className="absolute bottom-40 right-32 w-3 h-3 bg-purple-400 rounded-full animate-bounce"></div>
-        </div>
-        <div className="text-center relative z-10">
-          <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6">
-            <Sparkles className="w-12 h-12 text-white" />
+      <div className="min-h-screen bg-app flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="bg-app-fixed" />
+        <div className="glow-purple" style={{ top: '-200px', left: '-200px' }} />
+        <div className="glow-blue" style={{ bottom: '-200px', right: '-200px' }} />
+
+        <div className="relative z-10 text-center max-w-lg animate-fadeUp">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] mb-6 shadow-xl shadow-purple-500/20">
+            <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Welcome to Your Dashboard
+          <h1 className="heading-hero text-white mb-4">
+            Welcome to <span className="text-gradient-brand">LingoLive</span>
           </h1>
-          <p className="text-gray-400 mb-8 text-lg">
-            Please log in to access your personalized home page
+          <p className="text-secondary text-base mb-8">
+            Connect with people around the world. Start conversations, share moments, and build meaningful relationships.
           </p>
-          <a
-            href="/login"
-            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-4 rounded-xl inline-block font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-          >
-            Go to Login
-          </a>
+          <Link to="/login" className="btn-primary">
+            Get Started
+          </Link>
         </div>
       </div>
     );
@@ -40,116 +37,98 @@ const Home = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
-            <Loader className="w-8 h-8 text-blue-500 animate-pulse absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-          </div>
-          <p className="text-gray-400 mt-4">Loading your profile...</p>
-        </div>
+      <div className="min-h-screen bg-app flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-[#18202B] border-t-[#7C3AED] rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black text-white relative">
-      {/* Animated Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-blue-600/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-600/5 rounded-full blur-3xl"></div>
-      </div>
+    <div className="min-h-screen bg-app relative">
+      <div className="bg-app-fixed" />
 
-      <div className="max-w-9xl mx-auto md:px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <div className="relative z-10 max-w-[1600px] mx-auto px-4 md:px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Sidebar */}
-          <div className="lg:col-span-1 lg:block hidden space-y-6">
-             <LeftSideBar />
-          </div>
+          <aside className="hidden lg:block lg:col-span-3">
+            <LeftSideBar />
+          </aside>
 
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            {/* Welcome Message */}
-            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-xl md:rounded-2xl md:p-8 p-4 md:mb-8 border border-gray-700/50 shadow-2xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="md:text-3xl text-2xl font-bold mb-3">
-                    Welcome back, {user.fullname || user.username || "User"}! 👋
-                  </h1>
-                  <p className="text-blue-200/80 md:text-lg text-sm">
-                    Here's what's happening in your world today.
-                  </p>
-                </div>
-                <div className="md:w-16 md:h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl md:flex items-center justify-center hidden">
-                  <Sparkles className="md:w-8 md:h-8 text-white" />
-                </div>
+          {/* Main */}
+          <main className="lg:col-span-6 space-y-6">
+            {/* Welcome Banner */}
+            <div className="card-static p-6 md:p-7 relative overflow-hidden animate-fadeUp">
+              <div className="absolute inset-0 opacity-40 pointer-events-none"
+                style={{
+                  background: 'radial-gradient(circle at 85% 40%, rgba(124,58,237,0.15), transparent 55%)'
+                }}
+              />
+              <div className="relative">
+                <p className="text-xs font-semibold text-[#8B5CF6] uppercase tracking-wider mb-2">
+                  Welcome back
+                </p>
+                <h1 className="heading-lg text-white mb-2">
+                  Hey {user.fullname?.split(' ')[0] || user.username} 👋
+                </h1>
+                <p className="text-secondary text-sm">
+                  Here's what's happening in your community today.
+                </p>
               </div>
             </div>
-            
+
             {/* Create Post */}
-            <div
-              className="bg-gray-800/40 backdrop-blur-xl md:rounded-2xl lg:p-6 p-2 md:mb-8 border border-gray-700/50 shadow-xl cursor-pointer transform hover:scale-[1.02] transition-all duration-300"
+            <button
               onClick={() => navigate("/create-post")}
+              className="w-full card p-3 flex items-center gap-3 text-left animate-fadeUp delay-1"
             >
-              <div className="flex items-center space-x-2">
-                <button className="flex-1 bg-gray-700/50 hover:bg-gray-600/50 rounded-2xl px-6 py-4 text-left text-gray-300 border border-gray-600/50 transition-all duration-300">
-                  What's on your mind?
-                </button>
-                <button className="p-3 text-gray-400 hover:text-white bg-gray-700/50 rounded-xl hover:bg-gray-600/50 transition-all duration-300">
-                  <Camera className="w-6 h-6" />
-                </button>
+              <img
+                src={user?.profilePic || "/avatar.svg"}
+                alt=""
+                className="w-10 h-10 rounded-full object-cover border border-[#18202B]"
+              />
+              <div className="flex-1 px-4 py-2.5 rounded-xl bg-[#0B1017] border border-[#18202B] text-muted text-sm">
+                Share something with your community...
               </div>
-            </div>
+              <div className="p-2.5 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] text-white">
+                <Plus className="w-4 h-4" />
+              </div>
+            </button>
 
-            {/* Recent Activity */}
-            <div className="bg-gray-800/40 backdrop-blur-xl md:rounded-2xl lg:p-8 md:p-2 border border-gray-700/50 shadow-xl">
-              <div className="flex items-center justify-between md:mb-6">
-                <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  Recent Activity
-                </h3>
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-              </div>
-              
-              <div className="space-y-6">
-                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-700/50 to-gray-600/50 md:rounded-2xl md:border border-gray-600/50">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <Plus className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">You joined the platform!</p>
-                    <p className="text-gray-400 text-sm">
-                      {new Date(user.createdAt).toLocaleDateString('en-US', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                    </p>
-                  </div>
+            {/* Feed */}
+            <section className="animate-fadeUp delay-2">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="heading-sm text-white">Recent Activity</h2>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-[#10B981] rounded-full" />
+                  <span className="text-xs text-muted">Live</span>
                 </div>
-
-                {posts.length > 0 ? (
-                  <ShowPost />
-                ) : (
-                  <div className="text-center py-12 text-gray-400 bg-gray-700/30 rounded-2xl border border-gray-600/50">
-                    <MessageSquare className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg">No posts yet. Create the first post!</p>
-                    <button 
-                      onClick={() => navigate("/create-post")}
-                      className="mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
-                    >
-                      Create Post
-                    </button>
-                  </div>
-                )}
               </div>
-            </div>
-          </div>
-          
+
+              {posts.length > 0 ? (
+                <ShowPost />
+              ) : (
+                <div className="card-static p-10 text-center">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
+                    <Sparkles className="w-6 h-6 text-[#7C3AED]" />
+                  </div>
+                  <p className="heading-sm text-white mb-1">No posts yet</p>
+                  <p className="text-muted text-sm mb-5">Be the first to share something</p>
+                  <button
+                    onClick={() => navigate("/create-post")}
+                    className="btn-primary"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Create Post
+                  </button>
+                </div>
+              )}
+            </section>
+          </main>
+
           {/* Right Sidebar */}
-          <div className="lg:col-span-1 lg:block hidden space-y-6">
+          <aside className="hidden lg:block lg:col-span-3">
             <RightSideBar />
-          </div>
+          </aside>
         </div>
       </div>
     </div>

@@ -1,116 +1,112 @@
-import { useEffect, useState } from "react";
-import { UserCircle, MessageSquare, Search } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { Search, MessageCircle } from "lucide-react";
 import { useSocket } from "../../Context/SocketContext";
+import AppContext from "../../Context/UseContext";
 
 const FriendsSidebar = ({ onSelectFriend, selectedUser }) => {
   const { onlineUsers } = useSocket();
+  const { BASE_URL } = useContext(AppContext);
   const [friends, setFriends] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const res = await fetch(
-          "https://lingolive.onrender.com/api/friends/getfriends",
-          {
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`${BASE_URL}/api/friends/getfriends`, {
+          credentials: "include",
+        });
         const data = await res.json();
-        console.log("Fetched friends for message sidebar:", data);
         setFriends(data.friends || []);
       } catch (err) {
-        console.error("Error fetching friends:", err);
+        console.error(err);
       }
     };
     fetchFriends();
-  }, []);
+  }, [BASE_URL]);
 
-  const filteredFriends = friends.filter(friend =>
-    friend.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    friend.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filtered = friends.filter(
+    (f) =>
+      f.username?.toLowerCase().includes(search.toLowerCase()) ||
+      f.email?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="w-80 bg-[#050A15] backdrop-blur-xl h-full overflow-y-auto border-r border-gray-700/50">
+    <div className="w-80 h-full bg-[#06080C] border-r border-[#18202B] flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-10 p-6 border-b border-gray-700/50 bg-[#050A15] backdrop-blur-xl">
-        
-        <div className="flex items-center gap-1 mb-4">
-            <MessageSquare className="w-6 h-6 text-white" />
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            Messages
-          </h2>
+      <div className="p-5 border-b border-[#18202B]">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] flex items-center justify-center">
+            <MessageCircle className="w-4 h-4 text-white" />
+          </div>
+          <h2 className="heading-md text-white">Messages</h2>
         </div>
-        
-        {/* Search Bar */}
+
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
           <input
             type="text"
-            placeholder="Search friends..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-2 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+            placeholder="Search conversations..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input pl-10 py-2.5 text-sm"
           />
         </div>
       </div>
 
-      {/* Friends List */}
-      <div className="p-1">
-        {filteredFriends.length === 0 ? (
-          <div className="text-center py-12">
-            <UserCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg mb-2">
-              {searchTerm ? "No friends found" : "No friends yet"}
-            </p>
-            <p className="text-gray-500 text-sm">
-              {searchTerm ? "Try a different search term" : "Start connecting with people"}
+      {/* List */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
+        {filtered.length === 0 ? (
+          <div className="text-center py-12 px-4">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 text-muted" />
+            </div>
+            <p className="text-sm text-muted">
+              {search ? "No matches" : "No friends yet"}
             </p>
           </div>
         ) : (
-          <ul className="space-y-2">
-            {filteredFriends.map((friend) => (
-              <li
-                key={friend._id}
-                onClick={() => onSelectFriend(friend)}
-                className={`flex items-center gap-4 p-2 cursor-pointer rounded-2xl transition-all duration-300 ${
-                  selectedUser?._id === friend._id 
-                    ? "bg-gradient-to-r from-blue-500/20 to-purple-600/20 border border-blue-500/30 shadow-lg" 
-                    : "hover:bg-gray-700 border border-transparent hover:border-gray-100"
-                }`}
-              >
-                <div className="relative flex-shrink-0">
-                  {friend.profilePic ? (
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 p-0.5">
-                      <img
-                        src={friend.profilePic}
-                        alt="profile"
-                        className="w-full h-full rounded-full object-cover bg-gray-800"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 flex items-center justify-center border-2 border-white">
-                      <UserCircle className="w-8 h-8 text-gray-400" />
-                    </div>
-                  )}
-                  {onlineUsers.includes(friend._id) && (
-                    <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-gray-900 rounded-full"></span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-white font-semibold text-lg truncate">
-                    @{friend.username}
-                  </h3>
-                  <p className="text-gray-400 text-xs truncate">
-                    {onlineUsers.includes(friend._id) ? "Online" : "Offline"}
-                  </p>
-                </div>
-                {onlineUsers.includes(friend._id) && (
-                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                )}
-              </li>
-            ))}
+          <ul className="space-y-0.5">
+            {filtered.map((friend) => {
+              const online = onlineUsers.includes(friend._id);
+              const active = selectedUser?._id === friend._id;
+              return (
+                <li
+                  key={friend._id}
+                  onClick={() => onSelectFriend(friend)}
+                  className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
+                    active
+                      ? "bg-[#15152A] border border-[#8B5CF6]/25"
+                      : "border border-transparent hover:bg-white/[0.03]"
+                  }`}
+                >
+                  <div className="relative flex-shrink-0">
+                    <img
+                      src={friend.profilePic || "/avatar.svg"}
+                      alt=""
+                      className="w-11 h-11 rounded-full object-cover"
+                    />
+                    <span
+                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 ${
+                        active ? "border-[#15152A]" : "border-[#06080C]"
+                      }`}
+                      style={{ background: online ? "#10B981" : "#52525B" }}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-white truncate">
+                      @{friend.username}
+                    </h3>
+                    <p
+                      className={`text-xs truncate ${
+                        online ? "text-[#10B981]" : "text-muted"
+                      }`}
+                    >
+                      {online ? "Online" : "Offline"}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

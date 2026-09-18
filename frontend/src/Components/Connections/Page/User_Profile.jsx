@@ -1,159 +1,172 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
-  User,
-  MapPin,
-  Globe,
-  Calendar,
-  Heart,
-  MessageCircle,
+  User, MapPin, Globe, Calendar, Heart,
+  MessageCircle, ThumbsUp, Link2, Sparkles
 } from "lucide-react";
 import AppContext from "../../../Context/UseContext.jsx";
-import { Link, useParams } from "react-router-dom";
 import Comment from "../../Post/Service/Comment.jsx";
+import "remixicon/fonts/remixicon.css";
 
 const User_Profile = () => {
-    const { id } = useParams();
-  const [user, setUser] = useState({});
+  const { id } = useParams();
+  const [profile, setProfile] = useState({});
   const [openCommentBoxId, setOpenCommentBoxId] = useState(null);
-  const { posts, setCommentIdForFetching, setPosts, fetchComments, loading, setShowImage } = useContext(AppContext);
+  const [expandedPostId, setExpandedPostId] = useState(null);
+  const {
+    posts, setCommentIdForFetching, setPosts,
+    loading, setShowImage, BASE_URL,
+  } = useContext(AppContext);
 
-  const getUser = async () => {
-    try {
+  useEffect(() => {
+    const getUser = async () => {
       if (!id) return;
-      const res = await fetch(
-        `https://lingolive.onrender.com/api/friends/getfriend/${id}`,
-        {
+      try {
+        const res = await fetch(`${BASE_URL}/api/friends/getfriend/${id}`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
-        }
-      );
+        });
         const data = await res.json();
-        if (res.ok) {
-            ("Fetched user data:", data);
-            setUser(data.friend);
-        } else {
-            console.error("Failed to fetch user:", data.message);
-        }
-    } catch (err) {
-      (err.message);
-    }
-  };
+        if (res.ok) setProfile(data.friend);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getUser();
+  }, [id, BASE_URL]);
 
   const handleLike = async (postId) => {
     try {
       const response = await fetch(
-        `https://lingolive.onrender.com/api/posts/${postId}/likeandunlike`,
+        `${BASE_URL}/api/posts/${postId}/likeandunlike`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
         }
       );
-
       const data = await response.json();
-      ("Like response:", data);
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to like post");
-      }
-
       if (data.success) {
-        // immutably update posts
-        const updatedPosts = posts.map((post) =>
-          post._id === postId ? { ...post, likes: data.updatedLikes } : post
+        setPosts(
+          posts.map((post) =>
+            post._id === postId ? { ...post, likes: data.updatedLikes } : post
+          )
         );
-        setPosts(updatedPosts);
       }
     } catch (err) {
-      console.error("Error liking post:", err);
+      console.error(err);
     }
   };
-  useEffect(() => {
-    getUser();
-    if (openCommentBoxId) {
-      fetchComments();
-    }
-  }, []);
 
-  if (loading) return <div className="bg-gradient-to-br from-gray-900 via-gray-950 to-black min-h-screen text-gray-100"> Loading...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-app flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-[#18202B] border-t-[#7C3AED] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const userPosts = posts?.filter((p) => p.user._id === profile._id) || [];
+
+  const stats = [
+    { label: "Posts", value: profile.posts?.length || 0, color: "#22D3EE" },
+    { label: "Friends", value: profile.friends?.length || 0, color: "#10B981" },
+    { label: "Followers", value: profile.followers?.length || 0, color: "#EC4899" },
+    { label: "Following", value: profile.following?.length || 0, color: "#F59E0B" },
+  ];
+
+  const socials = [
+    { key: "twitter", icon: "ri-twitter-x-fill", label: "Twitter", color: "#22D3EE" },
+    { key: "instagram", icon: "ri-instagram-fill", label: "Instagram", color: "#EC4899" },
+    { key: "linkedin", icon: "ri-linkedin-fill", label: "LinkedIn", color: "#3B82F6" },
+    { key: "github", icon: "ri-github-fill", label: "GitHub", color: "#8B5CF6" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="max-w-full mx-auto p-6 ">
-        {/* Cover Photo */}
-        <div className="relative h-64 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg mb-6">
-          {user.coverPic && (
+    <div className="min-h-screen bg-app relative">
+      <div className="bg-app-fixed" />
+
+      <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-6">
+        {/* Cover */}
+        <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-br from-[#7C3AED]/30 via-[#3B82F6]/20 to-[#22D3EE]/20 mb-6 animate-fadeUp">
+          {profile.coverPic && (
             <img
-              src={user.coverPic}
-              alt="Cover"
-              className="w-full h-full object-cover rounded-lg"
-              onClick={()=>setShowImage(user.coverPic)}
+              src={profile.coverPic}
+              alt=""
+              className="w-full h-full object-cover cursor-pointer"
+              onClick={() => setShowImage(profile.coverPic)}
             />
           )}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
         </div>
 
         {/* Profile Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-end gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end gap-5 -mt-20 md:-mt-24 mb-8 relative z-20 animate-fadeUp">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-              {user.profilePic ? (
-                <img
-                  src={
-                    user.profilePic ? user.profilePic : "/defaultProfile.png"
-                  }
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                  onClick={()=>setShowImage(user.profilePic || "/defaultProfile.png")}
-                />
-              ) : (
-                <User className="w-16 h-16 text-gray-400" />
-              )}
+            <div className="w-28 h-28 md:w-32 md:h-32 rounded-full p-[3px] bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] shadow-2xl shadow-purple-500/20">
+              <div className="w-full h-full rounded-full overflow-hidden bg-[#0A0E14]">
+                {profile.profilePic ? (
+                  <img
+                    src={profile.profilePic}
+                    alt=""
+                    className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => setShowImage(profile.profilePic)}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <User className="w-12 h-12 text-muted" />
+                  </div>
+                )}
+              </div>
             </div>
+            <span className="absolute bottom-1 right-1 w-6 h-6 bg-[#10B981] border-4 border-[#05070A] rounded-full" />
           </div>
 
-          <div className="flex-1">
-            <div className="flex items-center gap-4 mb-2">
-              <h1 className="text-3xl font-bold">
-                {user.fullname || user.username || "Anonymous User"}
+          <div className="flex-1 card-static p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <h1 className="heading-lg text-white">
+                {profile.fullname || profile.username || "Anonymous"}
               </h1>
-              {user.isVerified && (
-                <div className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
+              {profile.isVerified && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-[#7C3AED] to-[#3B82F6] text-white text-[10px] font-bold">
+                  <Sparkles className="w-3 h-3" />
                   Verified
-                </div>
+                </span>
               )}
             </div>
-            <p className="text-gray-400 mb-2">@{user.username || "username"}</p>
-            {user.bio && <p className="text-gray-300 mb-4">{user.bio}</p>}
+            <p className="text-sm text-[#8B5CF6] mb-3">@{profile.username}</p>
 
-            <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-              {user.location && (
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  {user.location}
+            {profile.bio && (
+              <p className="text-sm text-secondary leading-relaxed mb-4">
+                {profile.bio}
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              {profile.location && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#0F141C] border border-[#18202B]">
+                  <MapPin className="w-3 h-3 text-[#EC4899]" />
+                  <span className="text-xs text-secondary">{profile.location}</span>
                 </div>
               )}
-              {user.website && (
-                <div className="flex items-center gap-1">
-                  <Globe className="w-4 h-4" />
-                  <a
-                    href={user.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-blue-400"
-                  >
-                    {user.website}
-                  </a>
-                </div>
+              {profile.website && (
+                <a
+                  href={profile.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#0F141C] border border-[#18202B] hover:border-[#293445] transition-colors"
+                >
+                  <Globe className="w-3 h-3 text-[#8B5CF6]" />
+                  <span className="text-xs text-secondary">Website</span>
+                </a>
               )}
-              {user.dateOfBirth && (
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {new Date(user.dateOfBirth).toLocaleDateString()}
+              {profile.dateOfBirth && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#0F141C] border border-[#18202B]">
+                  <Calendar className="w-3 h-3 text-[#F59E0B]" />
+                  <span className="text-xs text-secondary">
+                    {new Date(profile.dateOfBirth).toLocaleDateString()}
+                  </span>
                 </div>
               )}
             </div>
@@ -161,90 +174,63 @@ const User_Profile = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-2 mb-8">
-          <div className="bg-gray-600 p-4 rounded-lg text-center text-white">
-            <div className="text-2xl font-bold">{user.posts?.length || 0}</div>
-            <div className="text-blue-200">Posts</div>
-          </div>
-          <div className="bg-green-600 p-4 rounded-lg text-center text-white">
-            <div className="text-2xl font-bold">
-              {user.friends?.length || 0}
-            </div>
-            <div className="text-green-200">Friends</div>
-          </div>
-          <div className="bg-blue-600 p-3 rounded-lg text-center text-white">
-            <div className="text-2xl font-bold">
-              {user.followers?.length || 0}
-            </div>
-            <div className="text-purple-200">Followers</div>
-          </div>
-          <div className="bg-violet-600 p-3 rounded-lg text-center text-white">
-            <div className="text-2xl font-bold">
-              {user.following?.length || 0}
-            </div>
-            <div className="text-red-200">Following</div>
-          </div>
-        </div>
-
-        {/* Social Links Display */}
-        {user.socialLinks &&
-          Object.values(user.socialLinks).some((link) => link) && (
-            <div className="bg-gray-800 p-6 rounded-lg mt-6">
-              <h3 className="text-lg font-semibold mb-4">Social Links</h3>
-              <div className="flex flex-wrap gap-4">
-                {user.socialLinks.twitter && (
-                  <a
-                    href={user.socialLinks.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 flex items-center gap-2"
-                  >
-                    <span>Twitter</span>
-                  </a>
-                )}
-                {user.socialLinks.instagram && (
-                  <a
-                    href={user.socialLinks.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-pink-400 hover:text-pink-300 flex items-center gap-2"
-                  >
-                    <span>Instagram</span>
-                  </a>
-                )}
-                {user.socialLinks.linkedin && (
-                  <a
-                    href={user.socialLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-500 flex items-center gap-2"
-                  >
-                    <span>LinkedIn</span>
-                  </a>
-                )}
-                {user.socialLinks.github && (
-                  <a
-                    href={user.socialLinks.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-gray-300 flex items-center gap-2"
-                  >
-                    <span>GitHub</span>
-                  </a>
-                )}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 animate-fadeUp delay-1">
+          {stats.map((stat) => (
+            <div key={stat.label} className="card-static p-4 text-center">
+              <div
+                className="text-2xl font-bold mb-1"
+                style={{ color: stat.color }}
+              >
+                {stat.value}
+              </div>
+              <div className="text-[11px] uppercase tracking-wider text-muted">
+                {stat.label}
               </div>
             </div>
-          )}
+          ))}
+        </div>
+
+        {/* Social */}
+        {profile.socialLinks && Object.values(profile.socialLinks).some((l) => l) && (
+          <div className="card-static p-5 mb-6 animate-fadeUp delay-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Link2 className="w-4 h-4 text-[#8B5CF6]" />
+              <h3 className="heading-sm text-white">Connect</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {socials.map(
+                (s) =>
+                  profile.socialLinks[s.key] && (
+                    <a
+                      key={s.key}
+                      href={profile.socialLinks[s.key]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#0F141C] border border-[#18202B] hover:border-[#293445] transition-all"
+                    >
+                      <i className={`${s.icon} text-base`} style={{ color: s.color }}></i>
+                      <span className="text-xs text-secondary font-medium">
+                        {s.label}
+                      </span>
+                    </a>
+                  )
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Interests */}
-        {user.interests && user.interests.length > 0 && (
-          <div className="bg-gray-800 p-6 rounded-lg mt-6">
-            <h3 className="text-lg font-semibold mb-4">Interests</h3>
+        {profile.interests && profile.interests.length > 0 && (
+          <div className="card-static p-5 mb-6 animate-fadeUp delay-3">
+            <div className="flex items-center gap-2 mb-4">
+              <Heart className="w-4 h-4 text-[#EC4899]" />
+              <h3 className="heading-sm text-white">Interests</h3>
+            </div>
             <div className="flex flex-wrap gap-2">
-              {user.interests.map((interest, index) => (
+              {profile.interests.map((interest, i) => (
                 <span
-                  key={index}
-                  className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm"
+                  key={i}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-secondary bg-[#0F141C] border border-[#18202B]"
                 >
                   {interest}
                 </span>
@@ -253,87 +239,106 @@ const User_Profile = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between mt-12 mb-6">
-          <h3 className="text-2xl text-gray-200 font-semibold">Recent Posts</h3>
-        </div>
+        {/* Posts */}
+        <div className="space-y-4">
+          <h3 className="heading-md text-white mb-3">Recent Posts</h3>
 
-        {posts
-          ?.filter((post) => post.user._id === user._id) // only user’s posts
-          .map((post) => (
-            <div
-              key={post._id}
-              className="bg-gray-800 rounded-2xl shadow-lg p-4 space-y-3 max-w-4xl mb-6 mx-auto"
-            >
-              {/* User Info */}
-              <div className="flex items-center space-x-3">
-                <img
-                  src={post.profilePic || "/avatar.svg"}
-                  alt="Profile"
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-                <div>
-                  <Link
-                    to={`/profile/${post.user.username}`}
-                    className="font-semibold hover:underline"
-                  >
-                    @{post.user.username}
-                  </Link>
-                  <p className="text-xs text-gray-400">
-                    {new Date(post.createdAt).toLocaleString()}
-                  </p>
-                </div>
-              </div>
-
-              {/* Post Content */}
-              <p className="text-gray-200">{post.content}</p>
-
-              {post.image && (
-                <img
-                  src={post.image}
-                  alt="Post"
-                  className="rounded-lg max-h-96 object-contain w-full"
-                />
-              )}
-
-              {post.video && (
-                <video
-                  src={post.video}
-                  controls
-                  className="rounded-lg w-full max-h-96"
-                />
-              )}
-
-              {/* Actions */}
-              <div className="flex space-x-6 text-gray-400 mt-2">
-                <button
-                  className="flex items-center space-x-1 hover:text-red-400 transition-colors"
-                  onClick={() => handleLike(post._id)}
-                >
-                  <Heart
-                    className={`w-5 h-5 ${
-                      post.likes?.includes(user._id) ? "text-red-500" : ""
-                    }`}
+          {userPosts.length > 0 ? (
+            userPosts.map((post, i) => (
+              <article
+                key={post._id}
+                className="card-static p-5 animate-fadeUp"
+                style={{ animationDelay: `${i * 0.05}s` }}
+              >
+                <header className="flex items-center gap-3 mb-4">
+                  <img
+                    src={post.user?.profilePic || "/avatar.svg"}
+                    alt=""
+                    className="w-10 h-10 rounded-full object-cover"
                   />
-                  <span>{post.likes?.length || 0}</span>
-                </button>
+                  <div>
+                    <Link
+                      to={`/profile/${post.user._id}`}
+                      className="text-sm font-semibold text-white hover:text-[#8B5CF6] transition-colors"
+                    >
+                      @{post.user.username}
+                    </Link>
+                    <p className="text-[11px] text-muted">
+                      {new Date(post.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </header>
 
-                <button
-                  className="flex items-center space-x-1 hover:text-blue-400 transition-colors"
-                  onClick={() => {
-                    setOpenCommentBoxId(
-                      openCommentBoxId === post._id ? null : post._id
-                    );
-                    setCommentIdForFetching(post._id);
-                  }}
+                <p
+                  className={`text-sm text-secondary leading-relaxed mb-3 ${
+                    expandedPostId === post._id ? "" : "line-clamp-3"
+                  }`}
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  <span>{post.comments?.length || 0}</span>
-                </button>
-              </div>
+                  {post.content}
+                </p>
+                {post.content?.length > 180 && (
+                  <button
+                    onClick={() =>
+                      setExpandedPostId(expandedPostId === post._id ? null : post._id)
+                    }
+                    className="text-xs text-[#8B5CF6] hover:text-[#A78BFA] font-medium mb-3"
+                  >
+                    {expandedPostId === post._id ? "Show less" : "Read more"}
+                  </button>
+                )}
 
-              {openCommentBoxId === post._id && <Comment id={post._id} />}
+                {post.image && (
+                  <img
+                    src={post.image}
+                    alt=""
+                    className="rounded-lg w-full max-h-96 object-cover cursor-pointer border border-[#18202B] mb-3"
+                    onClick={() => setShowImage(post.image)}
+                  />
+                )}
+                {post.video && (
+                  <video
+                    src={post.video}
+                    controls
+                    className="rounded-lg w-full max-h-96 border border-[#18202B] mb-3"
+                  />
+                )}
+
+                <div className="flex items-center gap-1 pt-3 border-t border-[#111820]">
+                  <button
+                    onClick={() => handleLike(post._id)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-secondary hover:text-white hover:bg-white/[0.03] transition-all"
+                  >
+                    <ThumbsUp className="w-4 h-4" />
+                    <span className="font-medium">{post.likes?.length || 0}</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOpenCommentBoxId(
+                        openCommentBoxId === post._id ? null : post._id
+                      );
+                      setCommentIdForFetching(post._id);
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-secondary hover:text-white hover:bg-white/[0.03] transition-all"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span className="font-medium">{post.comments?.length || 0}</span>
+                  </button>
+                </div>
+
+                {openCommentBoxId === post._id && (
+                  <div className="mt-3 pt-3 border-t border-[#111820]">
+                    <Comment id={post._id} />
+                  </div>
+                )}
+              </article>
+            ))
+          ) : (
+            <div className="card-static p-12 text-center">
+              <MessageCircle className="w-10 h-10 text-muted mx-auto mb-3" />
+              <p className="text-sm text-muted">No posts yet</p>
             </div>
-          ))}
+          )}
+        </div>
       </div>
     </div>
   );

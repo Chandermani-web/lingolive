@@ -1,93 +1,137 @@
 import { useContext, useState } from "react";
-import AppContext from "../../../Context/UseContext";
 import { useNavigate } from "react-router-dom";
+import { Send, MoreVertical, Trash2 } from "lucide-react";
+import AppContext from "../../../Context/UseContext";
 
 const Comment = ({ id }) => {
   const navigate = useNavigate();
   const [comment, setComment] = useState("");
-  const [deleteOptionOpen, setDeleteOptionOpen] = useState(null);
-  const { comments, setComments } = useContext(AppContext);
-
-  // find the post and its comments from posts state
-  let commentsArr = comments || [];
+  const [menuOpen, setMenuOpen] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { comments, setComments, user, BASE_URL } = useContext(AppContext);
 
   const handleComment = async () => {
     if (!comment.trim()) return;
+    setLoading(true);
     try {
-      const res = await fetch(`https://lingolive.onrender.com/api/posts/${id}/comment`, {
+      const res = await fetch(`${BASE_URL}/api/posts/${id}/comment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ text: comment }),
       });
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.message || "Failed to add comment");
 
-      // Server returns populated `comment` (preferred)
-      if (data.comment) {
-        setComments((prev) =>
-          prev.map((p) => (p._id === id ? { ...p, comments: [...(p.comments || []), data.comment] } : p))
-        );
-      } else if (data.updatedComments) {
-        setComments((prev) => prev.map((p) => (p._id === id ? { ...p, comments: data.updatedComments } : p)));
-      }
+      if (data.comment) setComments((prev) => [...prev, data.comment]);
+      else if (data.updatedComments) setComments(data.updatedComments);
 
       setComment("");
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDelete = async (commentId) => {
     try {
-      const res = await fetch(`https://lingolive.onrender.com/api/posts/${id}/comment/${commentId}`, {
+      const res = await fetch(`${BASE_URL}/api/posts/${id}/comment/${commentId}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to delete comment");
-      (data);
-
-      // Update posts state with returned populated updatedComments
-      if (data.updatedComments) {
-        setComments((prev) => prev.filter((c) => c._id !== commentId));
-      } else {
-        // fallback: remove locally by id
-        setComments((prev) => prev.map((p) => (p._id === id ? { ...p, comments: (p.comments || []).filter(c => c._id !== commentId) } : p)));
-      }
+      if (!res.ok) throw new Error("Failed to delete comment");
+      setComments((prev) => prev.filter((c) => c._id !== commentId));
+      setMenuOpen(null);
     } catch (err) {
       console.error(err);
     }
   };
 
   return (
-    <div className="mt-4">
-      <textarea placeholder="Write a comment..." className="w-full p-2 border border-gray-300 rounded-lg"
-        value={comment} onChange={(e) => setComment(e.target.value)}></textarea>
-      <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer" onClick={handleComment}>Post Comment</button>
+    <div className="space-y-3">
+      {/* Input */}
+      <div className="flex items-start gap-2">
+        <img
+          src={user?.profilePic || "/avatar.svg"}
+          alt=""
+          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+        />
+        <div className="flex-1 relative">
+          <input
+            type="text"
+            placeholder="Write a comment..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleComment()}
+            className="input py-2.5 pr-11 text-sm"
+          />
+          <button
+            onClick={handleComment}
+            disabled={loading || !comment.trim()}
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+          >
+            <Send className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
 
-      <div className="mt-6 mx-3">
-        {commentsArr.length > 0 ? commentsArr.map((cmt) => (
-          <div key={cmt._id} className="mt-4 p-2 border-b border-gray-300 relative">
-            <div className="absolute top-0 right-0 mt-2 mr-2">
-              { /* show delete only if current user owns it; implement check with context user if available */ }
-              <i className="ri-more-2-fill" onClick={() => setDeleteOptionOpen(deleteOptionOpen === cmt._id ? null : cmt._id)}></i>
-              <div className={`absolute right-0 border-2 border-gray-400 rounded-lg shadow-lg ${deleteOptionOpen === cmt._id ? 'block' : 'hidden'}`}>
-                <button className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-lg" onClick={() => handleDeleteComment(cmt._id)}>Delete</button>
+      {/* List */}
+      <div className="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
+        {comments?.length > 0 ? (
+          comments.map((cmt) => (
+            <div
+              key={cmt._id}
+              className="flex items-start gap-2.5 p-2.5 rounded-lg bg-[#0F141C] border border-[#111820] group hover:border-[#18202B] transition-colors"
+            >
+              <img
+                src={cmt?.user?.profilePic || "/avatar.svg"}
+                alt=""
+                className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <button
+                    onClick={() => navigate(`/profile/${cmt.user?._id}`)}
+                    className="text-xs font-semibold text-[#8B5CF6] hover:text-[#A78BFA] transition-colors"
+                  >
+                    @{cmt.user?.username}
+                  </button>
+                  <span className="text-[10px] text-muted">
+                    {new Date(cmt.createdAt).toLocaleString()}
+                  </span>
+                </div>
+                <p className="text-sm text-secondary break-words">{cmt.text}</p>
               </div>
+
+              {cmt.user?._id === user?._id && (
+                <div className="relative">
+                  <button
+                    onClick={() => setMenuOpen(menuOpen === cmt._id ? null : cmt._id)}
+                    className="p-1 text-muted hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <MoreVertical className="w-3.5 h-3.5" />
+                  </button>
+                  {menuOpen === cmt._id && (
+                    <div className="absolute right-0 top-6 w-24 bg-[#0F141C] border border-[#18202B] rounded-lg overflow-hidden z-10 shadow-xl">
+                      <button
+                        onClick={() => handleDelete(cmt._id)}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs text-[#F43F5E] hover:bg-[#F43F5E]/5 transition-colors"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="flex items-center mb-2 space-x-2">
-              <img src={cmt?.user?.profilePic} alt="" className="w-5 h-5 rounded-full" />
-              <div className="leading-4">
-                <h1 className="font-semibold text-gray-300" onClick={() => navigate(`/profile/${cmt.user?._id}`)}>@{cmt.user?.username}</h1>
-                <span className="text-xs text-gray-500">{new Date(cmt.createdAt).toLocaleString()}</span>
-              </div>
-            </div>
-            <p className="text-sm">{cmt.text}</p>
-          </div>
-        )) : <p className="mt-4 text-gray-500">No comments yet.</p>}
+          ))
+        ) : (
+          <p className="text-xs text-muted text-center py-4">
+            No comments yet. Start the conversation.
+          </p>
+        )}
       </div>
     </div>
   );

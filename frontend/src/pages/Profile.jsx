@@ -1,11 +1,7 @@
-import ProfileUpdate from '../Components/Updates/ProfileUpdate.jsx'
+import ProfileUpdate from "../Components/Updates/ProfileUpdate.jsx";
 
 const Profile = () => {
-  return (
-    <div>
-      <ProfileUpdate />
-    </div>
-  )
-}
+  return <ProfileUpdate />;
+};
 
-export default Profile
+export default Profile;

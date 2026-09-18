@@ -1,43 +1,32 @@
-import { useState, useRef, useEffect } from 'react';
+import { useContext, useEffect, useRef, useState } from "react";
+import { ImagePlus, X, Send, FileText } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
+import AppContext from "../../Context/UseContext";
 
 const CreatePost = () => {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
+  const { BASE_URL } = useContext(AppContext);
 
-  // Cleanup file preview on unmount to prevent memory leaks
   useEffect(() => {
     return () => {
-      if (filePreview) {
-        URL.revokeObjectURL(filePreview);
-      }
+      if (filePreview) URL.revokeObjectURL(filePreview);
     };
   }, [filePreview]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      if (file.size > 50 * 1024 * 1024) { // 50MB limit
-        alert("File too large! Max 50MB allowed.");
-        return;
-      }
-      setSelectedFile(file);
-      const previewUrl = URL.createObjectURL(file);
-      setFilePreview(previewUrl);
+    if (!file) return;
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("File too large. Max 50MB");
+      return;
     }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
+    setSelectedFile(file);
+    setFilePreview(URL.createObjectURL(file));
   };
 
   const handleDrop = (e) => {
@@ -46,213 +35,190 @@ const CreatePost = () => {
     const file = e.dataTransfer.files[0];
     if (
       file &&
-      (file.type.startsWith('image/') ||
-        file.type.startsWith('video/') ||
-        file.type === 'application/pdf')
+      (file.type.startsWith("image/") ||
+        file.type.startsWith("video/") ||
+        file.type === "application/pdf")
     ) {
-      if (file.size > 10 * 1024 * 1024) {
-        alert("File too large! Max 10MB allowed.");
-        return;
-      }
       setSelectedFile(file);
       setFilePreview(URL.createObjectURL(file));
     }
   };
 
   const handleClear = () => {
-    setContent('');
+    setContent("");
     setSelectedFile(null);
-    if (filePreview) {
-      URL.revokeObjectURL(filePreview);
-    }
+    if (filePreview) URL.revokeObjectURL(filePreview);
     setFilePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!content.trim() && !selectedFile) return;
-
     setLoading(true);
     const formData = new FormData();
-    formData.append('content', content);
-    if (selectedFile) {
-      formData.append('file', selectedFile);
-    }
+    formData.append("content", content);
+    if (selectedFile) formData.append("file", selectedFile);
 
     try {
-      const res = await fetch("https://lingolive.onrender.com/api/posts", {
+      const res = await fetch(`${BASE_URL}/api/posts`, {
         method: "POST",
         body: formData,
         credentials: "include",
       });
-      const data = await res.json();
-      ("Post created:", data);
-      handleClear();
+      if (res.ok) {
+        toast.success("Post published");
+        handleClear();
+      } else {
+        toast.error("Failed to create post");
+      }
     } catch (err) {
-      console.error("Error creating post:", err.message);
+      toast.error("Error creating post");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-app relative overflow-hidden py-8 px-4">
+      <div className="bg-app-fixed" />
+      <div className="glow-purple" style={{ top: "-200px", left: "-200px" }} />
+      <div className="glow-blue" style={{ bottom: "-200px", right: "-200px" }} />
+
+      <div className="relative z-10 max-w-2xl mx-auto animate-fadeUp">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-3">
-            Create New Post
-          </h1>
-          <p className="text-gray-400 text-sm">Share your thoughts with the world</p>
+        <div className="mb-6">
+          <h1 className="heading-xl text-white mb-1">Create Post</h1>
+          <p className="text-secondary text-sm">
+            Share your thoughts with the community
+          </p>
         </div>
 
-        {/* Main Card */}
-        <div className="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 shadow-2xl overflow-hidden">
-          <div className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Content Section */}
-              <div className="space-y-3">
-                <label htmlFor="content" className="block text-sm font-medium text-gray-300">
-                  What's on your mind?
-                </label>
-                <div className="relative">
-                  <textarea
-                    name="content"
-                    id="content"
-                    rows="6"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Share your thoughts, ideas, or stories..."
-                    className="w-full p-4 rounded-xl bg-gray-700/50 border border-gray-600/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 resize-none"
-                  />
-                  <div className="absolute bottom-3 right-3 text-xs text-gray-400">
-                    {content.length}/500
-                  </div>
+        <div className="card-static p-6 md:p-7">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Content */}
+            <div>
+              <label className="block text-xs font-medium text-secondary mb-2 uppercase tracking-wide">
+                Content
+              </label>
+              <div className="relative">
+                <textarea
+                  rows="6"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="What's on your mind?"
+                  maxLength={500}
+                  className="input resize-none"
+                />
+                <div className="absolute bottom-3 right-3 text-[10px] text-muted">
+                  <span className={content.length > 450 ? "text-[#F59E0B]" : ""}>
+                    {content.length}
+                  </span>
+                  /500
                 </div>
               </div>
+            </div>
 
-              {/* File Upload Section */}
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-300">Add Media</label>
-                {/* Drag & Drop Area */}
-                <div
-                  className={`border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 cursor-pointer ${
-                    isDragging
-                      ? 'border-blue-400 bg-blue-500/10'
-                      : 'border-gray-600 hover:border-gray-500 bg-gray-700/30'
-                  }`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <div className="space-y-3">
-                    <div className="w-12 h-12 mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-gray-300 font-medium">Drop your files here</p>
-                      <p className="text-gray-400 text-sm mt-1">or click to browse</p>
-                    </div>
-                    <p className="text-xs text-gray-500">Supports images, videos, and PDF files</p>
-                  </div>
+            {/* Upload */}
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+                isDragging
+                  ? "border-[#8B5CF6] bg-[#8B5CF6]/5"
+                  : "border-[#18202B] hover:border-[#293445] bg-[#0B1017]"
+              }`}
+            >
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
+                <ImagePlus className="w-5 h-5 text-[#8B5CF6]" />
+              </div>
+              <p className="text-sm font-medium text-white mb-1">
+                Click to upload or drag and drop
+              </p>
+              <p className="text-xs text-muted">
+                Images, videos or PDFs up to 50MB
+              </p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*,application/pdf"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
 
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    id="file"
-                    name="file"
-                    accept="image/*,video/*,application/pdf"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
+            {/* Preview */}
+            {filePreview && (
+              <div className="animate-fadeUp">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-secondary">Preview</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      URL.revokeObjectURL(filePreview);
+                      setFilePreview(null);
+                    }}
+                    className="text-xs text-[#F43F5E] hover:text-[#F87171] flex items-center gap-1 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                    Remove
+                  </button>
                 </div>
-
-                {/* File Preview */}
-                {filePreview && (
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-300">Preview</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedFile(null);
-                          URL.revokeObjectURL(filePreview);
-                          setFilePreview(null);
-                        }}
-                        className="text-xs text-red-400 hover:text-red-300 transition-colors"
-                      >
-                        Remove
-                      </button>
+                <div className="rounded-xl overflow-hidden border border-[#18202B]">
+                  {selectedFile?.type.startsWith("image/") && (
+                    <img src={filePreview} alt="" className="w-full max-h-64 object-cover" />
+                  )}
+                  {selectedFile?.type.startsWith("video/") && (
+                    <video src={filePreview} controls className="w-full max-h-64" />
+                  )}
+                  {selectedFile?.type === "application/pdf" && (
+                    <div className="p-8 text-center bg-[#0F141C]">
+                      <FileText className="w-10 h-10 text-[#F43F5E] mx-auto mb-2" />
+                      <p className="text-sm text-white">{selectedFile.name}</p>
                     </div>
+                  )}
+                </div>
+              </div>
+            )}
 
-                    <div className="rounded-lg overflow-hidden border border-gray-600/50 bg-gray-700/30">
-                      {selectedFile?.type.startsWith('image/') && (
-                        <img src={filePreview} alt="Preview" className="w-full h-64 object-cover" />
-                      )}
-                      {selectedFile?.type.startsWith('video/') && (
-                        <video src={filePreview} controls className="w-full h-64 object-cover" />
-                      )}
-                      {selectedFile?.type === 'application/pdf' && (
-                        <div className="p-6 text-center">
-                          <div className="w-16 h-16 mx-auto mb-3 bg-red-500 rounded-lg flex items-center justify-center">
-                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </div>
-                          <p className="text-gray-300 font-medium">{selectedFile.name}</p>
-                          <p className="text-gray-400 text-sm">PDF Document</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+            {/* Actions */}
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleClear}
+                className="btn-secondary"
+              >
+                Clear
+              </button>
+              <button
+                type="submit"
+                disabled={(!content.trim() && !selectedFile) || loading}
+                className="btn-primary flex-1"
+              >
+                {loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Publish Post
+                  </>
                 )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="px-6 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-medium transition-all duration-300 hover:scale-105 active:scale-95"
-                >
-                  Clear All
-                </button>
-                <button
-                  type="submit"
-                  disabled={!content.trim() && !selectedFile || loading}
-                  className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                >
-                  {loading ? "Posting..." : "Create Post"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        {/* Features Indicator */}
-        <div className="mt-6 text-center">
-          <div className="inline-flex items-center gap-6 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-              <span>Image Support</span>
+              </button>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-              <span>Video Support</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-              <span>PDF Support</span>
-            </div>
-          </div>
+          </form>
         </div>
       </div>
+
+      <ToastContainer position="top-right" theme="dark" />
     </div>
   );
 };

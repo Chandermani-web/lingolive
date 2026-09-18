@@ -1,257 +1,197 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Send, Paperclip, Phone, Video, Trash2, MoreVertical } from "lucide-react";
 import { useSocket } from "../../Context/SocketContext";
 import { useCall } from "../../Context/CallContext";
-import { Send, FolderUpIcon } from "lucide-react";
-import "remixicon/fonts/remixicon.css";
-import { useNavigate } from "react-router-dom";
 import AppContext from "../../Context/UseContext";
 
 const ChatPage = ({ selectedUser, onOpenSidebar }) => {
-  const {
-  socket,
-  messages,
-  setMessages,
-  onlineUsers
-} = useSocket();
-
-  // Get call functions from CallContext
+  const { socket, messages, setMessages, onlineUsers } = useSocket();
   const { startCall, callActive, callStatus } = useCall();
+  const navigate = useNavigate();
+  const { setShowImage, BASE_URL } = useContext(AppContext);
 
-const navigate = useNavigate();
-  const { setShowImage } = useContext(AppContext);
   const [text, setText] = useState("");
-  const [editOn, setEditOn] = useState(false);
-  const [media, setMedia] = useState({
-    image: null,
-    video: null,
-    audio: null,
-    file: null,
-  });
+  const [menuOpen, setMenuOpen] = useState(null);
+  const [media, setMedia] = useState({ image: null, video: null, audio: null, file: null });
   const [loading, setLoading] = useState(false);
-
   const chatEndRef = useRef(null);
 
-  // Scroll to bottom when new message arrives
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fetch chat history
   useEffect(() => {
     if (!selectedUser?._id) return;
-
     const fetchMessages = async () => {
       try {
-        const res = await fetch(
-          `https://lingolive.onrender.com/api/messages/${selectedUser._id}`,
-          {
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`${BASE_URL}/api/messages/${selectedUser._id}`, {
+          credentials: "include",
+        });
         const data = await res.json();
-        ("Fetched messages:", data);
         setMessages(data || []);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
+      } catch (err) {
+        console.error(err);
       }
     };
     fetchMessages();
-  }, [selectedUser]);
+  }, [selectedUser, BASE_URL, setMessages]);
 
-  const handleMediaChange = (e) => {
+  const handleMedia = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    const type = file.type;
-    if (type.startsWith("image"))
-      setMedia({ image: file, video: null, audio: null, file: null });
-    else if (type.startsWith("video"))
-      setMedia({ image: null, video: file, audio: null, file: null });
-    else if (type.startsWith("audio"))
-      setMedia({ image: null, video: null, audio: file, file: null });
+    const t = file.type;
+    if (t.startsWith("image")) setMedia({ image: file, video: null, audio: null, file: null });
+    else if (t.startsWith("video")) setMedia({ image: null, video: file, audio: null, file: null });
+    else if (t.startsWith("audio")) setMedia({ image: null, video: null, audio: file, file: null });
     else setMedia({ image: null, video: null, audio: null, file });
   };
 
-  // Send new message
   const sendMessage = async () => {
-    if (
-      !text.trim() &&
-      !media.image &&
-      !media.video &&
-      !media.audio &&
-      !media.file
-    )
-      return;
-
+    if (!text.trim() && !media.image && !media.video && !media.audio && !media.file) return;
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("receiverId", selectedUser._id);
-      if (text.trim()) formData.append("text", text.trim());
-      if (media.image) formData.append("image", media.image);
-      if (media.video) formData.append("video", media.video);
-      if (media.audio) formData.append("audio", media.audio);
-      if (media.file) formData.append("file", media.file);
+      const fd = new FormData();
+      fd.append("receiverId", selectedUser._id);
+      if (text.trim()) fd.append("text", text.trim());
+      if (media.image) fd.append("image", media.image);
+      if (media.video) fd.append("video", media.video);
+      if (media.audio) fd.append("audio", media.audio);
+      if (media.file) fd.append("file", media.file);
 
-      const res = await fetch("https://lingolive.onrender.com/api/messages", {
+      const res = await fetch(`${BASE_URL}/api/messages`, {
         method: "POST",
         credentials: "include",
-        body: formData,
+        body: fd,
       });
-
-      const data = await res.json();
-      if (res.ok && data?.data) {
+      if (res.ok) {
         setText("");
         setMedia({ image: null, video: null, audio: null, file: null });
-        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
       }
+    } catch (err) {
+      console.error(err);
+    } finally {
       setLoading(false);
-    } catch (error) {
-      console.error("Error sending message:", error);
     }
   };
 
-  const deleteMessage = async (messageId) => {
+  const deleteMessage = async (id) => {
     try {
-      const res = await fetch(
-        `https://lingolive.onrender.com/api/messages/${messageId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-      if (res.ok) {
-        setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
-      }
-    } catch (error) {
-      console.error("Error deleting message:", error);
+      const res = await fetch(`${BASE_URL}/api/messages/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (res.ok) setMessages((prev) => prev.filter((m) => m._id !== id));
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
+  const online = onlineUsers.includes(selectedUser._id);
 
   return (
-    <div className="flex flex-col h-full bg-[#050A15] border-l border-gray-800">
+    <div className="flex flex-col h-full bg-[#05070A]">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-gray-800 bg-[#050A15]">
+      <div className="flex items-center gap-3 p-4 border-b border-[#18202B] bg-[#080B10]">
         <button
-          className="md:hidden mr-1 flex flex-col items-center justify-center w-9 h-9 rounded-md bg-gray-800 text-white"
+          className="md:hidden p-2 rounded-lg hover:bg-white/5 text-secondary"
           onClick={onOpenSidebar}
-          aria-label="Open chats"
         >
-          {/* simple hamburger */}
-          <span className="block w-5 h-0.5 bg-white mb-1"></span>
-          <span className="block w-5 h-0.5 bg-white mb-1"></span>
-          <span className="block w-5 h-0.5 bg-white"></span>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
         </button>
-        <img
-          src={selectedUser.profilePic || "/default-avatar.png"}
-          alt="profile"
-          className="w-10 h-10 rounded-full object-cover"
-          onClick={() => {
-            setShowImage(selectedUser.profilePic || "/default-avatar.png");
-          }}
-        />
-        <div className="flex-1">
+
+        <div className="relative">
+          <img
+            src={selectedUser.profilePic || "/avatar.svg"}
+            alt=""
+            className="w-10 h-10 rounded-full object-cover cursor-pointer"
+            onClick={() => setShowImage(selectedUser.profilePic || "/avatar.svg")}
+          />
+          <span
+            className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#080B10]"
+            style={{ background: online ? "#10B981" : "#52525B" }}
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
           <h2
-            className="text-white font-semibold text-lg"
-            onClick={() => {
-              navigate(`/profile/${selectedUser._id}`);
-            }}
+            className="text-sm font-semibold text-white cursor-pointer hover:text-[#8B5CF6] transition-colors truncate"
+            onClick={() => navigate(`/profile/${selectedUser._id}`)}
           >
             @{selectedUser.username}
           </h2>
-          <p className="text-gray-400 text-sm">
-            {onlineUsers.includes(selectedUser._id) ? "🟢Online" : "🔴Offline"}
+          <p className={`text-xs ${online ? "text-[#10B981]" : "text-muted"}`}>
+            {online ? "Online" : "Offline"}
           </p>
         </div>
 
-        {/* Call Buttons */}
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           <button
             onClick={() => startCall(selectedUser._id, "video", selectedUser.name, selectedUser.avatar)}
             disabled={callActive || callStatus !== "idle"}
-            className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors"
-            title="Video Call"
+            className="btn-ghost p-2 disabled:opacity-40"
+            title="Video call"
           >
-            <i className="ri-vidicon-line text-white"></i>
+            <Video className="w-[18px] h-[18px]" />
           </button>
-
           <button
             onClick={() => startCall(selectedUser._id, "audio", selectedUser.name, selectedUser.avatar)}
             disabled={callActive || callStatus !== "idle"}
-            className="p-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors"
-            title="Voice Call"
+            className="btn-ghost p-2 disabled:opacity-40"
+            title="Voice call"
           >
-            <i className="ri-phone-line text-white"></i>
+            <Phone className="w-[18px] h-[18px]" />
           </button>
         </div>
-        
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 custom-scrollbar">
-        {messages.map((m) => {
-          const senderId =
-            typeof m.sender === "object" ? m.sender._id : m.sender;
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+        {messages.map((m, i) => {
+          const senderId = typeof m.sender === "object" ? m.sender._id : m.sender;
           const isOwn = senderId !== selectedUser._id;
-          const isMenuOpen = editOn === m._id; // active message dropdown
+          const isMenuOpen = menuOpen === m._id;
 
           return (
             <div
-              key={m._id}
-              className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+              key={m._id || i}
+              className={`flex ${isOwn ? "justify-end" : "justify-start"} animate-fadeIn`}
             >
-              <div
-                className={`flex items-end gap-2 max-w-[80%] md:max-w-xs ${
-                  isOwn ? "flex-row-reverse" : "flex-row"
-                }`}
-              >
+              <div className={`flex items-end gap-2 max-w-[75%] md:max-w-md ${isOwn ? "flex-row-reverse" : ""}`}>
                 {!isOwn && (
                   <img
-                    src={selectedUser.profilePic || "/default-avatar.png"}
-                    alt="profile"
-                    className="w-8 h-8 rounded-full object-cover"
+                    src={selectedUser.profilePic || "/avatar.svg"}
+                    alt=""
+                    className="w-7 h-7 rounded-full object-cover flex-shrink-0"
                   />
                 )}
                 <div
-                  className={`py-3 px-4 rounded-2xl break-words relative group ${
+                  className={`py-2.5 px-4 rounded-2xl break-words relative group ${
                     isOwn
-                      ? "bg-blue-600 text-white rounded-br-none"
-                      : "bg-gray-800 text-gray-100 rounded-bl-none"
+                      ? "bg-gradient-to-br from-[#4F46E5] to-[#7C3AED] text-white rounded-br-md"
+                      : "bg-[#0F141C] border border-[#18202B] text-secondary rounded-bl-md"
                   }`}
                 >
-                  {/* 3-dot menu button */}
                   {isOwn && (
-                    <div className="absolute top-1 right-1">
+                    <div className="absolute -top-1 -right-1">
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditOn(isMenuOpen ? null : m._id);
-                        }}
-                        className="text-gray-300 hover:text-white transition"
+                        onClick={() => setMenuOpen(isMenuOpen ? null : m._id)}
+                        className="opacity-0 group-hover:opacity-100 p-1 rounded-full bg-[#0F141C] border border-[#18202B] transition-opacity"
                       >
-                        <i className="ri-more-2-line text-xs"></i>
+                        <MoreVertical className="w-3 h-3 text-secondary" />
                       </button>
-
-                      {/* Dropdown menu */}
                       {isMenuOpen && (
-                        <div
-                          className="absolute right-0 mt-6 w-28 bg-gray-900 border border-gray-700 rounded-lg shadow-md z-20"
-                          onClick={(e) => e.stopPropagation()}
-                        >
+                        <div className="absolute right-0 top-6 w-24 bg-[#0F141C] border border-[#18202B] rounded-lg overflow-hidden z-20 shadow-2xl">
                           <button
                             onClick={() => {
                               deleteMessage(m._id);
-                              setEditOn(null);
+                              setMenuOpen(null);
                             }}
-                            className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-gray-800 rounded-t-lg"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-[#F43F5E] hover:bg-[#F43F5E]/5 transition-colors"
                           >
+                            <Trash2 className="w-3 h-3" />
                             Delete
                           </button>
                         </div>
@@ -259,84 +199,75 @@ const navigate = useNavigate();
                     </div>
                   )}
 
-                  {/* Message content */}
                   {m.image && (
                     <img
                       src={m.image}
-                      alt="sent"
-                      className="mt-2 max-w-xs shadow-lg w-[200px] h-[200px] object-cover"
-                      onClick={()=>setShowImage(m.image)}
+                      alt=""
+                      className="mt-1 rounded-lg max-w-[220px] cursor-pointer"
+                      onClick={() => setShowImage(m.image)}
                     />
                   )}
                   {m.video && (
-                    <video
-                      src={m.video}
-                      controls
-                      className="mt-2 max-w-xs shadow-lg w-[200px] h-[200px] object-cover"
-                    />
+                    <video src={m.video} controls className="mt-1 rounded-lg max-w-[220px]" />
                   )}
-                  {m.audio && <audio src={m.audio} controls className="mt-2" />}
+                  {m.audio && <audio src={m.audio} controls className="mt-1 max-w-[220px]" />}
                   {m.file && (
                     <a
                       href={m.file}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-400 underline mt-2 block"
+                      className="underline mt-1 block text-sm"
                     >
                       📎 Download file
                     </a>
                   )}
-                  {m.text && <p className="text-sm">{m.text}</p>}
-                <span className={`text-[10px] block mt-2 text-right ${isOwn ? "text-blue-100" : "text-gray-400"
-                  }`}>
-                  {new Date(m.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-                  </div>
+                  {m.text && <p className="text-sm leading-relaxed">{m.text}</p>}
+
+                  <span
+                    className={`text-[10px] block mt-1 text-right ${
+                      isOwn ? "text-white/60" : "text-muted"
+                    }`}
+                  >
+                    {new Date(m.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
               </div>
             </div>
           );
         })}
-
-        <div ref={chatEndRef}></div>
+        <div ref={chatEndRef} />
       </div>
 
-      {/* Media preview before sending */}
+      {/* Media Preview */}
       {(media.image || media.video || media.audio || media.file) && (
-        <div className="p-2 flex items-center gap-3 border-t border-gray-800 bg-gray-900">
+        <div className="p-3 flex items-center gap-3 border-t border-[#18202B] bg-[#080B10]">
           {media.image && (
             <img
               src={URL.createObjectURL(media.image)}
-              alt="preview"
-              className="w-20 h-20 object-cover rounded-lg border border-gray-700"
+              alt=""
+              className="w-14 h-14 object-cover rounded-lg border border-[#18202B]"
             />
           )}
           {media.video && (
             <video
               src={URL.createObjectURL(media.video)}
-              controls
-              className="w-24 h-20 rounded-lg border border-gray-700"
+              className="w-14 h-14 rounded-lg border border-[#18202B]"
             />
           )}
           {media.audio && (
-            <audio
-              src={URL.createObjectURL(media.audio)}
-              controls
-              className="w-48"
-            />
+            <audio src={URL.createObjectURL(media.audio)} controls className="w-48" />
           )}
           {media.file && (
-            <p className="text-sm text-gray-300 truncate max-w-[150px]">
+            <p className="text-xs text-secondary truncate max-w-[150px]">
               📎 {media.file.name}
             </p>
           )}
           <button
-            onClick={() =>
-              setMedia({ image: null, video: null, audio: null, file: null })
-            }
-            className="text-red-400 text-xs underline"
+            onClick={() => setMedia({ image: null, video: null, audio: null, file: null })}
+            className="ml-auto text-xs text-[#F43F5E] hover:text-[#F87171] transition-colors"
           >
             Remove
           </button>
@@ -344,32 +275,35 @@ const navigate = useNavigate();
       )}
 
       {/* Input */}
-      <div className="flex items-center border-t border-gray-800 p-3 bg-gray-900">
-        <FolderUpIcon
-          className="cursor-pointer mr-3 text-amber-500"
-          onClick={() => document.getElementById("media").click()}
-        />
+      <div className="flex items-center gap-2 p-3 border-t border-[#18202B] bg-[#080B10]">
+        <button
+          onClick={() => document.getElementById("media-input").click()}
+          className="btn-ghost p-2.5"
+        >
+          <Paperclip className="w-[18px] h-[18px]" />
+        </button>
         <input
           type="file"
-          id="media"
+          id="media-input"
           className="hidden"
-          onChange={handleMediaChange}
+          onChange={handleMedia}
         />
 
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
           placeholder="Type a message..."
-          className="flex-1 bg-gray-800 text-white p-2 rounded-full outline-none focus:ring-2 focus:ring-blue-600"
+          className="input flex-1 py-2.5 text-sm"
         />
+
         <button
           onClick={sendMessage}
-          className={`ml-3 p-2 ${loading ? "bg-gray-600" : "bg-blue-600"} ${loading ? "hover:bg-gray-700" : "hover:bg-blue-700"} rounded-full transition`}
           disabled={loading}
+          className="p-2.5 btn-primary rounded-lg disabled:opacity-40"
         >
-          <Send size={18} />
+          <Send className="w-4 h-4" />
         </button>
       </div>
     </div>

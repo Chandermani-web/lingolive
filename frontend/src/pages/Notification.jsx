@@ -1,11 +1,7 @@
-import ShowNotification from '../Components/Notifications/ShowNotification'
+import ShowNotification from "../Components/Notifications/ShowNotification";
 
 const Notification = () => {
-  return (
-    <div>
-      <ShowNotification />
-    </div>
-  )
-}
+  return <ShowNotification />;
+};
 
-export default Notification
+export default Notification;

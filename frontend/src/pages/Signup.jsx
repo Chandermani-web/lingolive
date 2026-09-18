@@ -1,181 +1,155 @@
 import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { User, Mail, Lock, Eye, EyeOff, Radio, ArrowRight } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
-import { Eye, EyeOff, User, Mail, Lock, Sparkles } from "lucide-react";
 import AppContext from "../Context/UseContext";
 
 const Signup = () => {
-  const [formdata, setformdata] = useState({
-    username: "",
-    email: "",
-    password: "",
+  const [formdata, setFormdata] = useState({
+    username: "", email: "", password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showpassword, setshowpassword] = useState(false);
-  const { setUser } = useContext(AppContext);
+  const { setUser, BASE_URL } = useContext(AppContext);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setformdata({ ...formdata, [name]: value });
-  }; 
+    setFormdata({ ...formdata, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch("https://lingolive.onrender.com/api/auth/signup", {
+      const response = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formdata),
       });
       const data = await response.json();
-      console.log(data);
-
       setUser(data.user);
 
       if (response.ok) {
-        toast.success(`🎉 Welcome! ${data.message}`, {
-          autoClose: 1500,
-          onClose: () => {
-            window.location.href = "/profile";
-          },
-        });
+        toast.success("Account created! Welcome to LingoLive");
+        setTimeout(() => (window.location.href = "/profile"), 1200);
       } else {
-        toast.error(`Signup failed! ${data.message}`, { autoClose: 2000 });
+        toast.error(data.message || "Signup failed");
       }
     } catch (error) {
-      console.error(error);
-      toast.error(`Signup failed! ${error.message}`, { autoClose: 2000 });
+      toast.error(error.message || "Signup failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-black flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-4 h-4 bg-blue-400 rounded-full animate-bounce"></div>
-        <div className="absolute top-40 right-20 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-32 left-1/4 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
-      </div>
+    <div className="min-h-screen bg-app flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="bg-app-fixed" />
+      <div className="glow-blue" style={{ top: '-200px', right: '-200px' }} />
+      <div className="glow-purple" style={{ bottom: '-200px', left: '-200px' }} />
 
-      <div className="max-w-md w-full relative z-10">
-        <div className="bg-gray-800/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50 p-8 transform hover:scale-[1.02] transition-all duration-300">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-white" />
-                </div>
-              </div>
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">
-              Join Our Community
-            </h1>
-            <p className="text-gray-400">Start your amazing journey with us</p>
+      <div className="relative z-10 w-full max-w-[420px] animate-fadeUp">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] mb-5 shadow-xl shadow-purple-500/20">
+            <Radio className="w-7 h-7 text-white" strokeWidth={2.5} />
           </div>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
-            <div className="group">
-              <label className="block text-sm font-medium text-gray-300 mb-3">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-blue-400 transition-colors" />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  value={formdata.email}
-                  onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-4 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
-                  required
-                />
-              </div>
-            </div>
+          <h1 className="heading-xl text-white mb-2">Create your account</h1>
+          <p className="text-secondary text-sm">Join thousands of people connecting on LingoLive</p>
+        </div>
 
-            {/* Username Field */}
-            <div className="group">
-              <label className="block text-sm font-medium text-gray-300 mb-3">
+        <div className="card-static p-6 md:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-xs font-medium text-secondary mb-2 uppercase tracking-wide">
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-blue-400 transition-colors" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                 <input
                   type="text"
                   name="username"
                   placeholder="Choose a username"
                   value={formdata.username}
                   onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-4 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                  className="input pl-11"
                   required
                 />
               </div>
             </div>
-            
-            {/* Password Field */}
-            <div className="group">
-              <label className="block text-sm font-medium text-gray-300 mb-3">
+
+            <div>
+              <label className="block text-xs font-medium text-secondary mb-2 uppercase tracking-wide">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  value={formdata.email}
+                  onChange={handleChange}
+                  className="input pl-11"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-secondary mb-2 uppercase tracking-wide">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-blue-400 transition-colors" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                 <input
-                  type={showpassword ? "text" : "password"}
+                  type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Create a secure password"
+                  placeholder="Create a strong password"
                   value={formdata.password}
                   onChange={handleChange}
-                  className="w-full pl-12 pr-12 py-4 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
+                  className="input pl-11 pr-11"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setshowpassword(!showpassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-primary transition-colors"
                 >
-                  {showpassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
-            
-            {/* Submit Button */}
-            <button 
-              type="submit" 
+
+            <button
+              type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-4 px-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+              className="btn-primary w-full mt-2"
             >
               {loading ? (
-                <div className="flex items-center justify-center">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                  Creating Your Account...
-                </div>
+                <>
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Creating account...
+                </>
               ) : (
-                "Create Account"
+                <>
+                  Create Account
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
           </form>
-          
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-400">
-              Already have an account?{' '}
-              <a href="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors hover:underline">
-                Sign in here
-              </a>
+
+          <div className="mt-6 pt-6 border-t border-[#18202B] text-center">
+            <p className="text-sm text-secondary">
+              Already have an account?{" "}
+              <Link to="/login" className="text-gradient-brand font-semibold hover:opacity-80 transition-opacity">
+                Sign in
+              </Link>
             </p>
           </div>
         </div>
       </div>
-      <ToastContainer 
-        position="top-right"
-        theme="dark"
-        toastClassName="bg-gray-800 text-white"
-      />
+
+      <ToastContainer position="top-right" theme="dark" />
     </div>
   );
 };

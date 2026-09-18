@@ -1,43 +1,59 @@
-import 'remixicon/fonts/remixicon.css';
+import { Compass, Users, UserPlus } from "lucide-react";
 
-const Sidebar = ({ setdisplayName, displayName }) => {
+const Sidebar = ({ activeTab, setActiveTab }) => {
+  const items = [
+    { id: 1, icon: Compass, label: "Discover People", color: "#22D3EE" },
+    { id: 2, icon: Users, label: "My Connections", color: "#8B5CF6" },
+    { id: 3, icon: UserPlus, label: "Sent Requests", color: "#10B981" },
+  ];
+
   return (
-    <div className='bg-gradient-to-b from-gray-900 to-gray-800 md:rounded-2xl hidden md:block'>
-        <div className='flex flex-col bg-white/5 border border-white/10 md:rounded-2xl'>
-            
-            <button className={`py-5 px-3 border-b border-white/10 leading-10 font-semibold text-white hover:bg-blue-600/20 transition-all duration-300 ease-in-out hover:translate-x-2 group ${displayName === 1 ? "bg-gradient-to-br from-green-500 to-blue-500" : ""} rounded-t-2xl`} onClick={() => setdisplayName(1)}>
-                <div className='flex items-center space-x-4'>
-                    <div className='w-10 h-10 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-lg shadow-lg shadow-emerald-500/25 flex items-center justify-center group-hover:shadow-emerald-400/40 transition-all duration-300'>
-                        <i className="ri-user-line text-white text-xs"></i>
-                    </div>
-                    <span>Connections</span>
-                </div>
+    <div className="card-static p-2 hidden lg:block">
+      <nav className="space-y-1">
+        {items.map((item) => {
+          const active = activeTab === item.id;
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all ${
+                active
+                  ? "bg-[#15152A] border border-[#8B5CF6]/25"
+                  : "border border-transparent hover:bg-white/[0.03]"
+              }`}
+            >
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{
+                  background: active ? `${item.color}20` : "#0F141C",
+                  border: `1px solid ${active ? item.color + "40" : "#18202B"}`,
+                }}
+              >
+                <Icon
+                  className="w-4 h-4"
+                  style={{ color: active ? item.color : "#71717A" }}
+                />
+              </div>
+              <span
+                className={`text-sm font-medium ${
+                  active ? "text-white" : "text-secondary"
+                }`}
+              >
+                {item.label}
+              </span>
+              {active && (
+                <span
+                  className="ml-auto w-1.5 h-1.5 rounded-full"
+                  style={{ background: item.color }}
+                />
+              )}
             </button>
-            
-            <button className={`py-5 px-3 border-b border-white/10 leading-10 font-semibold text-white hover:bg-purple-600/20 transition-all duration-300 ease-in-out hover:translate-x-2 group ${displayName === 2 ? "bg-gradient-to-br from-green-500 to-blue-500" : ""}`} onClick={() => setdisplayName(2)}>
-                <div className='flex items-center space-x-4'>
-                    <div className='w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg shadow-lg shadow-purple-500/25 flex items-center justify-center group-hover:shadow-purple-400/40 transition-all duration-300'>
-                        <i className="ri-link-m text-white text-xs"></i>
-                    </div>
-                    <span>Your Friends</span>
-                </div>
-            </button>
-            <button className={`py-5 px-3 border-b border-white/10 leading-10 font-semibold text-white hover:bg-green-600/20 transition-all duration-300 ease-in-out hover:translate-x-2 group ${displayName === 3 ? "bg-gradient-to-br from-green-500 to-blue-500" : ""}  rounded-b-2xl`} onClick={() => setdisplayName(3)}>
-                <div className='flex items-center space-x-4'>
-                    <div className='w-10 h-10 bg-gradient-to-r from-green-400 to-teal-400 rounded-lg shadow-lg shadow-green-500/25 flex items-center justify-center group-hover:shadow-green-400/40 transition-all duration-300'>
-                        <i className="ri-arrow-right-up-line text-white text-xs"></i>
-                    </div>
-                    <span>Followers and Followings</span>
-                </div>
-            </button>
-        </div>
-
-        <div>
-            {/* Additional content can be added here if needed */}
-
-        </div>
+          );
+        })}
+      </nav>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;
