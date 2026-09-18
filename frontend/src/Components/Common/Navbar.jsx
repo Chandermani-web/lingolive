@@ -1,14 +1,14 @@
 import { useContext, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home, Users, MessageCircle, Bell, User as UserIcon, LogOut, Menu, X, Search, Radio
+  Home, Users, MessageCircle, Bell, User as UserIcon,
+  LogOut, Menu, X, Radio
 } from "lucide-react";
 import AppContext from "../../Context/UseContext";
 
 const Navbar = () => {
   const { auth, setUser, notifications, BASE_URL } = useContext(AppContext);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-[#05070A]/85 backdrop-blur-xl border-b border-[#18202B]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* ───── Logo ───── */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="relative w-9 h-9 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#3B82F6] flex items-center justify-center shadow-lg shadow-purple-500/20">
               <Radio className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -52,9 +52,9 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* ───── Desktop Nav (shows on lg+) ───── */}
           {auth && (
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-1">
               {navLinks.map(({ to, icon: Icon, label, badge }) => {
                 const active = isActive(to);
                 return (
@@ -76,39 +76,40 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Right Actions */}
+          {/* ───── Right Actions ───── */}
           <div className="flex items-center gap-2">
-            {auth && (
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="btn-ghost hidden sm:flex"
-                aria-label="Search"
-              >
-                <Search className="w-[18px] h-[18px]" />
-              </button>
-            )}
-
+            {/* Logout — desktop only */}
             {auth && (
               <button
                 onClick={handleLogout}
-                className="hidden md:flex btn-ghost text-[#F43F5E]"
+                className="hidden lg:flex btn-ghost text-[#F43F5E] hover:bg-[#F43F5E]/5"
+                title="Logout"
               >
                 <LogOut className="w-[18px] h-[18px]" />
+                <span className="text-sm font-medium">Logout</span>
               </button>
             )}
 
-            <button
-              className="md:hidden btn-ghost"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Menu — tablet & phone only (< lg) */}
+            {auth && (
+              <button
+                className="lg:hidden btn-ghost"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* ───── Mobile / Tablet Menu (shows on < lg) ───── */}
         {mobileOpen && auth && (
-          <div className="md:hidden py-3 border-t border-[#18202B] animate-fadeUp">
+          <div className="lg:hidden py-3 border-t border-[#18202B] animate-fadeUp">
             <div className="flex flex-col gap-1">
               {navLinks.map(({ to, icon: Icon, label }) => (
                 <Link
