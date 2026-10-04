@@ -6,6 +6,7 @@ import AppContext from "../../../Context/UseContext";
 const SendRequestConnection = () => {
   const { sentRequests, fetchSentRequests, loading } = useContext(AppContext);
   const navigate = useNavigate();
+  const validRequests = (sentRequests || []).filter((request) => request?.receiver?._id);
 
   useEffect(() => {
     fetchSentRequests();
@@ -19,7 +20,7 @@ const SendRequestConnection = () => {
     );
   }
 
-  if (sentRequests.length === 0) {
+  if (validRequests.length === 0) {
     return (
       <div className="card-static p-12 text-center">
         <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
@@ -35,7 +36,7 @@ const SendRequestConnection = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      {sentRequests.map((request, i) => {
+      {validRequests.map((request, i) => {
         const u = request.receiver;
         return (
         <div

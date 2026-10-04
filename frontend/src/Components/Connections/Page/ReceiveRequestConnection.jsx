@@ -13,7 +13,9 @@ const ReceiveRequestConnection = () => {
     fetchReceivedRequests();
   }, []);
 
-  if (loading || receivedRequests.length === 0) return null;
+  const validRequests = (receivedRequests || []).filter((request) => request?.sender?._id);
+
+  if (loading || validRequests.length === 0) return null;
 
   const handleAccept = async (requestId) => {
     setProcessing(requestId);
@@ -64,7 +66,7 @@ const ReceiveRequestConnection = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {receivedRequests.map((req, i) => (
+      {validRequests.map((req, i) => (
         <div
           key={req._id}
           className="card p-4 animate-fadeUp"

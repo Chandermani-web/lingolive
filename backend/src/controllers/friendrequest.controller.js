@@ -255,7 +255,9 @@ export const getConnections = asyncHandler(async (req, res) => {
         .sort({ updatedAt: -1 })
         .lean();
 
-    const connections = friendships.map((friendship) => {
+    const connections = friendships
+        .filter((friendship) => friendship.sender && friendship.receiver)
+        .map((friendship) => {
         const otherUser = friendship.sender._id.toString() === userId.toString()
             ? friendship.receiver
             : friendship.sender;
@@ -265,7 +267,7 @@ export const getConnections = asyncHandler(async (req, res) => {
             connectionId: friendship._id,
             connectedAt: friendship.updatedAt || friendship.createdAt,
         };
-    });
+        });
 
     res.status(200).json({
         message: 'Connections retrieved successfully.',
@@ -286,7 +288,7 @@ export const getReceivedFriendRequests = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         message: 'Received friend requests retrieved successfully.',
-        requests,
+        requests: requests.filter((request) => request.sender),
     });
 });
 
@@ -303,7 +305,7 @@ export const getSentFriendRequests = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         message: 'Sent friend requests retrieved successfully.',
-        requests,
+        requests: requests.filter((request) => request.receiver),
     });
 });
 
