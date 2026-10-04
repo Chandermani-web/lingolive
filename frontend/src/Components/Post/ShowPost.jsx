@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ThumbsUp, MessageCircle, MoreHorizontal } from "lucide-react";
 import AppContext from "../../Context/UseContext";
@@ -9,14 +9,15 @@ const ShowPost = () => {
   const [openCommentBoxId, setOpenCommentBoxId] = useState(null);
   const [expandedPostId, setExpandedPostId] = useState(null);
   const {
-    posts, user, setPosts, setComments,
+    posts, user, setPosts, setComments, fetchPosts, postPage,
+    hasMorePosts, loadingPosts, postsError,
     setCommentIdForFetching, setShowImage, BASE_URL,
   } = useContext(AppContext);
   const { socket } = useSocket();
+  const loadMoreRef = useRef(null);
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("newPost", (post) => setPosts((prev) => [post, ...prev]));
     socket.on("updateLikes", ({ postId, likes }) => {
       setPosts((prev) => prev.map((p) => (p._id === postId ? { ...p, likes } : p)));
     });
@@ -37,12 +38,28 @@ const ShowPost = () => {
       setComments((prev) => prev.filter((c) => c._id !== commentId));
     });
     return () => {
-      socket.off("newPost");
       socket.off("updateLikes");
       socket.off("newComment");
       socket.off("deleteComment");
     };
   }, [socket, setPosts]);
+
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (!sentinel || !hasMorePosts) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !loadingPosts) {
+          fetchPosts(postPage + 1, true);
+        }
+      },
+      { rootMargin: "320px 0px" }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [fetchPosts, hasMorePosts, loadingPosts, postPage]);
 
   const handleLike = async (postId) => {
     try {
@@ -192,6 +209,31 @@ const ShowPost = () => {
           )}
         </article>
       ))}
+
+      <div ref={loadMoreRef} aria-hidden="true" className="h-1" />
+
+      {loadingPosts && posts.length > 0 && (
+        <div className="flex justify-center py-6">
+          <div className="w-6 h-6 border-2 border-[#18202B] border-t-[#7C3AED] rounded-full animate-spin" />
+        </div>
+      )}
+
+      {postsError && (
+        <div className="flex flex-col items-center gap-2 py-4 text-center">
+          <p className="text-xs text-[#F43F5E]">Could not load more posts.</p>
+          <button
+            type="button"
+            onClick={() => fetchPosts(postPage + 1, true)}
+            className="text-xs text-[#A78BFA] hover:text-white transition-colors"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
+      {!hasMorePosts && posts.length > 0 && (
+        <p className="text-center text-xs text-muted py-4">You're all caught up</p>
+      )}
     </div>
   );
 };

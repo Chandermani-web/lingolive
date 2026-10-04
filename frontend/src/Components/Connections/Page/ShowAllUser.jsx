@@ -1,31 +1,56 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserPlus, MapPin, Users, Compass } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import AppContext from "../../../Context/UseContext";
 
 const ShowAllUser = () => {
-  const { user, allUser, fetchAllUser, requests, BASE_URL } = useContext(AppContext);
+  const {
+    user, allUser, fetchAllUser, requests, BASE_URL,
+    userPage, hasMoreUsers, loadingUsers, usersError,
+  } = useContext(AppContext);
   const [displayUsers, setDisplayUsers] = useState([]);
   const [processingId, setProcessingId] = useState(null);
+  const loadMoreRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchAllUser();
-  }, []);
-
-  useEffect(() => {
     if (allUser && user) {
+      const relationIds = (items = []) =>
+        items.map((item) => String(item?._id || item));
+      const followingIds = new Set(relationIds(user.following));
+      const followerIds = new Set(relationIds(user.followers));
+      const requestSenderIds = new Set(
+        requests?.map((request) => String(request.sender?._id || request.sender))
+      );
+
       const filtered = allUser.filter(
         (u) =>
-          u._id !== user._id &&
-          !user.following?.some((f) => f._id === u._id) &&
-          !user.followers?.some((f) => f._id === u._id) &&
-          !requests?.some((r) => r.sender?._id === u._id)
+          String(u._id) !== String(user._id) &&
+          !followingIds.has(String(u._id)) &&
+          !followerIds.has(String(u._id)) &&
+          !requestSenderIds.has(String(u._id))
       );
       setDisplayUsers(filtered);
     }
   }, [allUser, user, requests]);
+
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (!sentinel || !hasMoreUsers) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !loadingUsers) {
+          fetchAllUser(userPage + 1, true);
+        }
+      },
+      { rootMargin: "320px 0px" }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [fetchAllUser, hasMoreUsers, loadingUsers, userPage]);
 
   const handleSendRequest = async (userId) => {
     setProcessingId(userId);
@@ -50,7 +75,7 @@ const ShowAllUser = () => {
     }
   };
 
-  if (displayUsers.length === 0) {
+  if (displayUsers.length === 0 && allUser.length === 0 && !loadingUsers) {
     return (
       <div className="card-static p-12 text-center">
         <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
@@ -58,8 +83,17 @@ const ShowAllUser = () => {
         </div>
         <h3 className="heading-sm text-white mb-1">No suggestions right now</h3>
         <p className="text-sm text-muted">
-          Check back later for new people to connect with
+          {usersError || "Check back later for new people to connect with"}
         </p>
+        {usersError && (
+          <button
+            type="button"
+            onClick={() => fetchAllUser(userPage + 1, true)}
+            className="mt-4 text-xs text-[#A78BFA] hover:text-white transition-colors"
+          >
+            Try again
+          </button>
+        )}
       </div>
     );
   }
@@ -140,6 +174,32 @@ const ShowAllUser = () => {
           </div>
         </div>
       ))}
+      <div ref={loadMoreRef} aria-hidden="true" className="h-1 col-span-full" />
+
+      {loadingUsers && (
+        <div className="col-span-full flex justify-center py-6">
+          <div className="w-6 h-6 border-2 border-[#18202B] border-t-[#7C3AED] rounded-full animate-spin" />
+        </div>
+      )}
+
+      {usersError && allUser.length > 0 && (
+        <div className="col-span-full flex flex-col items-center gap-2 py-4 text-center">
+          <p className="text-xs text-[#F43F5E]">Could not load more people.</p>
+          <button
+            type="button"
+            onClick={() => fetchAllUser(userPage + 1, true)}
+            className="text-xs text-[#A78BFA] hover:text-white transition-colors"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
+      {!hasMoreUsers && allUser.length > 0 && (
+        <p className="col-span-full text-center text-xs text-muted py-4">
+          You're all caught up
+        </p>
+      )}
       <ToastContainer position="top-right" theme="dark" />
     </div>
   );

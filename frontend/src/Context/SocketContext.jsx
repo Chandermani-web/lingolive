@@ -97,7 +97,12 @@ export const SocketProvider = ({ children }) => {
     newSocket.emit("joinRoom", user._id);
 
     newSocket.on("newPost", (newPost) => {
-      setPosts((prev) => [newPost, ...prev]);
+      setPosts((prev) => {
+        if (prev.some((post) => String(post._id) === String(newPost._id))) {
+          return prev;
+        }
+        return [newPost, ...prev];
+      });
     });
 
     newSocket.on("updatePost", (updatedPost) => {

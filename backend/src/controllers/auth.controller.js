@@ -85,6 +85,33 @@ export const logout = asyncHandler(async (req, res) => {
 
 // AllUser
 export const AllUser = asyncHandler(async (req,res)=>{
-    const alluser = await User.find({ _id: { $ne: req.user._id } }).select("-password");
-    return res.status(200).json({ success: true, data: alluser });
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
+    const skip = (page - 1) * limit;
+    const filter = { _id: { $ne: req.user._id } };
+    const userFields = 'username email profilePic fullname coverPic bio location friends followers following interests socialLinks';
+
+    const [alluser, total] = await Promise.all([
+        User.find(filter)
+            .select(userFields)
+            .sort({ createdAt: -1, _id: -1 })
+            .skip(skip)
+            .limit(limit),
+        User.countDocuments(filter),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return res.status(200).json({
+        success: true,
+        users: alluser,
+        data: alluser,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages,
+            hasMore: page < totalPages,
+        },
+    });
 })

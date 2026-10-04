@@ -34,6 +34,7 @@ export const createPost = asyncHandler(async (req, res) => {
             { session }
         );
 
+        await newPost.populate('user', 'username profilePic');
         io.emit('newPost', newPost);
 
         // ✅ Fetch the full user document first
@@ -88,9 +89,12 @@ export const updatePost = asyncHandler(async (req, res) => {
     post.video = video || post.video;
 
     const updatedPost = await post.save();
+    const populatedUpdatedPost = await Post.findById(updatedPost._id)
+        .populate('user', 'username profilePic')
+        .lean();
 
     // ✅ Real-time emit to all connected users
-    io.emit('updatePost', updatedPost);
+    io.emit('updatePost', populatedUpdatedPost);
 
     // ✅ Notify friends
     const loggedInUser = await User.findById(userId).populate('friends');
@@ -220,10 +224,32 @@ export const likeAndUnlikePost = asyncHandler(async (req, res) => {
 
 // Get all posts
 export const getAllPosts = asyncHandler(async (req, res) => {
-    const posts = await Post.find()
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
+    const skip = (page - 1) * limit;
+
+    const [posts, total] = await Promise.all([
+        Post.find()
         .populate('user', 'username profilePic')
-        .sort({ createdAt: -1 });
-    res.status(200).json(posts);
+        .sort({ createdAt: -1, _id: -1 })
+        .skip(skip)
+        .limit(limit),
+        Post.countDocuments(),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+        success: true,
+        posts,
+        pagination: {
+            page,
+            limit,
+            total,
+            totalPages,
+            hasMore: page < totalPages,
+        },
+    });
 });
 
 // Get a post by ID
