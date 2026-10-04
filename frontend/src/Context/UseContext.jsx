@@ -12,9 +12,6 @@ export const AppProvider = ({ children }) => {
   const [commentIdForFetching, setCommentIdForFetching] = useState(null);
   const [comments, setComments] = useState([]);
   const [requests, setRequests] = useState([]);
-  const [receivedRequests, setReceivedRequests] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
-  const [connections, setConnections] = useState([]);
   const [friendList, setFriendList] = useState([]);
   const [showImage, setShowImage] = useState("");
   const [showVideo, setShowVideo] = useState("");
@@ -105,77 +102,29 @@ export const AppProvider = ({ children }) => {
 
   const fetchFriendRequests = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/friends/received-requests`, {
+      const res = await fetch(`${BASE_URL}/api/friends/requests`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
       const data = await res.json();
-      setReceivedRequests(data.requests || []);
       setRequests(data.requests || []);
     } catch (err) {
       console.error("Error fetching friend requests:", err);
     }
   };
 
-  const fetchReceivedRequests = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/api/friends/received-requests`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      const data = await res.json();
-      setReceivedRequests(data.requests || []);
-      setRequests(data.requests || []);
-    } catch (err) {
-      console.error("Error fetching received friend requests:", err);
-    }
-  };
-
-  const fetchSentRequests = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/api/friends/sent-requests`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      const data = await res.json();
-      setSentRequests(data.requests || []);
-    } catch (err) {
-      console.error("Error fetching sent friend requests:", err);
-    }
-  };
-
   const fetchFriendlist = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/friends/connections`, {
+      const res = await fetch(`${BASE_URL}/api/friends/list`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
       const data = await res.json();
-      const nextConnections = data.connections || data.friends || [];
-      setConnections(nextConnections);
-      setFriendList(nextConnections);
+      setFriendList(data.friends || []);
     } catch (err) {
       console.error("Error fetching friend list:", err);
-    }
-  };
-
-  const fetchConnections = async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/api/friends/connections`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      const data = await res.json();
-      const nextConnections = data.connections || data.friends || [];
-      setConnections(nextConnections);
-      setFriendList(nextConnections);
-    } catch (err) {
-      console.error("Error fetching connections:", err);
     }
   };
 
@@ -199,9 +148,8 @@ export const AppProvider = ({ children }) => {
       await Promise.all([
         fetchPosts(),
         fetchAllUser(),
-        fetchConnections(),
         fetchFriendRequests(),
-        fetchSentRequests(),
+        fetchFriendlist(),
         fetchNotifications(),
       ]);
       setLoading(false);
@@ -220,16 +168,13 @@ export const AppProvider = ({ children }) => {
     user, setUser,
     allUser, setAllUser,
     requests, setRequests,
-    receivedRequests, setReceivedRequests,
-    sentRequests, setSentRequests,
-    connections, setConnections,
     friendList, setFriendList,
     notifications, setNotifications,
     loading, setLoading,
     fetchNotifications,
     posts, setPosts,
     fetchPosts, fetchUser, fetchAllUser, fetchComments,
-    fetchFriendRequests, fetchReceivedRequests, fetchSentRequests, fetchFriendlist, fetchConnections,
+    fetchFriendRequests, fetchFriendlist,
     auth, setAuth,
     comments, setComments,
     commentIdForFetching, setCommentIdForFetching,

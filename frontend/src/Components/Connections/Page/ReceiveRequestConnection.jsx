@@ -5,17 +5,15 @@ import { toast, ToastContainer } from "react-toastify";
 import AppContext from "../../../Context/UseContext";
 
 const ReceiveRequestConnection = () => {
-  const { receivedRequests, setReceivedRequests, fetchConnections, fetchReceivedRequests, fetchSentRequests, loading, BASE_URL } = useContext(AppContext);
+  const { requests, setRequests, fetchFriendRequests, loading, BASE_URL } = useContext(AppContext);
   const navigate = useNavigate();
   const [processing, setProcessing] = useState(null);
 
   useEffect(() => {
-    fetchReceivedRequests();
+    fetchFriendRequests();
   }, []);
 
-  const validRequests = (receivedRequests || []).filter((request) => request?.sender?._id);
-
-  if (loading || validRequests.length === 0) return null;
+  if (loading || requests.length === 0) return null;
 
   const handleAccept = async (requestId) => {
     setProcessing(requestId);
@@ -29,9 +27,7 @@ const ReceiveRequestConnection = () => {
       const data = await res.json();
       if (res.ok) {
         toast.success("Request accepted");
-        setReceivedRequests((prev) => prev.filter((r) => r._id !== requestId));
-        await fetchConnections();
-        await fetchSentRequests();
+        setRequests((prev) => prev.filter((r) => r._id !== requestId));
       } else {
         toast.error(data.message || "Failed");
       }
@@ -53,9 +49,7 @@ const ReceiveRequestConnection = () => {
       });
       if (res.ok) {
         toast.info("Request declined");
-        setReceivedRequests((prev) => prev.filter((r) => r._id !== requestId));
-        await fetchConnections();
-        await fetchSentRequests();
+        setRequests((prev) => prev.filter((r) => r._id !== requestId));
       }
     } catch (err) {
       toast.error("Something went wrong");
@@ -66,7 +60,7 @@ const ReceiveRequestConnection = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {validRequests.map((req, i) => (
+      {requests.map((req, i) => (
         <div
           key={req._id}
           className="card p-4 animate-fadeUp"

@@ -92,9 +92,6 @@ export const acceptFriendRequest = asyncHandler(async (req, res) => {
         return res.status(404).json({ message: 'Friend request not found.' });
     }
 
-    const senderId = request.sender;
-    const receiverId = userId;
-
     request.status = 'accepted';
     await request.save();
 
@@ -111,20 +108,12 @@ export const acceptFriendRequest = asyncHandler(async (req, res) => {
     );
 
     const newNotification = new Notification({
-        toUser: senderId,
-        message: `${req.user.username} accepted your friend request.`,
+        toUser: receiverId,
+        message: `${req.user.username} Accept Your Friend Request.`,
         type: 'friend_request',
-        fromUser: receiverId,
+        fromUser: senderId,
     });
     await newNotification.save();
-
-    io.to(senderId.toString()).emit('friendRequest', {
-        newRequest: {
-            ...request.toObject(),
-            status: 'accepted',
-        },
-    });
-
     res.status(200).json({ message: 'Friend request accepted.', request });
 });
 
@@ -240,72 +229,6 @@ export const listFriendRequests = asyncHandler(async (req, res) => {
     res.status(200).json({
         message: 'Friend Request Get Successfully',
         requests,
-    });
-});
-
-export const getConnections = asyncHandler(async (req, res) => {
-    const userId = req.user._id;
-
-    const friendships = await Friend.find({
-        status: 'accepted',
-        $or: [{ sender: userId }, { receiver: userId }],
-    })
-        .populate('sender', 'username email profilePic phone dateOfBirth friends savedPosts interests socialLinks location website bio fullname coverPic followers following posts')
-        .populate('receiver', 'username email profilePic phone dateOfBirth friends savedPosts interests socialLinks location website bio fullname coverPic followers following posts')
-        .sort({ updatedAt: -1 })
-        .lean();
-
-    const connections = friendships
-        .filter((friendship) => friendship.sender && friendship.receiver)
-        .map((friendship) => {
-        const otherUser = friendship.sender._id.toString() === userId.toString()
-            ? friendship.receiver
-            : friendship.sender;
-
-        return {
-            ...otherUser,
-            connectionId: friendship._id,
-            connectedAt: friendship.updatedAt || friendship.createdAt,
-        };
-        });
-
-    res.status(200).json({
-        message: 'Connections retrieved successfully.',
-        connections,
-    });
-});
-
-export const getReceivedFriendRequests = asyncHandler(async (req, res) => {
-    const userId = req.user._id;
-
-    const requests = await Friend.find({ receiver: userId, status: 'pending' })
-        .populate(
-            'sender',
-            'username email profilePic phone dateOfBirth friends savedPosts interests socialLinks location website bio fullname coverPic followers following posts'
-        )
-        .sort({ createdAt: -1 })
-        .lean();
-
-    res.status(200).json({
-        message: 'Received friend requests retrieved successfully.',
-        requests: requests.filter((request) => request.sender),
-    });
-});
-
-export const getSentFriendRequests = asyncHandler(async (req, res) => {
-    const userId = req.user._id;
-
-    const requests = await Friend.find({ sender: userId, status: 'pending' })
-        .populate(
-            'receiver',
-            'username email profilePic phone dateOfBirth friends savedPosts interests socialLinks location website bio fullname coverPic followers following posts'
-        )
-        .sort({ createdAt: -1 })
-        .lean();
-
-    res.status(200).json({
-        message: 'Sent friend requests retrieved successfully.',
-        requests: requests.filter((request) => request.receiver),
     });
 });
 

@@ -30,7 +30,7 @@ const NotificationPopupManager = () => {
 
     if (newNotifications.length > 0) {
       setQueue((prev) => [...prev, ...newNotifications]);
-      setShownIds((prev) => new Set([...prev, ...newNotifications.map((n) => n._id)]));
+      setShownIds((prev) => new Set([...Array.from(prev), ...newNotifications.map((n) => n._id)]));
     }
   }, [activeConversationId, isMessagingRoute, shownIds, socketNotifications]);
 

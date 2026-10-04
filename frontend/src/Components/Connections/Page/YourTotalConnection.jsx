@@ -5,13 +5,13 @@ import { toast, ToastContainer } from "react-toastify";
 import AppContext from "../../../Context/UseContext";
 
 const YourTotalConnection = () => {
-  const { connections, fetchConnections, fetchReceivedRequests, fetchSentRequests, loading, BASE_URL } = useContext(AppContext);
+  const { friendList, fetchFriendlist, loading, BASE_URL } = useContext(AppContext);
   const [removingId, setRemovingId] = useState(null);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchConnections();
+    fetchFriendlist();
   }, []);
 
   const handleRemove = async (friendId) => {
@@ -26,9 +26,7 @@ const YourTotalConnection = () => {
       });
       if (!response.ok) throw new Error();
       toast.success("Connection removed");
-      await fetchConnections();
-      await fetchReceivedRequests();
-      await fetchSentRequests();
+      fetchFriendlist();
     } catch (err) {
       toast.error("Failed to remove");
     } finally {
@@ -44,13 +42,13 @@ const YourTotalConnection = () => {
     );
   }
 
-  const filtered = connections?.filter(
+  const filtered = friendList?.filter(
     (f) =>
       f.username?.toLowerCase().includes(search.toLowerCase()) ||
       f.fullname?.toLowerCase().includes(search.toLowerCase())
   ) || [];
 
-  if (connections?.length === 0) {
+  if (friendList?.length === 0) {
     return (
       <div className="card-static p-12 text-center">
         <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
@@ -116,7 +114,12 @@ const YourTotalConnection = () => {
 
               <div className="flex gap-2 flex-shrink-0">
                 <button
-                  onClick={() => navigate("/message")}
+                  onClick={() => navigate("/messages", {
+                    state: {
+                      conversationId: friend._id,
+                      user: friend,
+                    },
+                  })}
                   className="btn-secondary text-xs py-2 px-4"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />

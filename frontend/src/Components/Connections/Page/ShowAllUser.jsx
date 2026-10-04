@@ -5,7 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import AppContext from "../../../Context/UseContext";
 
 const ShowAllUser = () => {
-  const { user, allUser, fetchAllUser, receivedRequests, sentRequests, BASE_URL } = useContext(AppContext);
+  const { user, allUser, fetchAllUser, requests, BASE_URL } = useContext(AppContext);
   const [displayUsers, setDisplayUsers] = useState([]);
   const [processingId, setProcessingId] = useState(null);
   const navigate = useNavigate();
@@ -21,12 +21,11 @@ const ShowAllUser = () => {
           u._id !== user._id &&
           !user.following?.some((f) => f._id === u._id) &&
           !user.followers?.some((f) => f._id === u._id) &&
-          !receivedRequests?.some((r) => r.sender?._id === u._id) &&
-          !sentRequests?.some((r) => r.receiver?._id === u._id)
+          !requests?.some((r) => r.sender?._id === u._id)
       );
       setDisplayUsers(filtered);
     }
-  }, [allUser, user, receivedRequests, sentRequests]);
+  }, [allUser, user, requests]);
 
   const handleSendRequest = async (userId) => {
     setProcessingId(userId);
@@ -70,7 +69,7 @@ const ShowAllUser = () => {
       {displayUsers.map((u, i) => (
         <div
           key={u._id}
-          className="card overflow-hidden group animate-fadeUp"
+          className="card h-full overflow-hidden group animate-fadeUp flex flex-col"
           style={{ animationDelay: `${i * 0.04}s` }}
         >
           {/* Cover */}
@@ -85,7 +84,7 @@ const ShowAllUser = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E14] to-transparent" />
           </div>
 
-          <div className="p-4 -mt-8 relative">
+          <div className="p-4 -mt-8 relative flex flex-1 flex-col min-h-[264px]">
             <div className="flex items-end gap-3 mb-3">
               <div className="relative">
                 <img
@@ -115,17 +114,19 @@ const ShowAllUser = () => {
               {u.bio || "No bio available"}
             </p>
 
-            {u.location && (
-              <div className="flex items-center gap-1.5 text-[10px] text-muted mb-3">
+            <div className="flex items-center gap-1.5 text-[10px] text-muted mb-3 min-h-[1rem]">
+              {u.location ? (
+                <>
                 <MapPin className="w-3 h-3" />
                 <span className="truncate">{u.location}</span>
-              </div>
-            )}
+                </>
+              ) : null}
+            </div>
 
             <button
               onClick={() => handleSendRequest(u._id)}
               disabled={processingId === u._id}
-              className="btn-primary w-full text-xs py-2.5"
+              className="btn-primary w-full text-xs py-2.5 mt-auto"
             >
               {processingId === u._id ? (
                 <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />

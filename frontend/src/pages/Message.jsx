@@ -26,9 +26,7 @@ const Message = () => {
       (conversation) => String(conversation._id) === String(requestedConversationId)
     );
 
-    if (matchedConversation) {
-      setSelectedUser(matchedConversation);
-    }
+    setSelectedUser(matchedConversation || location.state?.user || null);
   }, [conversations, location.state]);
 
   useEffect(() => {

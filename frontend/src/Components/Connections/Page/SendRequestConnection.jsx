@@ -1,16 +1,14 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, UserPlus, Users } from "lucide-react";
 import AppContext from "../../../Context/UseContext";
 
 const SendRequestConnection = () => {
-  const { sentRequests, fetchSentRequests, loading } = useContext(AppContext);
+  const { user, loading } = useContext(AppContext);
   const navigate = useNavigate();
-  const validRequests = (sentRequests || []).filter((request) => request?.receiver?._id);
 
-  useEffect(() => {
-    fetchSentRequests();
-  }, []);
+  const friendIds = user?.friends?.map((f) => f._id) || [];
+  const sendRequests = user?.following?.filter((u) => !friendIds.includes(u._id)) || [];
 
   if (loading) {
     return (
@@ -20,7 +18,7 @@ const SendRequestConnection = () => {
     );
   }
 
-  if (validRequests.length === 0) {
+  if (sendRequests.length === 0) {
     return (
       <div className="card-static p-12 text-center">
         <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
@@ -36,12 +34,10 @@ const SendRequestConnection = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      {validRequests.map((request, i) => {
-        const u = request.receiver;
-        return (
+      {sendRequests.map((u, i) => (
         <div
           key={u._id}
-          className="card overflow-hidden group animate-fadeUp"
+          className="card h-full overflow-hidden group animate-fadeUp flex flex-col"
           style={{ animationDelay: `${i * 0.04}s` }}
         >
           <div className="relative h-20 overflow-hidden bg-gradient-to-br from-[#8B5CF6]/20 to-[#EC4899]/20">
@@ -60,7 +56,7 @@ const SendRequestConnection = () => {
             </div>
           </div>
 
-          <div className="p-4 -mt-8 relative">
+          <div className="p-4 -mt-8 relative flex flex-1 flex-col min-h-[264px]">
             <div className="flex items-end gap-3 mb-3">
               <div className="relative">
                 <img
@@ -90,21 +86,22 @@ const SendRequestConnection = () => {
               {u.bio || "No bio available"}
             </p>
 
-            {u.location && (
-              <div className="flex items-center gap-1.5 text-[10px] text-muted mb-3">
+            <div className="flex items-center gap-1.5 text-[10px] text-muted mb-3 min-h-[1rem]">
+              {u.location ? (
+                <>
                 <MapPin className="w-3 h-3" />
                 <span className="truncate">{u.location}</span>
-              </div>
-            )}
+                </>
+              ) : null}
+            </div>
 
-            <button className="w-full py-2.5 rounded-lg bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 text-[#8B5CF6] text-xs font-semibold flex items-center justify-center gap-1.5 cursor-default">
+            <button className="w-full py-2.5 rounded-lg bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 text-[#8B5CF6] text-xs font-semibold flex items-center justify-center gap-1.5 cursor-default mt-auto">
               <i className="ri-user-follow-line text-sm"></i>
               Following
             </button>
           </div>
         </div>
-        );
-      })}
+      ))}
     </div>
   );
 };
