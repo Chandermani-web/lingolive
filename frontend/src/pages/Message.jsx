@@ -25,16 +25,24 @@ const Message = () => {
     const matchedConversation = conversations.find(
       (conversation) => String(conversation._id) === String(requestedConversationId)
     );
+    const nextUser = matchedConversation || location.state?.user || null;
 
-    setSelectedUser(matchedConversation || location.state?.user || null);
+    setSelectedUser((currentUser) => {
+      if (String(currentUser?._id) === String(nextUser?._id)) {
+        return currentUser;
+      }
+      return nextUser;
+    });
   }, [conversations, location.state]);
 
+  const selectedUserId = selectedUser?._id;
+
   useEffect(() => {
-    setActiveConversationId(selectedUser?._id || null);
-    if (selectedUser?._id) {
-      resetConversationUnread(selectedUser._id);
+    setActiveConversationId(selectedUserId || null);
+    if (selectedUserId) {
+      resetConversationUnread(selectedUserId);
     }
-  }, [resetConversationUnread, selectedUser, setActiveConversationId]);
+  }, [resetConversationUnread, selectedUserId, setActiveConversationId]);
 
   return (
     <div className="flex h-[calc(100vh-4rem)] bg-[#05070A] relative overflow-hidden">
