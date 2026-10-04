@@ -40,13 +40,13 @@ const Message = () => {
     <div className="flex h-[calc(100vh-4rem)] bg-[#05070A] relative overflow-hidden">
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm md:hidden"
+          className="fixed top-16 right-0 bottom-0 left-0 z-20 bg-black/60 backdrop-blur-sm md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-80 transform transition-transform duration-300 md:static md:translate-x-0 ${
+        className={`fixed top-16 bottom-0 left-0 z-30 w-80 transform transition-transform duration-300 md:static md:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >

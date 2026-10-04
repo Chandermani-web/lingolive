@@ -34,10 +34,12 @@ const Navbar = () => {
     { to: "/profile", icon: UserIcon, label: "Profile" },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) =>
+    location.pathname === path ||
+    (path === "/message" && location.pathname === "/messages");
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#05070A]/85 backdrop-blur-xl border-b border-[#18202B]">
+    <nav className="relative sticky top-0 z-[100] pointer-events-auto bg-[#05070A]/95 backdrop-blur-xl border-b border-[#18202B]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16">
           {/* ───── Logo ───── */}
