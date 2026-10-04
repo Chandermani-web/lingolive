@@ -1,6 +1,6 @@
 import express from 'express';
 import { isLoggedIn } from '../middlewares/isLoggedIn.js';
-import { sendFriendRequest, acceptFriendRequest, rejectFriendRequest, removeFriend, listFriends, listFriendRequests, getFriendById, getFriends} from '../controllers/friendrequest.controller.js';
+import { sendFriendRequest, acceptFriendRequest, rejectFriendRequest, removeFriend, listFriends, listFriendRequests, getConnections, getReceivedFriendRequests, getSentFriendRequests, getFriendById, getFriends} from '../controllers/friendrequest.controller.js';
 
 const router = express.Router();
 
@@ -10,6 +10,9 @@ router.post("/reject-request", isLoggedIn, rejectFriendRequest);
 router.post("/remove-friend", isLoggedIn, removeFriend);
 router.get("/list", isLoggedIn, listFriends);
 router.get("/requests", isLoggedIn, listFriendRequests);
+router.get("/connections", isLoggedIn, getConnections);
+router.get("/received-requests", isLoggedIn, getReceivedFriendRequests);
+router.get("/sent-requests", isLoggedIn, getSentFriendRequests);
 router.get("/getfriend/:id", isLoggedIn, getFriendById);
 router.get("/getfriends", isLoggedIn, getFriends);
 

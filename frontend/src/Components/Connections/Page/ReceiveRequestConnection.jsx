@@ -5,15 +5,15 @@ import { toast, ToastContainer } from "react-toastify";
 import AppContext from "../../../Context/UseContext";
 
 const ReceiveRequestConnection = () => {
-  const { requests, setRequests, fetchFriendRequests, loading, BASE_URL } = useContext(AppContext);
+  const { receivedRequests, setReceivedRequests, fetchConnections, fetchReceivedRequests, fetchSentRequests, loading, BASE_URL } = useContext(AppContext);
   const navigate = useNavigate();
   const [processing, setProcessing] = useState(null);
 
   useEffect(() => {
-    fetchFriendRequests();
+    fetchReceivedRequests();
   }, []);
 
-  if (loading || requests.length === 0) return null;
+  if (loading || receivedRequests.length === 0) return null;
 
   const handleAccept = async (requestId) => {
     setProcessing(requestId);
@@ -27,7 +27,9 @@ const ReceiveRequestConnection = () => {
       const data = await res.json();
       if (res.ok) {
         toast.success("Request accepted");
-        setRequests((prev) => prev.filter((r) => r._id !== requestId));
+        setReceivedRequests((prev) => prev.filter((r) => r._id !== requestId));
+        await fetchConnections();
+        await fetchSentRequests();
       } else {
         toast.error(data.message || "Failed");
       }
@@ -49,7 +51,9 @@ const ReceiveRequestConnection = () => {
       });
       if (res.ok) {
         toast.info("Request declined");
-        setRequests((prev) => prev.filter((r) => r._id !== requestId));
+        setReceivedRequests((prev) => prev.filter((r) => r._id !== requestId));
+        await fetchConnections();
+        await fetchSentRequests();
       }
     } catch (err) {
       toast.error("Something went wrong");
@@ -60,7 +64,7 @@ const ReceiveRequestConnection = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {requests.map((req, i) => (
+      {receivedRequests.map((req, i) => (
         <div
           key={req._id}
           className="card p-4 animate-fadeUp"

@@ -5,13 +5,13 @@ import { toast, ToastContainer } from "react-toastify";
 import AppContext from "../../../Context/UseContext";
 
 const YourTotalConnection = () => {
-  const { friendList, fetchFriendlist, loading, BASE_URL } = useContext(AppContext);
+  const { connections, fetchConnections, fetchReceivedRequests, fetchSentRequests, loading, BASE_URL } = useContext(AppContext);
   const [removingId, setRemovingId] = useState(null);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchFriendlist();
+    fetchConnections();
   }, []);
 
   const handleRemove = async (friendId) => {
@@ -26,7 +26,9 @@ const YourTotalConnection = () => {
       });
       if (!response.ok) throw new Error();
       toast.success("Connection removed");
-      fetchFriendlist();
+      await fetchConnections();
+      await fetchReceivedRequests();
+      await fetchSentRequests();
     } catch (err) {
       toast.error("Failed to remove");
     } finally {
@@ -42,13 +44,13 @@ const YourTotalConnection = () => {
     );
   }
 
-  const filtered = friendList?.filter(
+  const filtered = connections?.filter(
     (f) =>
       f.username?.toLowerCase().includes(search.toLowerCase()) ||
       f.fullname?.toLowerCase().includes(search.toLowerCase())
   ) || [];
 
-  if (friendList?.length === 0) {
+  if (connections?.length === 0) {
     return (
       <div className="card-static p-12 text-center">
         <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">

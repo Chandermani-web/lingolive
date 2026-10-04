@@ -5,7 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import AppContext from "../../../Context/UseContext";
 
 const ShowAllUser = () => {
-  const { user, allUser, fetchAllUser, requests, BASE_URL } = useContext(AppContext);
+  const { user, allUser, fetchAllUser, receivedRequests, sentRequests, BASE_URL } = useContext(AppContext);
   const [displayUsers, setDisplayUsers] = useState([]);
   const [processingId, setProcessingId] = useState(null);
   const navigate = useNavigate();
@@ -21,11 +21,12 @@ const ShowAllUser = () => {
           u._id !== user._id &&
           !user.following?.some((f) => f._id === u._id) &&
           !user.followers?.some((f) => f._id === u._id) &&
-          !requests?.some((r) => r.sender?._id === u._id)
+          !receivedRequests?.some((r) => r.sender?._id === u._id) &&
+          !sentRequests?.some((r) => r.receiver?._id === u._id)
       );
       setDisplayUsers(filtered);
     }
-  }, [allUser, user, requests]);
+  }, [allUser, user, receivedRequests, sentRequests]);
 
   const handleSendRequest = async (userId) => {
     setProcessingId(userId);

@@ -11,7 +11,7 @@ import ReceiveRequestConnection from "../Components/Connections/Page/ReceiveRequ
 const Connection = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(1);
-  const { requests, loading, user, allUser, setShowImage } = useContext(AppContext);
+  const { receivedRequests, connections, loading, user, allUser, setShowImage } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
@@ -136,14 +136,14 @@ const Connection = () => {
                 </h2>
                 <p className="text-xs text-muted">
                   {activeTab === 1 && "Find new friends to connect with"}
-                  {activeTab === 2 && `${user?.friends?.length || 0} total connections`}
+                  {activeTab === 2 && `${connections.length || user?.friends?.length || 0} total connections`}
                   {activeTab === 3 && "People you've followed"}
                 </p>
               </div>
             </div>
 
             {/* Pending Requests Banner */}
-            {activeTab === 1 && requests.length > 0 && (
+            {activeTab === 1 && receivedRequests.length > 0 && (
               <div className="card-static p-5 border-l-2 border-l-[#10B981] animate-fadeUp">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 border border-[#10B981]/20 flex items-center justify-center">
@@ -154,9 +154,9 @@ const Connection = () => {
                     <p className="text-xs text-muted">
                       You have{" "}
                       <span className="text-[#10B981] font-semibold">
-                        {requests.length}
+                        {receivedRequests.length}
                       </span>{" "}
-                      pending {requests.length === 1 ? "request" : "requests"}
+                      pending {receivedRequests.length === 1 ? "request" : "requests"}
                     </p>
                   </div>
                 </div>

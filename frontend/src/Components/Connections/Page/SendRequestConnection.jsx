@@ -1,14 +1,15 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, UserPlus, Users } from "lucide-react";
 import AppContext from "../../../Context/UseContext";
 
 const SendRequestConnection = () => {
-  const { user, loading } = useContext(AppContext);
+  const { sentRequests, fetchSentRequests, loading } = useContext(AppContext);
   const navigate = useNavigate();
 
-  const friendIds = user?.friends?.map((f) => f._id) || [];
-  const sendRequests = user?.following?.filter((u) => !friendIds.includes(u._id)) || [];
+  useEffect(() => {
+    fetchSentRequests();
+  }, []);
 
   if (loading) {
     return (
@@ -18,7 +19,7 @@ const SendRequestConnection = () => {
     );
   }
 
-  if (sendRequests.length === 0) {
+  if (sentRequests.length === 0) {
     return (
       <div className="card-static p-12 text-center">
         <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#0F141C] border border-[#18202B] flex items-center justify-center">
@@ -34,7 +35,9 @@ const SendRequestConnection = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      {sendRequests.map((u, i) => (
+      {sentRequests.map((request, i) => {
+        const u = request.receiver;
+        return (
         <div
           key={u._id}
           className="card overflow-hidden group animate-fadeUp"
@@ -99,7 +102,8 @@ const SendRequestConnection = () => {
             </button>
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

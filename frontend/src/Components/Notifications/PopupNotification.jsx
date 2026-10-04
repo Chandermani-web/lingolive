@@ -14,7 +14,7 @@ const PopupNotification = ({ data, onClose, onNavigate }) => {
 
   return (
     <div
-      className="fixed bottom-6 right-6 bg-[#0F141C]/95 backdrop-blur-md border border-[#18202B] p-4 rounded-2xl shadow-lg shadow-[#7C3AED]/10 w-80 animate-slideIn z-[9999] cursor-pointer"
+      className="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 bg-[#0F141C]/95 backdrop-blur-md border border-[#18202B] p-4 rounded-2xl shadow-lg shadow-[#7C3AED]/10 w-[min(22rem,calc(100vw-1.25rem))] max-w-[calc(100vw-1.25rem)] animate-slideIn z-[9999] cursor-pointer overflow-hidden"
       onClick={handleClick}
     >
       <div className="flex items-start gap-3">
