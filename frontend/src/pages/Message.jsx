@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import FriendsSidebar from "../Components/Messages/FriendSideBar";
@@ -8,6 +8,7 @@ import { useSocket } from "../Context/SocketContext";
 const Message = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const appliedRouteConversation = useRef(null);
   const { conversations, setActiveConversationId, resetConversationUnread } = useSocket();
   const location = useLocation();
 
@@ -21,11 +22,15 @@ const Message = () => {
   useEffect(() => {
     const requestedConversationId = location.state?.conversationId;
     if (!requestedConversationId) return;
+    if (String(appliedRouteConversation.current) === String(requestedConversationId)) {
+      return;
+    }
 
     const matchedConversation = conversations.find(
       (conversation) => String(conversation._id) === String(requestedConversationId)
     );
     const nextUser = matchedConversation || location.state?.user || null;
+    if (!nextUser) return;
 
     setSelectedUser((currentUser) => {
       if (String(currentUser?._id) === String(nextUser?._id)) {
@@ -33,6 +38,7 @@ const Message = () => {
       }
       return nextUser;
     });
+    appliedRouteConversation.current = requestedConversationId;
   }, [conversations, location.state]);
 
   const selectedUserId = selectedUser?._id;
