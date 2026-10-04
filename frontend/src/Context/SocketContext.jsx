@@ -1,12 +1,26 @@
 // src/Context/SocketContext.jsx
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import AppContext from "./UseContext"; // import your main context
+import AppContext from "./UseContext";
 
-// Utility function to get Socket URL
 const getSocketUrl = () => "https://lingolive.onrender.com";
 
 const SocketContext = createContext();
+
+const getMessagePreview = (message) => {
+  if (!message) return "Start a conversation";
+
+  if (message.text && message.text.trim()) {
+    return message.text.trim();
+  }
+
+  if (message.image) return "📷 Photo";
+  if (message.video) return "🎥 Video";
+  if (message.audio) return "🎵 Audio";
+  if (message.file) return "📎 File";
+
+  return "Start a conversation";
+};
 
 export const SocketProvider = ({ children }) => {
   const { user, posts, setPosts, requests, setRequests } = useContext(AppContext);
@@ -14,6 +28,54 @@ export const SocketProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [messages, setMessages] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [activeConversationId, setActiveConversationId] = useState(null);
+
+  const resetConversationUnread = useCallback((friendId) => {
+    setConversations((prev) =>
+      prev.map((conversation) =>
+        String(conversation._id) === String(friendId)
+          ? { ...conversation, unreadCount: 0 }
+          : conversation
+      )
+    );
+  }, []);
+
+  const upsertConversation = useCallback(
+    (message, options = {}) => {
+      if (!user?._id || !message) return;
+
+      const senderId = typeof message.sender === "object" ? message.sender._id : message.sender;
+      const receiverId = typeof message.receiver === "object" ? message.receiver._id : message.receiver;
+      const otherUserId = String(senderId) === String(user._id) ? String(receiverId) : String(senderId);
+      const partner = String(senderId) === String(user._id)
+        ? (typeof message.receiver === "object" ? message.receiver : null)
+        : (typeof message.sender === "object" ? message.sender : null);
+
+      setConversations((prev) => {
+        const existing = prev.find((conversation) => String(conversation._id) === otherUserId);
+        const isCurrentConversation = String(otherUserId) === String(activeConversationId);
+        const nextUnreadCount =
+          options.isOwnMessage || isCurrentConversation
+            ? 0
+            : (existing?.unreadCount || 0) + (options.incrementUnread ? 1 : 0);
+
+        const nextConversation = {
+          ...(existing || {}),
+          _id: otherUserId,
+          username: partner?.username || existing?.username || "",
+          profilePic: partner?.profilePic || existing?.profilePic || "",
+          latestMessage: message,
+          latestMessageAt: message.createdAt || new Date().toISOString(),
+          unreadCount: nextUnreadCount,
+        };
+
+        return [nextConversation, ...prev.filter((conversation) => String(conversation._id) !== otherUserId)]
+          .sort((a, b) => new Date(b.latestMessageAt || 0) - new Date(a.latestMessageAt || 0));
+      });
+    },
+    [activeConversationId, user?._id]
+  );
 
   useEffect(() => {
     if (!user?._id) return;
@@ -24,7 +86,7 @@ export const SocketProvider = ({ children }) => {
     const newSocket = io(socketUrl, {
       query: { userId: user._id },
       withCredentials: true,
-      transports: ["websocket", "polling"], // fallback for reliability
+      transports: ["websocket", "polling"],
       timeout: 10000,
       forceNew: true,
     });
@@ -34,55 +96,74 @@ export const SocketProvider = ({ children }) => {
     newSocket.emit("addUser", user._id);
     newSocket.emit("joinRoom", user._id);
 
-    // Post events
     newSocket.on("newPost", (newPost) => {
-      console.log("🆕 New post received via socket:", newPost);
       setPosts((prev) => [newPost, ...prev]);
     });
 
     newSocket.on("updatePost", (updatedPost) => {
-      console.log("📝 Post updated via socket:", updatedPost);
       setPosts((prev) =>
         prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))
       );
     });
 
     newSocket.on("deletePost", ({ postId }) => {
-      console.log("🗑️ Post deleted via socket:", postId);
       setPosts((prev) => prev.filter((p) => p._id !== postId));
     });
 
-    // Friend request events
     newSocket.on("friendRequest", ({ newRequest }) => {
-      console.log("🆕 New friend request received:", newRequest);
       setRequests((prev) => [newRequest, ...prev]);
     });
 
-    // Notification events
     newSocket.on("newNotification", (notification) => {
-      console.log("🔔 New notification received:", notification);
       setNotifications((prev) => [notification, ...prev]);
     });
 
-    // Online users events
     newSocket.on("onlineUsers", (onlineUsersList) => {
-      console.log("👥 Online Users List Updated:", onlineUsersList);
       setOnlineUsers(onlineUsersList);
     });
 
     return () => {
-      console.log("🔌 Cleaning up socket connection");
       newSocket.disconnect();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?._id]); // Only reconnect when user changes
+  }, [user?._id, setPosts, setRequests]);
 
-  // Real-time message handling
   useEffect(() => {
     if (!socket) return;
 
     socket.on("newMessage", (message) => {
-      setMessages((prev) => [...prev, message]);
+      setMessages((prev) => {
+        if (prev.some((msg) => String(msg._id) === String(message._id))) {
+          return prev;
+        }
+        return [...prev, message];
+      });
+
+      const senderId = typeof message.sender === "object" ? message.sender._id : message.sender;
+      const receiverId = typeof message.receiver === "object" ? message.receiver._id : message.receiver;
+      const isIncoming = String(senderId) !== String(user?._id);
+      const otherUserId = isIncoming ? String(senderId) : String(receiverId);
+      const isCurrentConversation = String(otherUserId) === String(activeConversationId);
+
+      if (isIncoming && !isCurrentConversation) {
+        const notification = {
+          _id: `message-${message._id}`,
+          type: "message",
+          message: getMessagePreview(message),
+          fromUser: typeof message.sender === "object" ? message.sender : null,
+          conversationId: otherUserId,
+          createdAt: message.createdAt,
+        };
+
+        setNotifications((prev) => [
+          notification,
+          ...prev.filter((item) => item._id !== notification._id),
+        ]);
+      }
+
+      upsertConversation(message, {
+        incrementUnread: isIncoming && !isCurrentConversation,
+        isOwnMessage: !isIncoming,
+      });
     });
 
     socket.on("deleteMessage", (messageId) => {
@@ -93,7 +174,7 @@ export const SocketProvider = ({ children }) => {
       socket.off("newMessage");
       socket.off("deleteMessage");
     };
-  }, [socket]);
+  }, [activeConversationId, socket, upsertConversation, user?._id]);
 
   return (
     <SocketContext.Provider
@@ -106,6 +187,11 @@ export const SocketProvider = ({ children }) => {
         messages,
         onlineUsers,
         setMessages,
+        conversations,
+        setConversations,
+        activeConversationId,
+        setActiveConversationId,
+        resetConversationUnread,
       }}
     >
       {children}

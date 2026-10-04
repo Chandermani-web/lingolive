@@ -88,6 +88,7 @@ const App = () => {
             element={auth ? <Notification /> : <Login />}
           />
           <Route path="/message" element={auth ? <Message /> : <Login />} />
+          <Route path="/messages" element={auth ? <Message /> : <Login />} />
         </Routes>
       </Suspense>
       <NotificationPopupManager />

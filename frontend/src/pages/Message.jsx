@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import FriendsSidebar from "../Components/Messages/FriendSideBar";
 import ChatPage from "../Components/Messages/ChatPage";
+import { useSocket } from "../Context/SocketContext";
 
 const Message = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { conversations, setActiveConversationId, resetConversationUnread } = useSocket();
+  const location = useLocation();
 
   useEffect(() => {
     const handleResize = () => setSidebarOpen(window.innerWidth >= 768);
@@ -13,6 +17,26 @@ const Message = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const requestedConversationId = location.state?.conversationId;
+    if (!requestedConversationId) return;
+
+    const matchedConversation = conversations.find(
+      (conversation) => String(conversation._id) === String(requestedConversationId)
+    );
+
+    if (matchedConversation) {
+      setSelectedUser(matchedConversation);
+    }
+  }, [conversations, location.state]);
+
+  useEffect(() => {
+    setActiveConversationId(selectedUser?._id || null);
+    if (selectedUser?._id) {
+      resetConversationUnread(selectedUser._id);
+    }
+  }, [resetConversationUnread, selectedUser, setActiveConversationId]);
 
   return (
     <div className="flex h-[calc(100vh-4rem)] bg-[#05070A] relative overflow-hidden">

@@ -1,4 +1,7 @@
+import mongoose from 'mongoose';
 import Message from '../models/Message.model.js';
+import Friend from '../models/friend.model.js';
+import User from '../models/auth.model.js';
 import { io } from '../index.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
@@ -85,4 +88,106 @@ export const getMessages = asyncHandler(async (req, res) => {
         .sort({ createdAt: 1 });
 
     res.status(200).json(messages);
+});
+
+export const getConversations = asyncHandler(async (req, res) => {
+    const currentUserId = req.user._id;
+
+    const acceptedFriendships = await Friend.find({
+        status: 'accepted',
+        $or: [{ sender: currentUserId }, { receiver: currentUserId }],
+    }).lean();
+
+    const friendIds = [...new Set(
+        acceptedFriendships.map((friend) => {
+            const otherUserId = friend.sender.toString() === currentUserId.toString()
+                ? friend.receiver
+                : friend.sender;
+            return otherUserId.toString();
+        })
+    )];
+
+    if (!friendIds.length) {
+        return res.status(200).json({ conversations: [] });
+    }
+
+    const friendObjectIds = friendIds.map((id) => new mongoose.Types.ObjectId(id));
+
+    const latestMessages = await Message.aggregate([
+        {
+            $match: {
+                $or: [
+                    { sender: currentUserId, receiver: { $in: friendObjectIds } },
+                    { sender: { $in: friendObjectIds }, receiver: currentUserId },
+                ],
+            },
+        },
+        {
+            $project: {
+                otherUserId: {
+                    $cond: [{ $eq: ['$sender', currentUserId] }, '$receiver', '$sender'],
+                },
+                _id: 1,
+                sender: 1,
+                receiver: 1,
+                text: 1,
+                image: 1,
+                video: 1,
+                audio: 1,
+                file: 1,
+                createdAt: 1,
+            },
+        },
+        { $sort: { createdAt: -1 } },
+        {
+            $group: {
+                _id: '$otherUserId',
+                latestMessage: { $first: {
+                    _id: '$_id',
+                    sender: '$sender',
+                    receiver: '$receiver',
+                    text: '$text',
+                    image: '$image',
+                    video: '$video',
+                    audio: '$audio',
+                    file: '$file',
+                    createdAt: '$createdAt',
+                } },
+                latestMessageAt: { $first: '$createdAt' },
+            },
+        },
+    ]);
+
+    const latestByUserId = new Map(
+        latestMessages.map((item) => [item._id.toString(), item])
+    );
+
+    const users = await User.find({ _id: { $in: friendObjectIds } })
+        .select('username profilePic email')
+        .lean();
+
+    const userById = new Map(users.map((user) => [user._id.toString(), user]));
+
+    const conversations = friendIds
+        .map((friendId) => {
+            const user = userById.get(friendId);
+            const latest = latestByUserId.get(friendId);
+
+            return {
+                _id: friendId,
+                username: user?.username || '',
+                profilePic: user?.profilePic || '',
+                email: user?.email || '',
+                latestMessage: latest ? latest.latestMessage : null,
+                latestMessageAt: latest ? latest.latestMessageAt : null,
+                unreadCount: 0,
+            };
+        })
+        .sort((a, b) => {
+            const timeA = a.latestMessageAt ? new Date(a.latestMessageAt).getTime() : 0;
+            const timeB = b.latestMessageAt ? new Date(b.latestMessageAt).getTime() : 0;
+            return timeB - timeA;
+        });
+
+    res.status(200).json({ conversations });
 });
