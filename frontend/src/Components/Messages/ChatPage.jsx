@@ -16,16 +16,17 @@ const ChatPage = ({ selectedUser, onOpenSidebar }) => {
   const [media, setMedia] = useState({ image: null, video: null, audio: null, file: null });
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
+  const selectedUserId = selectedUser?._id;
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    if (!selectedUser?._id) return;
+    if (!selectedUserId) return;
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/messages/${selectedUser._id}`, {
+        const res = await fetch(`${BASE_URL}/api/messages/${selectedUserId}`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -35,7 +36,7 @@ const ChatPage = ({ selectedUser, onOpenSidebar }) => {
       }
     };
     fetchMessages();
-  }, [selectedUser, BASE_URL, setMessages]);
+  }, [selectedUserId, BASE_URL, setMessages]);
 
   const handleMedia = (e) => {
     const file = e.target.files[0];
